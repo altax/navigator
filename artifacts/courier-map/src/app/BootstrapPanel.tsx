@@ -81,8 +81,8 @@ export function BootstrapPanel({ stack }: { stack: StackStatus | null }) {
         // Оцениваем оставшееся время по прогрессу
         const elapsed = (Date.now() - (startedAtRef.current[s.id] ?? Date.now())) / 1000;
         const rate = s.pct / 100;
-        const total = rate > 0.01 ? elapsed / rate : expected;
-        return sum + Math.max(0, total - elapsed);
+        const estimatedTotal = rate > 0.01 ? elapsed / rate : expected;
+        return sum + Math.max(0, estimatedTotal - elapsed);
       }
       return sum + expected;
     }, 0);
