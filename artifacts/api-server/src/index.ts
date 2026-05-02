@@ -1,6 +1,7 @@
 import app from "./app";
 import { logger } from "./lib/logger";
 import { MARTIN_URL } from "./lib/services";
+import { startWatchdog } from "./lib/watchdog";
 
 const rawPort = process.env["PORT"];
 
@@ -52,4 +53,7 @@ app.listen(port, (err) => {
 
   // Прогреваем тайлы в фоне — не блокируем старт сервера
   setTimeout(() => warmupTiles().catch(() => {}), 1000);
+
+  // Запускаем сторожевой процесс для Martin и GraphHopper
+  startWatchdog();
 });

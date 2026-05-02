@@ -75,7 +75,7 @@ outputType = "webview"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "pnpm install --frozen-lockfile --prefer-offline 2>/dev/null || pnpm install --frozen-lockfile && PORT=5000 pnpm --filter @workspace/courier-map run dev"
+args = "pnpm install --frozen-lockfile --prefer-offline 2>/dev/null || pnpm install --frozen-lockfile && bash scripts/start-webapp.sh"
 waitForPort = 5000
 
 [agent]
@@ -93,10 +93,6 @@ externalPort = 3001
 [[ports]]
 localPort = 5000
 externalPort = 80
-
-[[ports]]
-localPort = 8000
-externalPort = 8000
 
 [[ports]]
 localPort = 8001
