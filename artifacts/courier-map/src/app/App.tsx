@@ -48,7 +48,8 @@ export default function App() {
   // ── Map init ──────────────────────────────────────────────────────────────
   useEffect(() => {
     if (!containerRef.current || mapRef.current) return;
-    maplibregl.setWorkerCount(6);
+    // setWorkerCount / prewarm / setMaxParallelImageRequests вызваны в main.tsx
+    // до рендера React — здесь повторять не нужно.
     let map: MlMap;
     try {
       map = new maplibregl.Map({
@@ -59,13 +60,17 @@ export default function App() {
         pitch: 35,
         maxPitch: 65,
         bearing: 0,
+        // Ограничиваем карту регионом СПб + ЛО: исключаем запросы тайлов
+        // за пределами рабочей зоны курьера (~1000 км² вместо всего мира).
+        maxBounds: [27.0, 58.0, 34.0, 61.8],
         attributionControl: { compact: true },
         touchPitch: true,
         cooperativeGestures: false,
         fadeDuration: 0,
-        maxTileCacheSize: 600,
+        maxTileCacheSize: 800,
         crossSourceCollisions: false,
         refreshExpiredTiles: false,
+        localIdeographFontFamily: "",
         pixelRatio: Math.min(window.devicePixelRatio || 1, 2),
       });
     } catch (e) {

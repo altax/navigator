@@ -1,5 +1,5 @@
 listen_addresses: '0.0.0.0:3000'
-worker_processes: 2
+worker_processes: 4
 keep_alive: 75
 preferred_encoding: gzip
 
