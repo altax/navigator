@@ -1,5 +1,5 @@
 graphhopper:
-  datareader.file: /home/runner/workspace/data/spb-lo.osm.pbf
+  datareader.file: /home/runner/workspace/data/spb-lo-filtered.osm.pbf
   graph.location: /home/runner/workspace/data/graphhopper/spb-lo-ebike-gh
   graph.encoded_values: car_access, road_class, road_environment, max_speed, surface, bike_access, foot_access, hike_rating
 

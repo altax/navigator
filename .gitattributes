@@ -1,3 +1,8 @@
+# Large GIS data files stored via Git LFS.
+# On a fresh GitHub import Replit does NOT run `git lfs pull`, so the
+# working-tree copies will be tiny 134-byte pointer stubs.
+# scripts/bootstrap.sh detects those stubs (size < threshold) and
+# automatically downloads / generates the real data from Geofabrik.
 data/graphhopper/spb-lo-ebike-gh/edges filter=lfs diff=lfs merge=lfs -text
 data/northwest-fed.osm.pbf filter=lfs diff=lfs merge=lfs -text
 data/spb-lo-filtered.geojsonseq filter=lfs diff=lfs merge=lfs -text

@@ -51,13 +51,41 @@ tools/                  martin v0.18, pmtiles CLI (скачаны однажды
 
 ## Данные
 
-- `data/spb-lo.osm.pbf` (204 МБ) — извлечение из `northwest-fed.osm.pbf` по bbox `27.4,58.4,36.0,61.4`
-- `data/spb-lo.pmtiles` (~337 МБ) — tippecanoe `-z14 -Z6`, слой `osm` с тегами highway/building/landuse/name
-- `data/graphhopper/spb-lo-ebike-gh/` — индекс GraphHopper (CH построен)
+Большие GIS-файлы (>100 МБ) **не хранятся в git** — они создаются автоматически при первом запуске
+через `scripts/bootstrap.sh`. Это сделано потому что Replit не поддерживает Git LFS при импорте.
+
+### Пайплайн данных (автоматический)
+
+```
+Geofabrik (NW Federal District, ~600 МБ)
+  └─> osmium extract bbox 27.5,58.3,36.5,61.5  ──> data/spb-lo-filtered.osm.pbf (~150 МБ)
+        ├─> osmium export (GeoJSON)              ──> data/spb-lo-filtered.geojsonseq (~1 ГБ)
+        │     └─> tippecanoe (z6-z14)            ──> data/spb-lo.pmtiles [martin/run.sh]
+        └─> GraphHopper import                   ──> data/graphhopper/spb-lo-ebike-gh/ [gh/run.sh]
+```
+
+### Файлы в git (малые, коммитятся нормально)
+- `data/fonts/NotoSans-*.ttf` — шрифты для подписей карты
+- `data/graphhopper-web-10.0.jar` (~45 МБ) — JAR GraphHopper
+- `data/spb-center.osm.pbf` (~30 МБ) — резерв (центр СПб)
+- Git LFS pointer-файлы для больших данных (bootstrap.sh распознаёт их и перегенерирует)
+
+### После импорта с GitHub
+При первом старте `bootstrap.sh`:
+1. Если `data/spb-lo-filtered.osm.pbf` отсутствует или это LFS-заглушка (<10 МБ):
+   - Скачивает NW Federal District с Geofabrik (~600 МБ, **однократно**)
+   - Вырезает bbox СПб+ЛО через `osmium extract`
+2. Генерирует `data/spb-lo-filtered.geojsonseq` через `osmium export`
+3. Martin автоматически строит `data/spb-lo.pmtiles` через tippecanoe (~15 мин)
+4. GraphHopper автоматически строит граф маршрутизации (~10-20 мин)
+
+### GraphHopper
+Теперь использует `data/spb-lo-filtered.osm.pbf` (не `spb-lo.osm.pbf`) — файл содержит
+все теги нужные для e-bike маршрутизации (highway, surface, access, maxspeed, bicycle и т.д.)
 
 При первом запуске workflow автоматически:
-- Martin: запускает tippecanoe (~10-15 мин), создаёт `data/spb-lo.pmtiles`, потом стартует Martin
-- GraphHopper: запускает import графа (~1 мин), потом стартует HTTP сервер
+- Martin: ждёт geojsonseq → запускает tippecanoe (~15 мин), создаёт `data/spb-lo.pmtiles`, стартует Martin
+- GraphHopper: ждёт spb-lo-filtered.osm.pbf → запускает import графа (~10-20 мин), стартует сервер
 
 ## Особенности окружения Replit
 

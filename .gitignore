@@ -47,3 +47,6 @@ Thumbs.db
 # Replit
 .cache/
 .local/
+
+# Temporary download file (used by bootstrap.sh, cleaned up after extraction)
+/tmp/nw-fed-district.osm.pbf
