@@ -160,9 +160,7 @@ function buildStyle(stack: StackStatus | null): StyleSpecification {
   const isVector = stack === null || stack?.basemap.source === "pmtiles_martin";
   if (isVector) {
     const rawUrl = stack?.basemap.url ?? DEFAULT_TILE_URL;
-    const tileBase = typeof window !== "undefined"
-      ? `${window.location.origin}${rawUrl}`
-      : rawUrl;
+    const tileBase = `${window.location.origin}${rawUrl}`;
     return {
       version: 8 as const,
       glyphs: "/api/tiles/font/{fontstack}/{range}.pbf?v=2",
