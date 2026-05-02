@@ -3,7 +3,7 @@ worker_processes: 2
 keep_alive: 75
 preferred_encoding: gzip
 
-cache_size_mb: 128
+cache_size_mb: 512
 
 pmtiles:
   paths:

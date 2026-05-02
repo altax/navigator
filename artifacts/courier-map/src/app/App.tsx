@@ -172,8 +172,8 @@ function buildStyle(stack: StackStatus | null): StyleSpecification {
         basemap: {
           type: "vector" as const,
           tiles: [`${tileBase}/{z}/{x}/{y}`],
-          minzoom: 6,
-          maxzoom: 14,
+          minzoom: 5,
+          maxzoom: 17,
         },
         "selected-building": {
           type: "geojson" as const,

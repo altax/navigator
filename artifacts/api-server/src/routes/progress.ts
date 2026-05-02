@@ -73,13 +73,15 @@ router.get("/stack/progress", (_req, res) => {
     },
     {
       id: "pmtiles",
-      label: "PMTiles (тайлы карты)",
+      label: "PMTiles z5-z17 (полное покрытие)",
       done: pmtilesDone,
-      pct: pmtilesDone ? 100 : 0,
+      pct: pmtilesDone ? 100 : geojsonDone && pmtilesSize > 0 ? pct(pmtilesSize, 600_000_000) : 0,
       detail: pmtilesDone
         ? mb(pmtilesSize)
         : geojsonDone
-          ? "сборка через tippecanoe (~15 мин)…"
+          ? pmtilesSize > 0
+            ? `${mb(pmtilesSize)} / ~600 МБ`
+            : "tippecanoe z17: ~30–60 мин…"
           : "ожидание GeoJSON",
       active: geojsonDone && !pmtilesDone,
     },

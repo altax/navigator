@@ -24,12 +24,19 @@ if [ "$NEED_BUILD" = "true" ]; then
     WAIT=$((WAIT + 15))
   done
 
-  echo "[martin/run.sh] Building $PMTILES from $GEOJSON via tippecanoe…"
+  echo "[martin/run.sh] Building $PMTILES from $GEOJSON via tippecanoe (z5-z17, full detail)…"
   rm -f "$PMTILES"
-  tippecanoe -o "$PMTILES" -z14 -Z6 \
+  # z17: все здания, все тропинки, все подъезды, все переулки видны полностью.
+  # --drop-densest-as-needed: умный дроп на низких зумах — детали остаются на высоких.
+  # --simplification=3: чуть упрощаем геометрию → меньше файл, быстрее загрузка.
+  # --no-feature-limit: не обрезаем фичи в тайле по числу.
+  # --maximum-tile-bytes=2097152: лимит 2 МБ/тайл — защита от мегатайлов в центре.
+  tippecanoe -o "$PMTILES" -z17 -Z5 \
     --drop-densest-as-needed \
     --extend-zooms-if-still-dropping \
-    --no-feature-limit --no-tile-size-limit \
+    --no-feature-limit \
+    --maximum-tile-bytes=2097152 \
+    --simplification=3 \
     --force -l osm "$GEOJSON"
   echo "[martin/run.sh] PMTiles built: $(ls -lh $PMTILES | awk '{print $5}')"
 fi
