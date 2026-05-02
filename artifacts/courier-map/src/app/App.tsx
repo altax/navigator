@@ -963,6 +963,13 @@ export default function App() {
         maxPitch: 65,
         bearing: 0,
         attributionControl: { compact: true },
+        // ── Планшетные жесты ───────────────────────────────────────────
+        // touchPitch: наклон карты двумя пальцами (вверх/вниз)
+        touchPitch: true,
+        // touchZoomRotate включён по умолчанию: pinch = zoom, twist = rotate
+        // cooperativeGestures: false — прокрутка страницы не нужна, карта всегда
+        // реагирует на scroll/pinch без зажатого Ctrl
+        cooperativeGestures: false,
       });
     } catch (e) {
       console.error("MapLibre init failed:", e);

@@ -62,6 +62,9 @@ fi
 echo "[api] GIS data pipeline running in background. Logs: /tmp/bootstrap.log"
 
 # ── 4. Build and start the API server immediately ─────────────────────
+# Освобождаем порт на случай если предыдущий инстанс завис
+fuser -k ${PORT}/tcp 2>/dev/null || true
+sleep 0.5
 echo "[api] Building API server…"
 cd artifacts/api-server
 pnpm run build

@@ -12,6 +12,8 @@ if [ ! -f "$PMTILES" ]; then NEED_BUILD=true; fi
 if [ -f "$PMTILES" ] && [ "$(stat -c%s "$PMTILES")" -lt 65536 ]; then NEED_BUILD=true; fi
 
 if [ "$NEED_BUILD" = "true" ]; then
+  # Удаляем журнальный файл если остался от прерванной сборки
+  rm -f "${PMTILES}-journal"
   # Wait up to 10 min for bootstrap to finish generating GeoJSON
   WAIT=0
   while [ ! -f "$GEOJSON" ] || [ "$(stat -c%s "$GEOJSON")" -lt 1000000 ]; do
@@ -31,7 +33,7 @@ if [ "$NEED_BUILD" = "true" ]; then
   # --simplification=3: чуть упрощаем геометрию → меньше файл, быстрее загрузка.
   # --no-feature-limit: не обрезаем фичи в тайле по числу.
   # --maximum-tile-bytes=2097152: лимит 2 МБ/тайл — защита от мегатайлов в центре.
-  tippecanoe -o "$PMTILES" -z17 -Z5 \
+  tippecanoe -o "$PMTILES" -z16 -Z5 \
     --drop-densest-as-needed \
     --extend-zooms-if-still-dropping \
     --no-feature-limit \

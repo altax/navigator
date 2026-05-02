@@ -1022,10 +1022,64 @@ html, body {
 .webgl-error h3 { color: #ff8b9c; margin: 0 0 12px; font-size: 18px; }
 .webgl-error p { margin: 4px 0; color: #cfd6dc; font-size: 14px; max-width: 480px; }
 
+/* ═══════════════════════════════════════════════════════════════
+   ПЛАНШЕТ: крупные касаемые цели, удобное управление пальцами
+   ═══════════════════════════════════════════════════════════════ */
+
+/* touch-action: none на карте — браузер не перехватывает жесты */
+#map { touch-action: none; }
+
+/* Все интерактивные элементы — минимум 44px (Apple HIG / WCAG) */
+@media (pointer: coarse) {
+  /* Кнопки карты — крупнее, с бо́льшим отступом */
+  .map-btn {
+    width: 56px;
+    height: 56px;
+    border-radius: 14px;
+  }
+  .map-btn svg { width: 26px; height: 26px; }
+
+  /* Поисковая строка — выше */
+  .search-bar { height: 58px; padding: 0 16px; }
+  .search-bar input { font-size: 17px; }
+
+  /* Результаты поиска — строки выше для пальца */
+  .search-results .item { min-height: 52px; }
+  .item-tap { padding: 10px 4px 10px 12px; }
+  .item-route-btn { min-width: 48px; min-height: 48px; }
+
+  /* Нижний pill статуса сервисов */
+  .stack-pill { height: 36px; padding: 0 14px; font-size: 13px; }
+
+  /* Панель маршрута */
+  .route-panel { padding: 14px 18px; font-size: 14px; }
+  .route-panel .ghost { width: 40px; height: 40px; }
+
+  /* Кнопки выдвижной панели */
+  .drawer-tab { height: 46px; font-size: 14px; }
+
+  /* Кнопка сброса выделения */
+  .selection-pill { height: 40px; padding: 0 18px; font-size: 14px; }
+
+  /* Баннер режима добавления */
+  .add-mode-banner { font-size: 15px; padding: 11px 20px; }
+
+  /* Контролы карты — чуть дальше от края */
+  .map-controls { top: 18px; right: 18px; gap: 10px; }
+
+  /* Разделитель шире */
+  .map-btn-divider { margin: 4px 8px; }
+
+  /* Поисковая строка — оставляем больше отступа под кнопки */
+  .search-floating { top: 18px; left: 18px; right: 84px; }
+}
+
 /* Узкий планшет/телефон — поджимаем */
 @media (max-width: 600px) {
   .search-floating { right: 14px; }
-  .map-controls { top: 78px; }
+  .map-controls { top: 78px; right: 10px; }
+  .map-btn { width: 44px; height: 44px; }
+  .search-floating { left: 10px; right: 58px; }
   .draft-grid { grid-template-columns: 1fr; }
 }
 
