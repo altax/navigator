@@ -4,6 +4,7 @@ import poisRouter from "./pois";
 import courierRoutesRouter from "./courierRoutes";
 import geoRouter from "./geo";
 import stackRouter from "./stack";
+import progressRouter from "./progress";
 import tilesRouter from "./tiles";
 
 const router: IRouter = Router();
@@ -13,6 +14,7 @@ router.use(poisRouter);
 router.use(courierRoutesRouter);
 router.use(geoRouter);
 router.use(stackRouter);
+router.use(progressRouter);
 router.use(tilesRouter);
 
 export default router;

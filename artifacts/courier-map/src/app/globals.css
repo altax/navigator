@@ -729,6 +729,193 @@ html, body {
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
 }
 
+/* ============= Bootstrap прогресс-панель ============= */
+.bootstrap-panel {
+  position: absolute;
+  bottom: 56px;
+  left: 14px;
+  width: 310px;
+  background: rgba(13, 17, 23, 0.97);
+  border: 1px solid #2a3540;
+  border-radius: 12px;
+  box-shadow: 0 8px 28px rgba(0,0,0,0.55);
+  backdrop-filter: blur(10px);
+  z-index: 30;
+  font-size: 12px;
+  color: #cfd6dc;
+  overflow: hidden;
+}
+
+.bootstrap-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 12px 8px;
+  border-bottom: 1px solid #1d2530;
+}
+
+.bootstrap-title {
+  font-weight: 600;
+  font-size: 12px;
+  color: #e6e8eb;
+  letter-spacing: 0.01em;
+}
+
+.bootstrap-actions {
+  display: flex;
+  gap: 2px;
+}
+
+.bootstrap-btn {
+  background: transparent;
+  border: none;
+  color: #5a6370;
+  font-size: 16px;
+  line-height: 1;
+  width: 22px;
+  height: 22px;
+  border-radius: 4px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+}
+.bootstrap-btn:hover { color: #cfd6dc; background: rgba(255,255,255,0.06); }
+
+.bootstrap-steps {
+  padding: 8px 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.bs-step {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 5px 12px;
+}
+
+.bs-icon {
+  font-size: 11px;
+  width: 14px;
+  flex: none;
+  margin-top: 1px;
+  font-family: monospace;
+}
+
+.bs-step.done   .bs-icon { color: #22c55e; }
+.bs-step.active .bs-icon { color: #60a5fa; animation: spin 1.4s linear infinite; display: inline-block; }
+.bs-step.waiting .bs-icon { color: #374151; }
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+.bs-body { flex: 1; min-width: 0; }
+
+.bs-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 6px;
+}
+
+.bs-label {
+  font-size: 12px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.bs-step.done    .bs-label { color: #cfd6dc; }
+.bs-step.active  .bs-label { color: #e6e8eb; font-weight: 500; }
+.bs-step.waiting .bs-label { color: #3d4852; }
+
+.bs-detail {
+  font-size: 10px;
+  color: #5a6370;
+  white-space: nowrap;
+  flex: none;
+}
+.bs-step.done .bs-detail { color: #22c55e; opacity: 0.75; }
+
+.bs-bar {
+  margin-top: 4px;
+  height: 3px;
+  background: #1d2530;
+  border-radius: 2px;
+  overflow: hidden;
+}
+.bs-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #1d4ed8, #60a5fa);
+  border-radius: 2px;
+  transition: width 0.6s ease;
+}
+
+.bootstrap-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 7px 12px 9px;
+  border-top: 1px solid #1d2530;
+  gap: 8px;
+}
+
+.bootstrap-services {
+  display: flex;
+  gap: 10px;
+}
+
+.bs-svc {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 10px;
+  color: #5a6370;
+}
+.bs-svc.up { color: #22c55e; }
+
+.bs-svc-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+  flex: none;
+}
+
+.bootstrap-hint {
+  font-size: 10px;
+  color: #3d4852;
+  white-space: nowrap;
+}
+
+/* Свёрнутая кнопка */
+.bootstrap-mini {
+  position: absolute;
+  bottom: 56px;
+  left: 14px;
+  background: rgba(13, 17, 23, 0.95);
+  border: 1px solid #2a3540;
+  border-radius: 8px;
+  color: #60a5fa;
+  font-size: 12px;
+  padding: 5px 10px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  z-index: 30;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+}
+.bootstrap-mini:hover { border-color: #3b82f6; color: #93c5fd; }
+
+.bootstrap-mini-spinner {
+  display: inline-block;
+  animation: spin 1.4s linear infinite;
+}
+
 .webgl-error {
   position: absolute;
   inset: 0;

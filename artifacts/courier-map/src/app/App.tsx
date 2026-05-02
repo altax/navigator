@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useRef, useState, useCallback } from "react";
 import maplibregl, { Map as MlMap, type MapLayerMouseEvent, type StyleSpecification } from "maplibre-gl";
 import type { Poi, PoiType, StackStatus, GeocodeResult } from "./types";
+import { BootstrapPanel } from "./BootstrapPanel";
 import { POI_TYPE_META } from "./types";
 import { api } from "./api";
 
@@ -2022,6 +2023,8 @@ export default function App() {
           </svg>
         </button>
       </div>
+
+      <BootstrapPanel stack={stack} />
 
       {/* Маленький значок здоровья сервисов внизу слева, разворачивается по клику */}
       <button
