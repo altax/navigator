@@ -713,13 +713,14 @@ function buildStyle(stack: StackStatus | null): StyleSpecification {
         // Дедуп: только полигоны зданий (не отдельные точки парадных),
         // не building:part (чтобы не дублировать с основным полигоном),
         // без гаражей/сараев — в них курьеру нечего делать.
-        // Размеры подняты на 2px на каждом уровне зума, minzoom опущен до z12.
+        // minzoom поднят до 15: на низком зуме номера мешают обзору и нечитаемы.
+        // При z15 мягко появляются, при z17+ разрешаем перекрытие — курьер уже у цели.
         {
           id: "housenumbers",
           type: "symbol" as const,
           source: "basemap",
           "source-layer": "osm",
-          minzoom: 12,
+          minzoom: 15,
           filter: [
             "all",
             ["has", "addr:housenumber"],
@@ -734,20 +735,21 @@ function buildStyle(stack: StackStatus | null): StyleSpecification {
           layout: {
             "text-field": ["get", "addr:housenumber"],
             "text-font": ["Noto Sans Bold"],
-            // z12 появляется полупрозрачно, с z13 полная видимость — всегда читаемо на ходу
-            "text-size": ["interpolate", ["linear"], ["zoom"], 12, 9, 13, 12, 15, 15, 17, 18, 19, 21],
+            // z15 маленький, z17 читаем, z19 крупный — плавное нарастание
+            "text-size": ["interpolate", ["linear"], ["zoom"], 15, 10, 17, 15, 19, 20],
             "text-padding": 4,
-            "text-allow-overlap": ["step", ["zoom"], false, 16, true],
+            // Перекрытие только когда курьер уже у подъезда (z17+)
+            "text-allow-overlap": ["step", ["zoom"], false, 17, true],
             "text-ignore-placement": false,
             "symbol-placement": "point",
           },
           paint: {
             "text-color": "#ffd166",
             "text-halo-color": "#0e1116",
-            "text-halo-width": ["interpolate", ["linear"], ["zoom"], 12, 1.5, 17, 3],
+            "text-halo-width": ["interpolate", ["linear"], ["zoom"], 15, 2, 17, 3],
             "text-halo-blur": 0.4,
-            // На z12 полупрозрачно — не мешает общему обзору, но уже видно
-            "text-opacity": ["interpolate", ["linear"], ["zoom"], 12, 0.5, 13, 1],
+            // Плавное появление: z15 = 80%, z16 = 100%
+            "text-opacity": ["interpolate", ["linear"], ["zoom"], 15, 0.8, 16, 1],
           },
         },
         // Подсветка выбранного дома — плоская заливка для низкого зума.
@@ -814,9 +816,9 @@ function buildStyle(stack: StackStatus | null): StyleSpecification {
           layout: {
             "icon-image": "zebra-icon",
             "icon-size": ["interpolate", ["linear"], ["zoom"], 16, 0.55, 18, 0.85, 20, 1.15],
-            // Выравнивание по карте, а не по экрану — при наклоне/повороте полоски остаются на дороге
-            "icon-rotation-alignment": "map",
-            "icon-pitch-alignment": "map",
+            // Выравнивание по экрану — полоски всегда читаемы вне зависимости от поворота карты
+            "icon-rotation-alignment": "viewport",
+            "icon-pitch-alignment": "viewport",
             "icon-allow-overlap": true,
             "icon-ignore-placement": true,
           },
@@ -907,6 +909,8 @@ export default function App() {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [drawerTab, setDrawerTab] = useState<"points" | "filter" | "stack">("points");
   const [searchFocused, setSearchFocused] = useState(false);
+  // Флаг: только что выбрали результат — не запускать новый поиск по setSearch(primary)
+  const suppressSearchRef = useRef(false);
   // Информация о выделенном здании (для подписи на плашке «снять выделение»)
   const [selectedBuildingInfo, setSelectedBuildingInfo] = useState<{
     label: string;
@@ -1736,6 +1740,11 @@ export default function App() {
       setParsedQuery(null);
       return;
     }
+    // Пропускаем поиск если только что выбрали результат из списка
+    if (suppressSearchRef.current) {
+      suppressSearchRef.current = false;
+      return;
+    }
     const t = window.setTimeout(async () => {
       try {
         const res = await api.searchAddress(search.trim());
@@ -1881,8 +1890,10 @@ export default function App() {
                   <div
                     className="item-tap"
                     onClick={() => {
+                      suppressSearchRef.current = true;
                       flyTo(r.lng, r.lat, 17, true);
                       setSearchResults([]);
+                      setSearchFocused(false);
                       setSearch(primary);
                     }}
                   >
@@ -1909,7 +1920,9 @@ export default function App() {
                     title="Маршрут от меня"
                     onClick={(ev) => {
                       ev.stopPropagation();
+                      suppressSearchRef.current = true;
                       setSearchResults([]);
+                      setSearchFocused(false);
                       setSearch(primary);
                       routeFromMe({ lng: r.lng, lat: r.lat }, primary);
                     }}
@@ -2020,6 +2033,29 @@ export default function App() {
             <polygon points="12 2 15 8 12 6 9 8 12 2" />
             <polygon points="12 22 15 16 12 18 9 16 12 22" />
             <line x1="12" y1="6" x2="12" y2="18" />
+          </svg>
+        </button>
+        {/* Разделитель */}
+        <div className="map-btn-divider" />
+        {/* Зум + */}
+        <button
+          className="map-btn"
+          title="Приблизить"
+          onClick={() => mapRef.current?.zoomIn({ duration: 200 })}
+        >
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+            <line x1="12" y1="5" x2="12" y2="19" />
+            <line x1="5" y1="12" x2="19" y2="12" />
+          </svg>
+        </button>
+        {/* Зум − */}
+        <button
+          className="map-btn"
+          title="Отдалить"
+          onClick={() => mapRef.current?.zoomOut({ duration: 200 })}
+        >
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+            <line x1="5" y1="12" x2="19" y2="12" />
           </svg>
         </button>
       </div>
@@ -2277,8 +2313,8 @@ function ServiceRow({
   detail?: string | null;
   restartService?: string;
 }) {
-  const [restarting, setRestarting] = React.useState(false);
-  const [msg, setMsg] = React.useState<string | null>(null);
+  const [restarting, setRestarting] = useState(false);
+  const [msg, setMsg] = useState<string | null>(null);
 
   async function handleRestart() {
     if (restarting) return;

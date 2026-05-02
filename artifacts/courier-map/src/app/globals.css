@@ -218,6 +218,13 @@ html, body {
 }
 .map-btn svg { display: block; }
 
+/* Тонкий разделитель внутри колонки кнопок */
+.map-btn-divider {
+  height: 1px;
+  background: #2a323a;
+  margin: 2px 6px;
+}
+
 /* ============= Pill «N/4» статуса сервисов ============= */
 .stack-pill {
   position: absolute;
@@ -782,6 +789,18 @@ html, body {
   padding: 0;
 }
 .bootstrap-btn:hover { color: #cfd6dc; background: rgba(255,255,255,0.06); }
+
+/* Общий прогресс-бар поверх списка шагов */
+.bs-total-bar {
+  height: 2px;
+  background: #1d2530;
+  overflow: hidden;
+}
+.bs-total-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #1d4ed8, #60a5fa);
+  transition: width 0.8s ease;
+}
 
 .bootstrap-steps {
   padding: 8px 0;
