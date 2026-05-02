@@ -17,7 +17,7 @@ html, body {
   overscroll-behavior: none;
 }
 
-#__next, body > div { height: 100%; }
+#root { height: 100%; }
 
 .app {
   position: relative;

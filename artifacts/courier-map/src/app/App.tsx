@@ -1,5 +1,3 @@
-"use client";
-
 import { useEffect, useMemo, useRef, useState, useCallback } from "react";
 import maplibregl, { Map as MlMap, type MapLayerMouseEvent, type StyleSpecification } from "maplibre-gl";
 import type { Poi, PoiType, StackStatus, GeocodeResult } from "./types";

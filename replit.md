@@ -1,57 +1,73 @@
 # Курьерская Карта — СПб и Ленобласть
 
 ## Overview
-This project is a personal application designed for a courier operating in Saint Petersburg and the Leningrad Oblast. Its primary purpose is to provide essential navigation and information features for efficient delivery. Key functionalities include displaying Points of Interest (POIs) such as entrances, gates, passages, parking spots, notes, and staircases. It also offers geocoding services and e-bike specific routing. The long-term vision is to enhance courier efficiency and delivery accuracy within the specified regions.
+Personal courier application for Saint Petersburg and Leningrad Oblast. Provides full-screen MapLibre GL map with z14 vector tiles, 3D buildings, POI management (PostGIS), e-bike routing (GraphHopper), and address search (Nominatim). Designed for tablet use.
 
-## User Preferences
-Not specified in the original document.
+## Architecture
 
-## System Architecture
+### Stack
+| Service | Port | Notes |
+|---|---|---|
+| **Vite dev server** (frontend) | 5000 | `Web App` workflow → `bash scripts/start-webapp.sh` |
+| **Express API** | 8080 | `API Server` workflow → `bash scripts/start-api.sh` |
+| **Martin tile server** | 3000 | `Martin tile server` workflow → `bash stack/martin/run.sh` |
+| **GraphHopper** | 8000 | `GraphHopper` workflow → `bash stack/graphhopper/run.sh` |
+| **PostgreSQL + PostGIS** | 5432 | Replit-managed, host=`helium` db=`heliumdb` |
 
-### UI/UX Decisions
-- **Full-screen Map Interface**: The application prioritizes a full-screen map experience without a sidebar for optimal tablet use.
-- **Search Bar**: A prominent floating search bar is located top-left for easy access.
-- **Navigation Buttons**: Top-right circular SVG buttons for menu (right drawer with tabs for points/filter/stack), add point, locate me, and reset map orientation.
-- **Status Indicators**: A bottom-left pill `N/4` displays service statuses (Martin/GraphHopper/OSM/PostGIS) with color-coded indicators.
-- **Draft Panel**: A `draft-panel` for creating new points is located bottom-center.
-- **MapLibre ScaleControl**: Styled to fit the overall design, positioned bottom-right.
-- **Removed Default Controls**: `NavigationControl` (+/-) and `GeolocateControl` were removed to avoid redundancy with custom buttons.
-- **3D Buildings**: `fill-extrusion` layer for buildings (zoom 15+) with height based on `building:levels * 3m`, vertical gradient, and interpolated colors from dark blue to lavender. Map starts with `pitch:35 maxPitch:65`.
-- **Building Color by Floors**: Flat layer uses interpolated colors based on `building:levels` for immediate recognition of high-rise buildings.
-- **Persistent Building Highlight**: Clicking a building or selecting an address highlights it with orange fill and yellow outline, including 3D extrusion. This highlight remains until explicitly dismissed via a `selection-pill` at the top-center.
-- **Always Visible House Numbers**: `housenumbers` layer (zoom 13+) with `text-allow-overlap:false`, `text-padding:4`, filtered for Polygons only.
-- **Crossings (Pedestrian)**: `crossings` layer displays white points with black outlines for `highway=crossing` / `footway=crossing` / `crossing=*` (zoom 15+), with small "zebra" labels (zoom 17+).
-- **POI Pin Icons**: Custom colored "drop" map pins with white letters (П/К/>/N/P/S) for each POI type, drawn via `canvas` and registered with `map.addImage()`.
-- **Animated Route Line**: `route-line-dash` layer with RAF-animation for `line-dasharray` to create an "ant march" effect, indicating direction of travel.
-- **Turn-by-Turn Instructions**: GraphHopper `steps[]` are saved and displayed. A `▼ N шагов` button in the route panel expands a scrollable list of steps with distances.
-- **POI Clustering**: MapLibre native clustering for POIs (`cluster: true, clusterMaxZoom: 15, clusterRadius: 45`). Clicking a cluster zooms in.
+### Workflows (4 active, 3 disabled)
+Active workflows (do not remove):
+- `Web App` → `bash scripts/start-webapp.sh`
+- `API Server` → `bash scripts/start-api.sh`
+- `Martin tile server` → `bash stack/martin/run.sh`
+- `GraphHopper` → `bash stack/graphhopper/run.sh`
 
-### Technical Implementations
-- **Frontend**: Next.js 15, TypeScript, MapLibre GL JS (`artifacts/courier-map`).
-- **API**: Express, Zod, Pino, drizzle/pg (`artifacts/api-server`).
-- **Database**: PostgreSQL 16 with PostGIS 3.5 and h3/h3_postgis.
-- **Tiles**: tippecanoe → PMTiles → Martin v0.18 (workflow `Martin tile server`). Tiles are proxied via `/api/tiles/<source>/{z}/{x}/{y}`.
-- **Routing**: GraphHopper 10.0 with a custom e-bike profile (workflow `GraphHopper`).
-- **Geocoding**: Nominatim as a fallback, with Pelias planned. Includes a custom SPb address normalizer (`lib/spbAddress.ts`) for parsing abbreviations and handling specific address formats.
-- **Data Pipeline**: Automated generation of large GIS files (`spb-lo-filtered.osm.pbf`, `spb-lo-filtered.geojsonseq`, `spb-lo.pmtiles`, GraphHopper routing graph) on first run from Geofabrik data.
-- **OpenAPI**: Used for API specification with `orval-кодеген` for Zod, React Query, and type generation.
-- **Drizzle Schema**: Defined for `pois` (with `h3_r9` trigger) and `courier_routes` (auto `distance_m`).
-- **Geolocation**: `navigator.geolocation.getCurrentPosition` for "locate me" functionality.
-- **Map Layers**:
-    - **Base Map Detail**: Yellow house numbers (`addr:housenumber`, zoom 16+), street names (`name:ru`/`name`, zoom 14+), dotted yellow lines for arches/passages (`tunnel=building_passage`, `covered=arcade`, `footway+tunnel`) from zoom 15+.
-    - **Glyphs**: `Noto Sans Regular` and `Noto Sans Bold` fonts are used.
-- **Map Interactions**: "Route from me" button in POI popups and search results, automatically fits map to route bounding box.
-- **Marker**: "I am here" marker (`me-dot` + `me-accuracy`) shows current position and accuracy.
-- **Floating Panel**: Displays distance and time, source (GraphHopper/OSRM), and a clear button.
+Disabled workflows (they FAIL intentionally — `dev` script set to `sleep infinity` to prevent port conflicts):
+- `artifacts/courier-map: web` — duplicate of Web App
+- `artifacts/api-server: API Server` — duplicate of API Server
+- `artifacts/mockup-sandbox: Component Preview Server` — not used in production
 
-## External Dependencies
-- **PostgreSQL 16**: Database, Replit-managed, with PostGIS 3.5 and h3/h3_postgis extensions.
-- **MapLibre GL JS**: Frontend map library.
-- **GraphHopper 10.0**: Routing engine, custom e-bike profile.
-- **Martin v0.18**: Tile server for PMTiles.
-- **Nominatim**: Geocoding service (fallback).
-- **OSM (OpenStreetMap)**: Data source for maps and routing.
-- **Geofabrik**: Source for OSM data extracts.
-- **tippecanoe**: Tool for generating vector tiles.
-- **osmium**: Tool for processing OSM data.
-- **pnpm**: Package manager.
+### Frontend (`artifacts/courier-map`)
+- **Framework**: Vite + React + TypeScript (converted from Next.js — 165ms cold start vs 40s)
+- **Entry**: `index.html` → `src/main.tsx` → `src/app/App.tsx`
+- **Map**: MapLibre GL JS v4.7+ with PMTiles protocol
+- **Config**: `vite.config.ts` — port 5000, proxy `/api` → localhost:8080, `allowedHosts: "all"`
+- **Key files**:
+  - `src/app/App.tsx` — main component (2378 lines, map init + all logic)
+  - `src/app/BootstrapPanel.tsx` — startup progress overlay
+  - `src/app/globals.css` — all CSS (dark theme, 1068 lines)
+  - `src/app/api.ts` — typed fetch wrappers for `/api/*`
+  - `src/app/types.ts` — shared TypeScript types
+  - `public/sw.js` — Service Worker (5000-tile LRU cache, v3)
+
+### Backend (`artifacts/api-server`)
+- **Framework**: Express 5 + TypeScript, built with esbuild
+- **Routes**: `/api/pois`, `/api/geo/geocode`, `/api/geo/route`, `/api/tiles/*` (Martin proxy), `/api/stack/status`, `/api/stack/progress`
+- **DB**: Drizzle ORM + PostGIS (lib/db)
+- **Geocoding**: Nominatim (primary) with SPb address normalizer
+- **Routing**: GraphHopper e-bike profile, fallback to OSRM
+
+### Tile Data (`data/`)
+- `data/spb-lo.pmtiles` — 532MB, z5-z14, vector tiles (mvt+gzip) for all of SPb + Leningrad Oblast
+- `data/fonts/` — Noto Sans Regular + Bold for MapLibre glyphs
+- Build script: `scripts/z14-bg-build.sh` (tippecanoe → pmtiles convert → pmtiles edit)
+
+### Map Features
+- **3D Buildings**: `fill-extrusion` at zoom 15+, height from `building:levels * 3m`
+- **House Numbers**: always visible zoom 13+
+- **POI Clustering**: native MapLibre clustering (clusterMaxZoom=15)
+- **Animated Route**: RAF-animated "ant march" dash sequence
+- **Turn-by-Turn**: GraphHopper steps with distances
+- **Building Highlight**: persistent orange/yellow highlight until dismissed
+- **Speed**: `fadeDuration:0`, `setWorkerCount(6)`, `maxTileCacheSize:600`, Service Worker LRU
+
+## Key Scripts
+- `scripts/start-webapp.sh` — starts Vite on port 5000 (used by `Web App` workflow)
+- `scripts/start-api.sh` — builds and starts Express API on port 8080
+- `scripts/z14-bg-build.sh` — background z14 PMTiles rebuild
+- `stack/martin/run.sh` — starts Martin, auto-triggers z14 rebuild if maxzoom < 14
+- `stack/graphhopper/run.sh` — starts GraphHopper with e-bike profile
+
+## Database
+- PostgreSQL 16 / PostGIS 3.5 / h3_postgis
+- Tables: `pois` (with h3_r9 trigger), `courier_routes` (auto distance_m)
+- Connection: `DATABASE_URL` env var (Replit managed)
