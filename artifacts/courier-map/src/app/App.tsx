@@ -173,7 +173,7 @@ function buildStyle(stack: StackStatus | null): StyleSpecification {
           type: "vector" as const,
           tiles: [`${tileBase}/{z}/{x}/{y}`],
           minzoom: 5,
-          maxzoom: 17,
+          maxzoom: 14,
         },
         "selected-building": {
           type: "geojson" as const,
@@ -950,6 +950,9 @@ export default function App() {
 
   useEffect(() => {
     if (!containerRef.current || mapRef.current) return;
+    // ── Максимум воркеров для параллельного декодирования тайлов ──────────
+    // 6 воркеров = 6 тайлов одновременно (по умолчанию только 2)
+    maplibregl.setWorkerCount(6);
     let map: MlMap;
     try {
       map = new maplibregl.Map({
@@ -964,12 +967,21 @@ export default function App() {
         bearing: 0,
         attributionControl: { compact: true },
         // ── Планшетные жесты ───────────────────────────────────────────
-        // touchPitch: наклон карты двумя пальцами (вверх/вниз)
         touchPitch: true,
-        // touchZoomRotate включён по умолчанию: pinch = zoom, twist = rotate
-        // cooperativeGestures: false — прокрутка страницы не нужна, карта всегда
-        // реагирует на scroll/pinch без зажатого Ctrl
         cooperativeGestures: false,
+        // ── Молниеносная прогрузка (как 2ГИС / Яндекс) ────────────────
+        // fadeDuration: 0 — тайлы появляются МГНОВЕННО, без плавного fade-in
+        fadeDuration: 0,
+        // maxTileCacheSize: держим 600 тайлов в памяти — при движении по карте
+        // не нужно перезапрашивать тайлы, которые уже были на экране
+        maxTileCacheSize: 600,
+        // crossSourceCollisions: false — ускоряет collision detection подписей
+        crossSourceCollisions: false,
+        // refreshExpiredTiles: false — не переспрашиваем тайлы по TTL
+        // (наши тайлы локальные, они никогда не устаревают)
+        refreshExpiredTiles: false,
+        // pixelRatio: 2 на Retina, но не больше — баланс качество/скорость
+        pixelRatio: Math.min(window.devicePixelRatio || 1, 2),
       });
     } catch (e) {
       console.error("MapLibre init failed:", e);

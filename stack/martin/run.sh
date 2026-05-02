@@ -107,6 +107,17 @@ else
   fi
 fi
 
+# ── Запуск фоновой сборки z14 если текущие тайлы ограничены z12 ─────────────
+CURRENT_MAXZOOM=$($TOOLS/pmtiles show "$PMTILES" 2>/dev/null | grep "max zoom" | awk '{print $NF}')
+if [ "${CURRENT_MAXZOOM:-0}" -lt 14 ] && ! pgrep -f "z14-bg-build.sh" > /dev/null 2>&1; then
+  echo "[martin/run.sh] PMTiles maxzoom=${CURRENT_MAXZOOM:-?} < 14 — launching background z14 rebuild..."
+  echo "[martin/run.sh] Martin will serve z12 tiles now; auto-restarts with z14 when done (~30-60 min)"
+  chmod +x scripts/z14-bg-build.sh
+  setsid bash scripts/z14-bg-build.sh &
+  disown $!
+  echo "[martin/run.sh] z14 build started, log: data/z14-build.log"
+fi
+
 # Ждём шрифты
 WAIT_FONTS=0
 while true; do
