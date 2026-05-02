@@ -1,12 +1,12 @@
 #!/bin/bash
-# Artifact workflow Vite dev server — port 5001 (independent of main Web App on 5000).
+# Artifact workflow Vite dev server — port 19218 (Replit artifact expected port).
 set -euo pipefail
 cd /home/runner/workspace
 
-PORT=5001
+PORT=19218
 export PORT
 
-# Kill anything on port 5001 by finding inode in /proc/net/tcp
+# Kill anything on this port using inode lookup in /proc/net/tcp
 HEX=$(printf "%04X" "$PORT")
 INODES=$(awk -v hex="$HEX" 'NR>1{split($2,a,":");if(toupper(a[2])==hex && $4=="0A")print $10}' \
   /proc/net/tcp /proc/net/tcp6 2>/dev/null | sort -u)
