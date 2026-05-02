@@ -933,13 +933,6 @@ export default function App() {
   }, []);
 
   useEffect(() => {
-    // Регистрируем Service Worker для офлайн-кеширования тайлов и шрифтов
-    if (typeof window !== "undefined" && "serviceWorker" in navigator) {
-      navigator.serviceWorker
-        .register("/sw.js")
-        .catch(() => {});
-    }
-
     loadStack();
     reloadPois();
     const id = window.setInterval(loadStack, 15000);
