@@ -60,4 +60,7 @@ if [ "$NEED_BUILD" = "true" ]; then
 fi
 
 echo "[gh/run.sh] Starting GraphHopper server on :8000…"
+# Free the port in case a previous instance is still holding it
+fuser -k 8000/tcp 2>/dev/null || true
+sleep 1
 exec java -Xmx1500m -jar "$JAR" server "$CONFIG"

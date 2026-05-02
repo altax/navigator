@@ -6,6 +6,7 @@ import geoRouter from "./geo";
 import stackRouter from "./stack";
 import progressRouter from "./progress";
 import tilesRouter from "./tiles";
+import adminRouter from "./admin";
 
 const router: IRouter = Router();
 
@@ -16,5 +17,6 @@ router.use(geoRouter);
 router.use(stackRouter);
 router.use(progressRouter);
 router.use(tilesRouter);
+router.use(adminRouter);
 
 export default router;

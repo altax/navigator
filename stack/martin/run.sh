@@ -47,4 +47,7 @@ while [ ! -f "data/fonts/NotoSans-Regular.ttf" ] || [ "$(stat -c%s "data/fonts/N
 done
 
 echo "[martin/run.sh] Starting Martin tile server on :3000…"
+# Free the port in case a previous instance is still holding it
+fuser -k 3000/tcp 2>/dev/null || true
+sleep 1
 exec ./tools/martin --config stack/martin/config.yaml

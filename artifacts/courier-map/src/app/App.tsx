@@ -2237,8 +2237,18 @@ export default function App() {
                 <div className="drawer-section">
                   <p className="drawer-hint">Состояние гео-сервисов проекта.</p>
                   <ServiceRow label="PostGIS + h3" up={stack?.postgis.up} detail={stack?.postgis.detail} />
-                  <ServiceRow label="Martin (PMTiles)" up={stack?.martin.up} detail={stack?.martin.detail} />
-                  <ServiceRow label="GraphHopper" up={stack?.graphhopper.up} detail={stack?.graphhopper.detail} />
+                  <ServiceRow
+                    label="Martin (PMTiles)"
+                    up={stack?.martin.up}
+                    detail={stack?.martin.detail}
+                    restartService="martin"
+                  />
+                  <ServiceRow
+                    label="GraphHopper"
+                    up={stack?.graphhopper.up}
+                    detail={stack?.graphhopper.detail}
+                    restartService="graphhopper"
+                  />
                   <ServiceRow label="Pelias" up={stack?.pelias.up} detail={stack?.pelias.detail} />
                   <div className="basemap-source">
                     Базовая карта:{" "}
@@ -2256,12 +2266,54 @@ export default function App() {
   );
 }
 
-function ServiceRow({ label, up, detail }: { label: string; up?: boolean; detail?: string | null }) {
+function ServiceRow({
+  label,
+  up,
+  detail,
+  restartService,
+}: {
+  label: string;
+  up?: boolean;
+  detail?: string | null;
+  restartService?: string;
+}) {
+  const [restarting, setRestarting] = React.useState(false);
+  const [msg, setMsg] = React.useState<string | null>(null);
+
+  async function handleRestart() {
+    if (restarting) return;
+    setRestarting(true);
+    setMsg(null);
+    try {
+      const r = await fetch(`/api/admin/restart/${restartService}`, { method: "POST" });
+      const json = await r.json();
+      setMsg(r.ok ? "Перезапускается…" : (json.error ?? "Ошибка"));
+    } catch {
+      setMsg("Нет связи с API");
+    } finally {
+      setTimeout(() => {
+        setRestarting(false);
+        setMsg(null);
+      }, 12_000);
+    }
+  }
+
   return (
-    <div className="row">
+    <div className="row svc-row">
       <span className={`dot ${up ? "up" : ""}`} />
       <span className="label">{label}</span>
       {detail && <span className="detail" title={detail}>●</span>}
+      {restartService && (
+        <button
+          className={`svc-restart-btn${restarting ? " spinning" : ""}${!up ? " warn" : ""}`}
+          onClick={handleRestart}
+          disabled={restarting}
+          title={restarting ? "Перезапускается…" : "Перезапустить сервис"}
+        >
+          ↺
+        </button>
+      )}
+      {msg && <span className="svc-restart-msg">{msg}</span>}
     </div>
   );
 }
