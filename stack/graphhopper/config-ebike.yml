@@ -1,0 +1,35 @@
+graphhopper:
+  datareader.file: /home/runner/workspace/data/spb-lo.osm.pbf
+  graph.location: /home/runner/workspace/data/graphhopper/spb-lo-ebike-gh
+  graph.encoded_values: car_access, road_class, road_environment, max_speed, surface, bike_access, foot_access, hike_rating
+
+  import.osm.ignored_highways: motorway,trunk
+
+  profiles:
+    - name: ebike
+      custom_model_files: [ebike.json]
+
+  custom_models.directory: /home/runner/workspace/stack/graphhopper
+
+  profiles_ch:
+    - profile: ebike
+
+  routing.non_ch.max_waypoint_distance: 1000000
+
+server:
+  application_connectors:
+    - type: http
+      port: 8000
+      bind_host: 0.0.0.0
+  admin_connectors:
+    - type: http
+      port: 8001
+      bind_host: 0.0.0.0
+  request_log:
+    appenders: []
+
+logging:
+  appenders:
+    - type: console
+      time_zone: UTC
+      log_format: "%-5p [%d{HH:mm:ss}] %c{15}: %m%n%rEx"

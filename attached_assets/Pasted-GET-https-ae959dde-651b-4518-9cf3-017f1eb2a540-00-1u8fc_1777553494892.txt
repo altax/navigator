@@ -1,0 +1,850 @@
+GET https://ae959dde-651b-4518-9cf3-017f1eb2a540-00-1u8fc4e7dtfeo.spock.replit.dev/favicon.ico 404 (Not Found)
+App.tsx:268 Unable to perform style diff: Style is not done loading..  Rebuilding the style from scratch.
+A @ maplibre-gl.js:41
+_updateDiff @ maplibre-gl.js:45
+_diffStyle @ maplibre-gl.js:45
+setStyle @ maplibre-gl.js:45
+(anonymous) @ App.tsx:268
+react_stack_bottom_frame @ react-dom-client.development.js:23669
+runWithFiberInDEV @ react-dom-client.development.js:872
+commitHookEffectListMount @ react-dom-client.development.js:12345
+commitHookPassiveMountEffects @ react-dom-client.development.js:12466
+commitPassiveMountOnFiber @ react-dom-client.development.js:14387
+recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:14360
+commitPassiveMountOnFiber @ react-dom-client.development.js:14380
+recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:14360
+commitPassiveMountOnFiber @ react-dom-client.development.js:14485
+recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:14360
+commitPassiveMountOnFiber @ react-dom-client.development.js:14458
+recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:14360
+commitPassiveMountOnFiber @ react-dom-client.development.js:14380
+recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:14360
+commitPassiveMountOnFiber @ react-dom-client.development.js:14380
+recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:14360
+commitPassiveMountOnFiber @ react-dom-client.development.js:14380
+recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:14360
+commitPassiveMountOnFiber @ react-dom-client.development.js:14380
+recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:14360
+commitPassiveMountOnFiber @ react-dom-client.development.js:14514
+recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:14360
+commitPassiveMountOnFiber @ react-dom-client.development.js:14514
+recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:14360
+commitPassiveMountOnFiber @ react-dom-client.development.js:14380
+recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:14360
+commitPassiveMountOnFiber @ react-dom-client.development.js:14390
+recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:14360
+commitPassiveMountOnFiber @ react-dom-client.development.js:14380
+recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:14360
+commitPassiveMountOnFiber @ react-dom-client.development.js:14390
+recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:14360
+commitPassiveMountOnFiber @ react-dom-client.development.js:14380
+recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:14360
+commitPassiveMountOnFiber @ react-dom-client.development.js:14380
+recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:14360
+commitPassiveMountOnFiber @ react-dom-client.development.js:14390
+recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:14360
+commitPassiveMountOnFiber @ react-dom-client.development.js:14380
+recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:14360
+commitPassiveMountOnFiber @ react-dom-client.development.js:14390
+recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:14360
+commitPassiveMountOnFiber @ react-dom-client.development.js:14380
+recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:14360
+commitPassiveMountOnFiber @ react-dom-client.development.js:14380
+recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:14360
+commitPassiveMountOnFiber @ react-dom-client.development.js:14514
+recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:14360
+commitPassiveMountOnFiber @ react-dom-client.development.js:14514
+recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:14360
+commitPassiveMountOnFiber @ react-dom-client.development.js:14380
+recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:14360
+commitPassiveMountOnFiber @ react-dom-client.development.js:14380
+recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:14360
+commitPassiveMountOnFiber @ react-dom-client.development.js:14514
+recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:14360
+commitPassiveMountOnFiber @ react-dom-client.development.js:14514
+recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:14360
+commitPassiveMountOnFiber @ react-dom-client.development.js:14514
+recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:14360
+commitPassiveMountOnFiber @ react-dom-client.development.js:14380
+recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:14360
+commitPassiveMountOnFiber @ react-dom-client.development.js:14380
+recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:14360
+commitPassiveMountOnFiber @ react-dom-client.development.js:14390
+recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:14360
+commitPassiveMountOnFiber @ react-dom-client.development.js:14380
+recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:14360
+commitPassiveMountOnFiber @ react-dom-client.development.js:14390
+recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:14360
+commitPassiveMountOnFiber @ react-dom-client.development.js:14380
+recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:14360
+commitPassiveMountOnFiber @ react-dom-client.development.js:14380
+recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:14360
+commitPassiveMountOnFiber @ react-dom-client.development.js:14390
+recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:14360
+commitPassiveMountOnFiber @ react-dom-client.development.js:14380
+recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:14360
+commitPassiveMountOnFiber @ react-dom-client.development.js:14514
+recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:14360
+commitPassiveMountOnFiber @ react-dom-client.development.js:14514
+recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:14360
+commitPassiveMountOnFiber @ react-dom-client.development.js:14514
+recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:14360
+commitPassiveMountOnFiber @ react-dom-client.development.js:14514
+recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:14360
+commitPassiveMountOnFiber @ react-dom-client.development.js:14514
+recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:14360
+commitPassiveMountOnFiber @ react-dom-client.development.js:14514
+recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:14360
+commitPassiveMountOnFiber @ react-dom-client.development.js:14380
+recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:14360
+commitPassiveMountOnFiber @ react-dom-client.development.js:14390
+recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:14360
+commitPassiveMountOnFiber @ react-dom-client.development.js:14380
+recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:14360
+commitPassiveMountOnFiber @ react-dom-client.development.js:14380
+recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:14360
+commitPassiveMountOnFiber @ react-dom-client.development.js:14380
+recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:14360
+commitPassiveMountOnFiber @ react-dom-client.development.js:14514
+recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:14360
+commitPassiveMountOnFiber @ react-dom-client.development.js:14380
+recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:14360
+commitPassiveMountOnFiber @ react-dom-client.development.js:14380
+recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:14360
+commitPassiveMountOnFiber @ react-dom-client.development.js:14514
+recursivelyTraversePassiveMountEffects @ react-dom-client.development.js:14360
+commitPassiveMountOnFiber @ react-dom-client.development.js:14399
+flushPassiveEffects @ react-dom-client.development.js:16338
+eval @ react-dom-client.development.js:15974
+performWorkUntilDeadline @ scheduler.development.js:45
+<...>
+exports.jsx @ react-jsx-runtime.development.js:323
+LoadableComponent @ loadable.js:63
+react_stack_bottom_frame @ react-dom-client.development.js:23584
+renderWithHooks @ react-dom-client.development.js:6793
+updateFunctionComponent @ react-dom-client.development.js:9247
+beginWork @ react-dom-client.development.js:10858
+runWithFiberInDEV @ react-dom-client.development.js:872
+performUnitOfWork @ react-dom-client.development.js:15727
+workLoopConcurrentByScheduler @ react-dom-client.development.js:15721
+renderRootConcurrent @ react-dom-client.development.js:15696
+performWorkOnRoot @ react-dom-client.development.js:14990
+performWorkOnRootViaSchedulerTask @ react-dom-client.development.js:16816
+performWorkUntilDeadline @ scheduler.development.js:45
+<LoadableComponent>
+exports.jsxDEV @ react-jsx-dev-runtime.development.js:323
+HomePage @ page.tsx:15
+react_stack_bottom_frame @ react-dom-client.development.js:23584
+renderWithHooks @ react-dom-client.development.js:6793
+updateFunctionComponent @ react-dom-client.development.js:9247
+beginWork @ react-dom-client.development.js:10858
+runWithFiberInDEV @ react-dom-client.development.js:872
+performUnitOfWork @ react-dom-client.development.js:15727
+workLoopConcurrentByScheduler @ react-dom-client.development.js:15721
+renderRootConcurrent @ react-dom-client.development.js:15696
+performWorkOnRoot @ react-dom-client.development.js:14990
+performWorkOnRootViaSchedulerTask @ react-dom-client.development.js:16816
+performWorkUntilDeadline @ scheduler.development.js:45
+<HomePage>
+exports.jsx @ react-jsx-runtime.development.js:323
+ClientPageRoot @ client-page.js:20
+react_stack_bottom_frame @ react-dom-client.development.js:23584
+renderWithHooks @ react-dom-client.development.js:6793
+updateFunctionComponent @ react-dom-client.development.js:9247
+beginWork @ react-dom-client.development.js:10807
+runWithFiberInDEV @ react-dom-client.development.js:872
+performUnitOfWork @ react-dom-client.development.js:15727
+workLoopConcurrentByScheduler @ react-dom-client.development.js:15721
+renderRootConcurrent @ react-dom-client.development.js:15696
+performWorkOnRoot @ react-dom-client.development.js:14990
+performWorkOnRootViaSchedulerTask @ react-dom-client.development.js:16816
+performWorkUntilDeadline @ scheduler.development.js:45
+"use client"
+Promise.all @ VM827 <anonymous>:1
+initializeElement @ react-server-dom-webpack-client.browser.development.js:1376
+eval @ react-server-dom-webpack-client.browser.development.js:3126
+initializeModelChunk @ react-server-dom-webpack-client.browser.development.js:1273
+resolveModelChunk @ react-server-dom-webpack-client.browser.development.js:1127
+processFullStringRow @ react-server-dom-webpack-client.browser.development.js:2958
+processFullBinaryRow @ react-server-dom-webpack-client.browser.development.js:2825
+processBinaryChunk @ react-server-dom-webpack-client.browser.development.js:3028
+progress @ react-server-dom-webpack-client.browser.development.js:3294
+"use server"
+ResponseInstance @ react-server-dom-webpack-client.browser.development.js:2091
+createResponseFromOptions @ react-server-dom-webpack-client.browser.development.js:3155
+exports.createFromReadableStream @ react-server-dom-webpack-client.browser.development.js:3540
+eval @ app-index.js:130
+(app-pages-browser)/../../node_modules/.pnpm/next@15.5.15_react-dom@19.1.0_react@19.1.0__react@19.1.0/node_modules/next/dist/client/app-index.js @ main-app.js?v=1777553415252:160
+(anonymous) @ webpack.js:1
+__webpack_require__ @ webpack.js:1
+(anonymous) @ webpack.js:1
+eval @ app-next-dev.js:14
+eval @ app-bootstrap.js:59
+loadScriptsInSequence @ app-bootstrap.js:24
+appBootstrap @ app-bootstrap.js:53
+eval @ app-next-dev.js:13
+(app-pages-browser)/../../node_modules/.pnpm/next@15.5.15_react-dom@19.1.0_react@19.1.0__react@19.1.0/node_modules/next/dist/client/app-next-dev.js @ main-app.js?v=1777553415252:182
+(anonymous) @ webpack.js:1
+__webpack_require__ @ webpack.js:1
+__webpack_exec__ @ main-app.js?v=1777553415252:1889
+(anonymous) @ main-app.js?v=1777553415252:1890
+(anonymous) @ webpack.js:1
+(anonymous) @ main-app.js?v=1777553415252:9
+maplibre-gl.js:41  GET https://ae959dde-651b-4518-9cf3-017f1eb2a540-00-1u8fc4e7dtfeo.spock.replit.dev/api/tiles/font/Noto%20Sans%20Regular/0-255.pbf 404 (Not Found)
+eval @ maplibre-gl.js:41
+eval @ maplibre-gl.js:41
+e @ maplibre-gl.js:41
+eval @ maplibre-gl.js:41
+O @ maplibre-gl.js:41
+t.l @ maplibre-gl.js:41
+eval @ maplibre-gl.js:45
+eval @ maplibre-gl.js:41
+e @ maplibre-gl.js:41
+C.loadGlyphRange @ maplibre-gl.js:45
+eval @ maplibre-gl.js:45
+eval @ maplibre-gl.js:41
+e @ maplibre-gl.js:41
+_getAndCacheGlyphsPromise @ maplibre-gl.js:45
+eval @ maplibre-gl.js:45
+eval @ maplibre-gl.js:41
+e @ maplibre-gl.js:41
+getGlyphs @ maplibre-gl.js:45
+eval @ maplibre-gl.js:45
+eval @ maplibre-gl.js:41
+e @ maplibre-gl.js:41
+getGlyphs @ maplibre-gl.js:45
+eval @ maplibre-gl.js:45
+eval @ maplibre-gl.js:41
+eval @ maplibre-gl.js:41
+e @ maplibre-gl.js:41
+processTask @ maplibre-gl.js:41
+receive @ maplibre-gl.js:41
+eval @ maplibre-gl.js:41
+postMessage
+(anonymous) @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+sendAsync @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+sendAsync @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+(anonymous) @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+(anonymous) @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+e @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+parse @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+(anonymous) @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+a @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+Promise.then
+l @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+(anonymous) @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+e @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+loadTile @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+(anonymous) @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+(anonymous) @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+(anonymous) @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+e @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+processTask @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+process @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+(anonymous) @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+Ic.MessageChannel._channel.port2.onmessage @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+postMessage
+trigger @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+process @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+(anonymous) @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+Ic.MessageChannel._channel.port2.onmessage @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+postMessage
+trigger @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+process @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+(anonymous) @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+Ic.MessageChannel._channel.port2.onmessage @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+postMessage
+trigger @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+process @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+(anonymous) @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+Ic.MessageChannel._channel.port2.onmessage @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+postMessage
+trigger @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+process @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+(anonymous) @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+Ic.MessageChannel._channel.port2.onmessage @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+postMessage
+trigger @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+process @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+(anonymous) @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+Ic.MessageChannel._channel.port2.onmessage @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+postMessage
+trigger @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+process @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+(anonymous) @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+Ic.MessageChannel._channel.port2.onmessage @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+postMessage
+trigger @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+process @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+(anonymous) @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+Ic.MessageChannel._channel.port2.onmessage @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+postMessage
+trigger @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+process @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+(anonymous) @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+Ic.MessageChannel._channel.port2.onmessage @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+postMessage
+trigger @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+process @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+(anonymous) @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+Ic.MessageChannel._channel.port2.onmessage @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+postMessage
+trigger @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+process @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+(anonymous) @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+Ic.MessageChannel._channel.port2.onmessage @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+postMessage
+trigger @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+process @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+(anonymous) @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+Ic.MessageChannel._channel.port2.onmessage @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+postMessage
+trigger @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+process @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+(anonymous) @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+Ic.MessageChannel._channel.port2.onmessage @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+postMessage
+trigger @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+process @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+(anonymous) @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+Ic.MessageChannel._channel.port2.onmessage @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+postMessage
+trigger @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+process @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+(anonymous) @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+Ic.MessageChannel._channel.port2.onmessage @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+postMessage
+trigger @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+process @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+(anonymous) @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+Ic.MessageChannel._channel.port2.onmessage @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+postMessage
+trigger @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+process @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+(anonymous) @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+Ic.MessageChannel._channel.port2.onmessage @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+postMessage
+trigger @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+process @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+(anonymous) @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+Ic.MessageChannel._channel.port2.onmessage @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+postMessage
+trigger @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+process @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+(anonymous) @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+Ic.MessageChannel._channel.port2.onmessage @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+postMessage
+trigger @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+process @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+(anonymous) @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+Ic.MessageChannel._channel.port2.onmessage @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+postMessage
+trigger @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+process @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+(anonymous) @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+Ic.MessageChannel._channel.port2.onmessage @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+postMessage
+trigger @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+process @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+(anonymous) @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+Ic.MessageChannel._channel.port2.onmessage @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+postMessage
+trigger @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+process @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+(anonymous) @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+Ic.MessageChannel._channel.port2.onmessage @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+postMessage
+trigger @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+process @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+(anonymous) @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+Ic.MessageChannel._channel.port2.onmessage @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+postMessage
+trigger @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+process @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+(anonymous) @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+Ic.MessageChannel._channel.port2.onmessage @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+postMessage
+trigger @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+process @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+(anonymous) @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+Ic.MessageChannel._channel.port2.onmessage @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+postMessage
+trigger @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+process @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+(anonymous) @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+Ic.MessageChannel._channel.port2.onmessage @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+postMessage
+trigger @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+process @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+(anonymous) @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+Ic.MessageChannel._channel.port2.onmessage @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+postMessage
+trigger @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+process @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+(anonymous) @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+Ic.MessageChannel._channel.port2.onmessage @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+postMessage
+trigger @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+process @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+(anonymous) @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+Ic.MessageChannel._channel.port2.onmessage @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+postMessage
+trigger @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+process @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+(anonymous) @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+Ic.MessageChannel._channel.port2.onmessage @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+postMessage
+trigger @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+process @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+(anonymous) @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+Ic.MessageChannel._channel.port2.onmessage @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+postMessage
+trigger @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+process @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+(anonymous) @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+Ic.MessageChannel._channel.port2.onmessage @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+postMessage
+trigger @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+process @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+(anonymous) @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+Ic.MessageChannel._channel.port2.onmessage @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+postMessage
+trigger @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+process @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+(anonymous) @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+Ic.MessageChannel._channel.port2.onmessage @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+postMessage
+trigger @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+process @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+(anonymous) @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+Ic.MessageChannel._channel.port2.onmessage @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+postMessage
+trigger @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+process @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+(anonymous) @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+Ic.MessageChannel._channel.port2.onmessage @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+postMessage
+trigger @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+process @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+(anonymous) @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+Ic.MessageChannel._channel.port2.onmessage @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+postMessage
+trigger @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+receive @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+(anonymous) @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+Worker.postMessage
+eval @ maplibre-gl.js:41
+sendAsync @ maplibre-gl.js:41
+eval @ maplibre-gl.js:45
+eval @ maplibre-gl.js:41
+e @ maplibre-gl.js:41
+loadTile @ maplibre-gl.js:45
+eval @ maplibre-gl.js:45
+eval @ maplibre-gl.js:41
+e @ maplibre-gl.js:41
+_loadTile @ maplibre-gl.js:45
+_addTile @ maplibre-gl.js:45
+_updateRetainedTiles @ maplibre-gl.js:45
+update @ maplibre-gl.js:45
+_updateSources @ maplibre-gl.js:45
+_render @ maplibre-gl.js:45
+eval @ maplibre-gl.js:45
+Promise.then
+triggerRepaint @ maplibre-gl.js:45
+_requestFrame @ maplibre-gl.js:45
+_triggerRenderFrame @ maplibre-gl.js:45
+eval @ maplibre-gl.js:45
+_start @ maplibre-gl.js:45
+wheel @ maplibre-gl.js:45
+handleEvent @ maplibre-gl.js:45
+maplibre-gl.js:41  GET https://ae959dde-651b-4518-9cf3-017f1eb2a540-00-1u8fc4e7dtfeo.spock.replit.dev/api/tiles/font/Noto%20Sans%20Regular/1024-1279.pbf 404 (Not Found)
+eval @ maplibre-gl.js:41
+eval @ maplibre-gl.js:41
+e @ maplibre-gl.js:41
+eval @ maplibre-gl.js:41
+O @ maplibre-gl.js:41
+t.l @ maplibre-gl.js:41
+eval @ maplibre-gl.js:45
+eval @ maplibre-gl.js:41
+e @ maplibre-gl.js:41
+C.loadGlyphRange @ maplibre-gl.js:45
+eval @ maplibre-gl.js:45
+eval @ maplibre-gl.js:41
+e @ maplibre-gl.js:41
+_getAndCacheGlyphsPromise @ maplibre-gl.js:45
+eval @ maplibre-gl.js:45
+eval @ maplibre-gl.js:41
+e @ maplibre-gl.js:41
+getGlyphs @ maplibre-gl.js:45
+eval @ maplibre-gl.js:45
+eval @ maplibre-gl.js:41
+e @ maplibre-gl.js:41
+getGlyphs @ maplibre-gl.js:45
+eval @ maplibre-gl.js:45
+eval @ maplibre-gl.js:41
+eval @ maplibre-gl.js:41
+e @ maplibre-gl.js:41
+processTask @ maplibre-gl.js:41
+receive @ maplibre-gl.js:41
+eval @ maplibre-gl.js:41
+postMessage
+(anonymous) @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+sendAsync @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+sendAsync @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+(anonymous) @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+(anonymous) @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+e @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+parse @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+(anonymous) @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+a @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+Promise.then
+l @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+(anonymous) @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+e @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+loadTile @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+(anonymous) @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+(anonymous) @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+(anonymous) @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+e @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+processTask @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+process @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+(anonymous) @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+Ic.MessageChannel._channel.port2.onmessage @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+postMessage
+trigger @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+process @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+(anonymous) @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+Ic.MessageChannel._channel.port2.onmessage @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+postMessage
+trigger @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+process @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+(anonymous) @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+Ic.MessageChannel._channel.port2.onmessage @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+postMessage
+trigger @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+process @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+(anonymous) @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+Ic.MessageChannel._channel.port2.onmessage @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+postMessage
+trigger @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+process @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+(anonymous) @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+Ic.MessageChannel._channel.port2.onmessage @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+postMessage
+trigger @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+process @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+(anonymous) @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+Ic.MessageChannel._channel.port2.onmessage @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+postMessage
+trigger @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+process @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+(anonymous) @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+Ic.MessageChannel._channel.port2.onmessage @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+postMessage
+trigger @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+process @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+(anonymous) @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+Ic.MessageChannel._channel.port2.onmessage @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+postMessage
+trigger @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+process @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+(anonymous) @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+Ic.MessageChannel._channel.port2.onmessage @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+postMessage
+trigger @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+process @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+(anonymous) @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+Ic.MessageChannel._channel.port2.onmessage @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+postMessage
+trigger @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+process @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+(anonymous) @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+Ic.MessageChannel._channel.port2.onmessage @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+postMessage
+trigger @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+process @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+(anonymous) @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+Ic.MessageChannel._channel.port2.onmessage @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+postMessage
+trigger @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+process @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+(anonymous) @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+Ic.MessageChannel._channel.port2.onmessage @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+postMessage
+trigger @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+process @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+(anonymous) @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+Ic.MessageChannel._channel.port2.onmessage @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+postMessage
+trigger @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+process @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+(anonymous) @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+Ic.MessageChannel._channel.port2.onmessage @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+postMessage
+trigger @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+process @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+(anonymous) @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+Ic.MessageChannel._channel.port2.onmessage @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+postMessage
+trigger @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+process @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+(anonymous) @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+Ic.MessageChannel._channel.port2.onmessage @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+postMessage
+trigger @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+process @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+(anonymous) @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+Ic.MessageChannel._channel.port2.onmessage @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+postMessage
+trigger @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+process @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+(anonymous) @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+Ic.MessageChannel._channel.port2.onmessage @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+postMessage
+trigger @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+process @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+(anonymous) @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+Ic.MessageChannel._channel.port2.onmessage @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+postMessage
+trigger @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+process @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+(anonymous) @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+Ic.MessageChannel._channel.port2.onmessage @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+postMessage
+trigger @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+process @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+(anonymous) @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+Ic.MessageChannel._channel.port2.onmessage @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+postMessage
+trigger @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+process @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+(anonymous) @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+Ic.MessageChannel._channel.port2.onmessage @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+postMessage
+trigger @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+process @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+(anonymous) @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+Ic.MessageChannel._channel.port2.onmessage @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+postMessage
+trigger @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+process @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+(anonymous) @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+Ic.MessageChannel._channel.port2.onmessage @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+postMessage
+trigger @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+process @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+(anonymous) @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+Ic.MessageChannel._channel.port2.onmessage @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+postMessage
+trigger @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+process @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+(anonymous) @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+Ic.MessageChannel._channel.port2.onmessage @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+postMessage
+trigger @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+process @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+(anonymous) @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+Ic.MessageChannel._channel.port2.onmessage @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+postMessage
+trigger @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+process @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+(anonymous) @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+Ic.MessageChannel._channel.port2.onmessage @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+postMessage
+trigger @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+process @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+(anonymous) @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+Ic.MessageChannel._channel.port2.onmessage @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+postMessage
+trigger @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+process @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+(anonymous) @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+Ic.MessageChannel._channel.port2.onmessage @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+postMessage
+trigger @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+process @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+(anonymous) @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+Ic.MessageChannel._channel.port2.onmessage @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+postMessage
+trigger @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+process @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+(anonymous) @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+Ic.MessageChannel._channel.port2.onmessage @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+postMessage
+trigger @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+process @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+(anonymous) @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+Ic.MessageChannel._channel.port2.onmessage @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+postMessage
+trigger @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+process @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+(anonymous) @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+Ic.MessageChannel._channel.port2.onmessage @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+postMessage
+trigger @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+process @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+(anonymous) @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+Ic.MessageChannel._channel.port2.onmessage @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+postMessage
+trigger @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+process @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+(anonymous) @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+Ic.MessageChannel._channel.port2.onmessage @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+postMessage
+trigger @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+process @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+(anonymous) @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+Ic.MessageChannel._channel.port2.onmessage @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+postMessage
+trigger @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+receive @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+(anonymous) @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+Worker.postMessage
+eval @ maplibre-gl.js:41
+sendAsync @ maplibre-gl.js:41
+eval @ maplibre-gl.js:45
+eval @ maplibre-gl.js:41
+e @ maplibre-gl.js:41
+loadTile @ maplibre-gl.js:45
+eval @ maplibre-gl.js:45
+eval @ maplibre-gl.js:41
+e @ maplibre-gl.js:41
+_loadTile @ maplibre-gl.js:45
+_addTile @ maplibre-gl.js:45
+_updateRetainedTiles @ maplibre-gl.js:45
+update @ maplibre-gl.js:45
+_updateSources @ maplibre-gl.js:45
+_render @ maplibre-gl.js:45
+eval @ maplibre-gl.js:45
+Promise.then
+triggerRepaint @ maplibre-gl.js:45
+_requestFrame @ maplibre-gl.js:45
+_triggerRenderFrame @ maplibre-gl.js:45
+eval @ maplibre-gl.js:45
+_start @ maplibre-gl.js:45
+wheel @ maplibre-gl.js:45
+handleEvent @ maplibre-gl.js:45
+maplibre-gl.js:41  GET https://ae959dde-651b-4518-9cf3-017f1eb2a540-00-1u8fc4e7dtfeo.spock.replit.dev/api/tiles/font/Noto%20Sans%20Bold/0-255.pbf 404 (Not Found)
+eval @ maplibre-gl.js:41
+eval @ maplibre-gl.js:41
+e @ maplibre-gl.js:41
+eval @ maplibre-gl.js:41
+O @ maplibre-gl.js:41
+t.l @ maplibre-gl.js:41
+eval @ maplibre-gl.js:45
+eval @ maplibre-gl.js:41
+e @ maplibre-gl.js:41
+C.loadGlyphRange @ maplibre-gl.js:45
+eval @ maplibre-gl.js:45
+eval @ maplibre-gl.js:41
+e @ maplibre-gl.js:41
+_getAndCacheGlyphsPromise @ maplibre-gl.js:45
+eval @ maplibre-gl.js:45
+eval @ maplibre-gl.js:41
+e @ maplibre-gl.js:41
+getGlyphs @ maplibre-gl.js:45
+eval @ maplibre-gl.js:45
+eval @ maplibre-gl.js:41
+e @ maplibre-gl.js:41
+getGlyphs @ maplibre-gl.js:45
+eval @ maplibre-gl.js:45
+eval @ maplibre-gl.js:41
+eval @ maplibre-gl.js:41
+e @ maplibre-gl.js:41
+processTask @ maplibre-gl.js:41
+receive @ maplibre-gl.js:41
+eval @ maplibre-gl.js:41
+postMessage
+(anonymous) @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+sendAsync @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+sendAsync @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+(anonymous) @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+(anonymous) @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+e @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+parse @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+(anonymous) @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+a @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+Promise.then
+l @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+(anonymous) @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+e @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+loadTile @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+(anonymous) @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+(anonymous) @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+(anonymous) @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+e @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+processTask @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+process @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+(anonymous) @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+Ic.MessageChannel._channel.port2.onmessage @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+postMessage
+trigger @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+process @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+(anonymous) @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+Ic.MessageChannel._channel.port2.onmessage @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+postMessage
+trigger @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+receive @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+(anonymous) @ 0580ce32-8092-4a53-8c6a-e34f260fe260:1
+Worker.postMessage
+eval @ maplibre-gl.js:41
+sendAsync @ maplibre-gl.js:41
+eval @ maplibre-gl.js:45
+eval @ maplibre-gl.js:41
+e @ maplibre-gl.js:41
+loadTile @ maplibre-gl.js:45
+eval @ maplibre-gl.js:45
+eval @ maplibre-gl.js:41
+e @ maplibre-gl.js:41
+_loadTile @ maplibre-gl.js:45
+_addTile @ maplibre-gl.js:45
+_updateRetainedTiles @ maplibre-gl.js:45
+update @ maplibre-gl.js:45
+_updateSources @ maplibre-gl.js:45
+_render @ maplibre-gl.js:45
+eval @ maplibre-gl.js:45
+Promise.then
+triggerRepaint @ maplibre-gl.js:45
+_requestFrame @ maplibre-gl.js:45
+_triggerRenderFrame @ maplibre-gl.js:45
+handleEvent @ maplibre-gl.js:45
+eval @ maplibre-gl.js:45
+run @ maplibre-gl.js:45
+_render @ maplibre-gl.js:45
+eval @ maplibre-gl.js:45
+Promise.then
+triggerRepaint @ maplibre-gl.js:45
+_requestFrame @ maplibre-gl.js:45
+_triggerRenderFrame @ maplibre-gl.js:45
+handleEvent @ maplibre-gl.js:45
+eval @ maplibre-gl.js:45
+run @ maplibre-gl.js:45
+_render @ maplibre-gl.js:45
+eval @ maplibre-gl.js:45
+Promise.then
+triggerRepaint @ maplibre-gl.js:45
+_requestFrame @ maplibre-gl.js:45
+_triggerRenderFrame @ maplibre-gl.js:45
+handleEvent @ maplibre-gl.js:45
+eval @ maplibre-gl.js:45
+run @ maplibre-gl.js:45
+_render @ maplibre-gl.js:45
+eval @ maplibre-gl.js:45
+Promise.then
+triggerRepaint @ maplibre-gl.js:45
+_requestFrame @ maplibre-gl.js:45
+_triggerRenderFrame @ maplibre-gl.js:45
+handleEvent @ maplibre-gl.js:45
+eval @ maplibre-gl.js:45
+run @ maplibre-gl.js:45
+_render @ maplibre-gl.js:45
+eval @ maplibre-gl.js:45
+Promise.then
+triggerRepaint @ maplibre-gl.js:45
+_requestFrame @ maplibre-gl.js:45
+_triggerRenderFrame @ maplibre-gl.js:45
+eval @ maplibre-gl.js:45
+_start @ maplibre-gl.js:45
+wheel @ maplibre-gl.js:45
+handleEvent @ maplibre-gl.js:45
+maplibre-gl.js:41  GET https://ae959dde-651b-4518-9cf3-017f1eb2a540-00-1u8fc4e7dtfeo.spock.replit.dev/api/tiles/font/Noto%20Sans%20Bold/1024-1279.pbf 404 (Not Found)

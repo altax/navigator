@@ -1,0 +1,135 @@
+Failed to load resource: the server responded with a status of 404 (Not Found)
+/api/tiles/font/Noto%20Sans%20Regular/1024-1279.pbf:1  Failed to load resource: the server responded with a status of 404 (Not Found)
+maplibre-gl.js:41  GET https://ae959dde-651b-4518-9cf3-017f1eb2a540-00-1u8fc4e7dtfeo.spock.replit.dev/api/tiles/font/Noto%20Sans%20Bold/0-255.pbf 404 (Not Found)
+eval @ maplibre-gl.js:41
+eval @ maplibre-gl.js:41
+e @ maplibre-gl.js:41
+eval @ maplibre-gl.js:41
+O @ maplibre-gl.js:41
+t.l @ maplibre-gl.js:41
+eval @ maplibre-gl.js:45
+eval @ maplibre-gl.js:41
+e @ maplibre-gl.js:41
+C.loadGlyphRange @ maplibre-gl.js:45
+eval @ maplibre-gl.js:45
+eval @ maplibre-gl.js:41
+e @ maplibre-gl.js:41
+_getAndCacheGlyphsPromise @ maplibre-gl.js:45
+eval @ maplibre-gl.js:45
+eval @ maplibre-gl.js:41
+e @ maplibre-gl.js:41
+getGlyphs @ maplibre-gl.js:45
+eval @ maplibre-gl.js:45
+eval @ maplibre-gl.js:41
+e @ maplibre-gl.js:41
+getGlyphs @ maplibre-gl.js:45
+eval @ maplibre-gl.js:45
+eval @ maplibre-gl.js:41
+eval @ maplibre-gl.js:41
+e @ maplibre-gl.js:41
+processTask @ maplibre-gl.js:41
+receive @ maplibre-gl.js:41
+eval @ maplibre-gl.js:41
+postMessage
+(anonymous) @ d5fffbc3-42d4-435d-ab9a-a7e1486fa936:1
+sendAsync @ d5fffbc3-42d4-435d-ab9a-a7e1486fa936:1
+sendAsync @ d5fffbc3-42d4-435d-ab9a-a7e1486fa936:1
+(anonymous) @ d5fffbc3-42d4-435d-ab9a-a7e1486fa936:1
+(anonymous) @ d5fffbc3-42d4-435d-ab9a-a7e1486fa936:1
+e @ d5fffbc3-42d4-435d-ab9a-a7e1486fa936:1
+parse @ d5fffbc3-42d4-435d-ab9a-a7e1486fa936:1
+(anonymous) @ d5fffbc3-42d4-435d-ab9a-a7e1486fa936:1
+a @ d5fffbc3-42d4-435d-ab9a-a7e1486fa936:1
+Promise.then
+l @ d5fffbc3-42d4-435d-ab9a-a7e1486fa936:1
+(anonymous) @ d5fffbc3-42d4-435d-ab9a-a7e1486fa936:1
+e @ d5fffbc3-42d4-435d-ab9a-a7e1486fa936:1
+loadTile @ d5fffbc3-42d4-435d-ab9a-a7e1486fa936:1
+(anonymous) @ d5fffbc3-42d4-435d-ab9a-a7e1486fa936:1
+(anonymous) @ d5fffbc3-42d4-435d-ab9a-a7e1486fa936:1
+(anonymous) @ d5fffbc3-42d4-435d-ab9a-a7e1486fa936:1
+e @ d5fffbc3-42d4-435d-ab9a-a7e1486fa936:1
+processTask @ d5fffbc3-42d4-435d-ab9a-a7e1486fa936:1
+process @ d5fffbc3-42d4-435d-ab9a-a7e1486fa936:1
+(anonymous) @ d5fffbc3-42d4-435d-ab9a-a7e1486fa936:1
+Ic.MessageChannel._channel.port2.onmessage @ d5fffbc3-42d4-435d-ab9a-a7e1486fa936:1
+postMessage
+trigger @ d5fffbc3-42d4-435d-ab9a-a7e1486fa936:1
+process @ d5fffbc3-42d4-435d-ab9a-a7e1486fa936:1
+(anonymous) @ d5fffbc3-42d4-435d-ab9a-a7e1486fa936:1
+Ic.MessageChannel._channel.port2.onmessage @ d5fffbc3-42d4-435d-ab9a-a7e1486fa936:1
+postMessage
+trigger @ d5fffbc3-42d4-435d-ab9a-a7e1486fa936:1
+process @ d5fffbc3-42d4-435d-ab9a-a7e1486fa936:1
+(anonymous) @ d5fffbc3-42d4-435d-ab9a-a7e1486fa936:1
+Ic.MessageChannel._channel.port2.onmessage @ d5fffbc3-42d4-435d-ab9a-a7e1486fa936:1
+postMessage
+trigger @ d5fffbc3-42d4-435d-ab9a-a7e1486fa936:1
+process @ d5fffbc3-42d4-435d-ab9a-a7e1486fa936:1
+(anonymous) @ d5fffbc3-42d4-435d-ab9a-a7e1486fa936:1
+Ic.MessageChannel._channel.port2.onmessage @ d5fffbc3-42d4-435d-ab9a-a7e1486fa936:1
+postMessage
+trigger @ d5fffbc3-42d4-435d-ab9a-a7e1486fa936:1
+process @ d5fffbc3-42d4-435d-ab9a-a7e1486fa936:1
+(anonymous) @ d5fffbc3-42d4-435d-ab9a-a7e1486fa936:1
+Ic.MessageChannel._channel.port2.onmessage @ d5fffbc3-42d4-435d-ab9a-a7e1486fa936:1
+postMessage
+trigger @ d5fffbc3-42d4-435d-ab9a-a7e1486fa936:1
+process @ d5fffbc3-42d4-435d-ab9a-a7e1486fa936:1
+(anonymous) @ d5fffbc3-42d4-435d-ab9a-a7e1486fa936:1
+Ic.MessageChannel._channel.port2.onmessage @ d5fffbc3-42d4-435d-ab9a-a7e1486fa936:1
+postMessage
+trigger @ d5fffbc3-42d4-435d-ab9a-a7e1486fa936:1
+process @ d5fffbc3-42d4-435d-ab9a-a7e1486fa936:1
+(anonymous) @ d5fffbc3-42d4-435d-ab9a-a7e1486fa936:1
+Ic.MessageChannel._channel.port2.onmessage @ d5fffbc3-42d4-435d-ab9a-a7e1486fa936:1
+postMessage
+trigger @ d5fffbc3-42d4-435d-ab9a-a7e1486fa936:1
+process @ d5fffbc3-42d4-435d-ab9a-a7e1486fa936:1
+(anonymous) @ d5fffbc3-42d4-435d-ab9a-a7e1486fa936:1
+Ic.MessageChannel._channel.port2.onmessage @ d5fffbc3-42d4-435d-ab9a-a7e1486fa936:1
+postMessage
+trigger @ d5fffbc3-42d4-435d-ab9a-a7e1486fa936:1
+process @ d5fffbc3-42d4-435d-ab9a-a7e1486fa936:1
+(anonymous) @ d5fffbc3-42d4-435d-ab9a-a7e1486fa936:1
+Ic.MessageChannel._channel.port2.onmessage @ d5fffbc3-42d4-435d-ab9a-a7e1486fa936:1
+postMessage
+trigger @ d5fffbc3-42d4-435d-ab9a-a7e1486fa936:1
+process @ d5fffbc3-42d4-435d-ab9a-a7e1486fa936:1
+(anonymous) @ d5fffbc3-42d4-435d-ab9a-a7e1486fa936:1
+Ic.MessageChannel._channel.port2.onmessage @ d5fffbc3-42d4-435d-ab9a-a7e1486fa936:1
+postMessage
+trigger @ d5fffbc3-42d4-435d-ab9a-a7e1486fa936:1
+process @ d5fffbc3-42d4-435d-ab9a-a7e1486fa936:1
+(anonymous) @ d5fffbc3-42d4-435d-ab9a-a7e1486fa936:1
+Ic.MessageChannel._channel.port2.onmessage @ d5fffbc3-42d4-435d-ab9a-a7e1486fa936:1
+postMessage
+trigger @ d5fffbc3-42d4-435d-ab9a-a7e1486fa936:1
+receive @ d5fffbc3-42d4-435d-ab9a-a7e1486fa936:1
+(anonymous) @ d5fffbc3-42d4-435d-ab9a-a7e1486fa936:1
+Worker.postMessage
+eval @ maplibre-gl.js:41
+sendAsync @ maplibre-gl.js:41
+eval @ maplibre-gl.js:45
+eval @ maplibre-gl.js:41
+e @ maplibre-gl.js:41
+loadTile @ maplibre-gl.js:45
+eval @ maplibre-gl.js:45
+eval @ maplibre-gl.js:41
+e @ maplibre-gl.js:41
+_loadTile @ maplibre-gl.js:45
+_addTile @ maplibre-gl.js:45
+_updateRetainedTiles @ maplibre-gl.js:45
+update @ maplibre-gl.js:45
+_updateSources @ maplibre-gl.js:45
+_render @ maplibre-gl.js:45
+eval @ maplibre-gl.js:45
+Promise.then
+triggerRepaint @ maplibre-gl.js:45
+_requestFrame @ maplibre-gl.js:45
+_triggerRenderFrame @ maplibre-gl.js:45
+eval @ maplibre-gl.js:45
+_start @ maplibre-gl.js:45
+wheel @ maplibre-gl.js:45
+handleEvent @ maplibre-gl.js:45
+maplibre-gl.js:41  GET https://ae959dde-651b-4518-9cf3-017f1eb2a540-00-1u8fc4e7dtfeo.spock.replit.dev/api/tiles/font/Noto%20Sans%20Bold/1024-1279.pbf 404 (Not Found)

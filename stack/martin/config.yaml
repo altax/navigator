@@ -1,0 +1,39 @@
+listen_addresses: '0.0.0.0:3000'
+worker_processes: 2
+keep_alive: 75
+preferred_encoding: gzip
+
+cache_size_mb: 128
+
+pmtiles:
+  paths:
+    - /home/runner/workspace/data
+  sources: {}
+
+fonts:
+  - /home/runner/workspace/data/fonts
+
+postgres:
+  connection_string: ${DATABASE_URL}
+  default_srid: 4326
+  pool_size: 5
+
+  tables:
+    pois_layer:
+      schema: public
+      table: pois
+      srid: 4326
+      geometry_column: geom
+      id_column: id
+      minzoom: 8
+      maxzoom: 20
+      bounds: [27.4, 58.4, 36.0, 61.4]
+      extent: 4096
+      buffer: 64
+      clip_geom: true
+      geometry_type: POINT
+      properties:
+        title: text
+        type: text
+        address: text
+        description: text

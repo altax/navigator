@@ -1,0 +1,6 @@
+data/graphhopper/spb-lo-ebike-gh/edges filter=lfs diff=lfs merge=lfs -text
+data/northwest-fed.osm.pbf filter=lfs diff=lfs merge=lfs -text
+data/spb-lo-filtered.geojsonseq filter=lfs diff=lfs merge=lfs -text
+data/spb-lo-filtered.osm.pbf filter=lfs diff=lfs merge=lfs -text
+data/spb-lo.osm.pbf filter=lfs diff=lfs merge=lfs -text
+data/spb-lo.pmtiles filter=lfs diff=lfs merge=lfs -text
