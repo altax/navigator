@@ -901,6 +901,7 @@ export default function App() {
   const [draftDesc, setDraftDesc] = useState("");
   const [draftAddr, setDraftAddr] = useState("");
   const [saving, setSaving] = useState(false);
+  const [saveError, setSaveError] = useState<string | null>(null);
   // Новый UI: выдвижная панель и какая вкладка в ней открыта
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [drawerTab, setDrawerTab] = useState<"points" | "filter" | "stack">("points");
@@ -1662,9 +1663,13 @@ export default function App() {
         el.querySelector('[data-action="delete"]')?.addEventListener("click", async (ev) => {
           ev.stopPropagation();
           if (!confirm("Удалить эту точку?")) return;
-          await api.deletePoi(poi.id);
-          popup.remove();
-          reloadPois();
+          try {
+            await api.deletePoi(poi.id);
+            popup.remove();
+            reloadPois();
+          } catch (e) {
+            alert(`Не удалось удалить точку: ${(e as Error).message ?? "неизвестная ошибка"}`);
+          }
         });
         return;
       }
@@ -1794,6 +1799,7 @@ export default function App() {
   const saveDraft = async () => {
     if (!draftPoint || !draftTitle.trim()) return;
     setSaving(true);
+    setSaveError(null);
     try {
       await api.createPoi({
         type: draftType,
@@ -1807,7 +1813,10 @@ export default function App() {
       setDraftTitle("");
       setDraftDesc("");
       setDraftAddr("");
+      setSaveError(null);
       reloadPois();
+    } catch (e) {
+      setSaveError((e as Error).message ?? "Ошибка сохранения");
     } finally {
       setSaving(false);
     }
@@ -2175,8 +2184,13 @@ export default function App() {
             placeholder="Заметки для курьера…"
             rows={2}
           />
+          {saveError && (
+            <div className="route-error" style={{ marginTop: 6 }}>
+              {saveError}
+            </div>
+          )}
           <div className="draft-actions">
-            <button className="secondary" onClick={() => setDraftPoint(null)} disabled={saving}>
+            <button className="secondary" onClick={() => { setDraftPoint(null); setSaveError(null); }} disabled={saving}>
               Отмена
             </button>
             <button onClick={saveDraft} disabled={saving || !draftTitle.trim()}>
