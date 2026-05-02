@@ -51,6 +51,27 @@ async function isUp(url: string): Promise<boolean> {
 
 function restartService(svc: ServiceConfig): void {
   if (restarting[svc.name]) return;
+
+  // Do not restart Martin while tippecanoe is building PMTiles —
+  // killing the process group would interrupt the tile build.
+  if (svc.name === "Martin") {
+    exec("pgrep tippecanoe", (err, stdout) => {
+      const running = !err && stdout.trim().length > 0;
+      if (running) {
+        logger.info({ service: svc.name }, "Watchdog: tippecanoe building PMTiles — skipping Martin restart");
+        failCounts[svc.name] = 0;  // reset so we don't immediately retry
+        return;
+      }
+      _doRestart(svc);
+    });
+    return;
+  }
+
+  _doRestart(svc);
+}
+
+function _doRestart(svc: ServiceConfig): void {
+  if (restarting[svc.name]) return;
   restarting[svc.name] = true;
 
   logger.warn({ service: svc.name }, "Watchdog: restarting service");

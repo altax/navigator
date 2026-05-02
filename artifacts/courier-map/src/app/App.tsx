@@ -288,7 +288,7 @@ function buildStyle(stack: StackStatus | null): StyleSpecification {
           type: "fill-extrusion" as const,
           source: "basemap",
           "source-layer": "osm",
-          minzoom: 15,
+          minzoom: 13,
           filter: [
             "all",
             ["has", "building"],
