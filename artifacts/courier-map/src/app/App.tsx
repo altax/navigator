@@ -52,26 +52,38 @@ export default function App() {
     // до рендера React — здесь повторять не нужно.
     let map: MlMap;
     try {
+      // Определяем «слабое» железо: ≤ 2 ядра или ≤ 2 ГБ RAM.
+      // На таких устройствах снижаем нагрузку на GPU и CPU.
+      const weakDevice =
+        (navigator.hardwareConcurrency ?? 4) <= 2 ||
+        ((navigator as { deviceMemory?: number }).deviceMemory ?? 4) <= 2;
+
       map = new maplibregl.Map({
         container: containerRef.current,
         style: buildStyle(stack),
         center: SPB_CENTER,
         zoom: 14,
-        pitch: 35,
+        // На слабом GPU (Intel HD 500 и аналогичных) 3D-перспектива — основная
+        // причина медленного первого рендера. Стартуем плоско, курьер может
+        // наклонить карту жестом в любой момент.
+        pitch: weakDevice ? 0 : 35,
         maxPitch: 65,
         bearing: 0,
-        // Ограничиваем карту регионом СПб + ЛО: исключаем запросы тайлов
-        // за пределами рабочей зоны курьера (~1000 км² вместо всего мира).
         maxBounds: [27.0, 58.0, 34.0, 61.8],
         attributionControl: { compact: true },
         touchPitch: true,
         cooperativeGestures: false,
         fadeDuration: 0,
-        maxTileCacheSize: 800,
+        // antialias: false — значительно снижает нагрузку на GPU при шейдерном
+        // рендере. Для карты курьера визуальная разница незаметна.
+        antialias: false,
+        maxTileCacheSize: weakDevice ? 400 : 800,
         crossSourceCollisions: false,
         refreshExpiredTiles: false,
         localIdeographFontFamily: "",
-        pixelRatio: Math.min(window.devicePixelRatio || 1, 2),
+        // На слабом железе ограничиваем pixelRatio = 1: рендерим в нативных
+        // пикселях браузера, без апскейлинга. На сильном — до 2× для чёткости.
+        pixelRatio: weakDevice ? 1 : Math.min(window.devicePixelRatio || 1, 2),
       });
     } catch (e) {
       console.error("MapLibre init failed:", e);
