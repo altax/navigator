@@ -7,6 +7,8 @@ const allowedOrigins = [
   "*.replit.dev",
   "*.riker.replit.dev",
   "*.picard.replit.dev",
+  "*.sisko.replit.dev",
+  "*.kirk.replit.dev",
   ...(replitDevDomain ? [replitDevDomain] : []),
 ];
 
@@ -31,8 +33,6 @@ const nextConfig = {
         },
       ];
     },
-    // В Replit Workspace iframe-канвас часто кеширует старую версию страницы.
-    // В dev-режиме отключаем кеш, чтобы хот-релоад всегда отдавался свежим.
     async headers() {
       return [
         {
