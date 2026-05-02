@@ -11,7 +11,9 @@ echo "[webapp-artifact] Checking dependencies..."
 pnpm install --frozen-lockfile --prefer-offline 2>/dev/null || pnpm install
 
 fuser -k ${PORT}/tcp 2>/dev/null || true
-sleep 0.3
+sleep 1
+fuser -k ${PORT}/tcp 2>/dev/null || true
+sleep 0.5
 
 echo "[webapp-artifact] Starting Vite on port $PORT..."
 exec pnpm --filter @workspace/courier-map exec vite \

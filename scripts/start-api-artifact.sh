@@ -52,7 +52,9 @@ SQL
 fi
 
 fuser -k ${PORT}/tcp 2>/dev/null || true
-sleep 0.3
+sleep 1
+fuser -k ${PORT}/tcp 2>/dev/null || true
+sleep 0.5
 
 echo "[api-artifact] Building API server…"
 cd artifacts/api-server
