@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "echo '[api-server] Use the API Server workflow instead.' && sleep infinity",
+    "dev": "bash /home/runner/workspace/scripts/start-api-artifact.sh",
     "build": "node ./build.mjs",
     "start": "node --enable-source-maps ./dist/index.mjs",
     "typecheck": "tsc -p tsconfig.json --noEmit"

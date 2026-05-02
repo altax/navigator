@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "echo '[courier-map] Use the Web App workflow to start Vite.' && sleep infinity",
+    "dev": "bash /home/runner/workspace/scripts/start-webapp-artifact.sh",
     "build": "vite build",
     "preview": "vite preview",
     "typecheck": "tsc --noEmit"
