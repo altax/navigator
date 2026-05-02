@@ -81,10 +81,10 @@ router.get("/pois/stats", async (_req, res) => {
   const r = await pool.query<{ type: string; count: string }>(
     `SELECT type, COUNT(*)::text AS count FROM pois GROUP BY type ORDER BY type`,
   );
-  const total = r.rows.reduce((acc, row) => acc + Number(row.count), 0);
+  const total = r.rows.reduce((acc: number, row: { type: string; count: string }) => acc + Number(row.count), 0);
   res.json({
     total,
-    byType: r.rows.map((row) => ({ type: row.type, count: Number(row.count) })),
+    byType: r.rows.map((row: { type: string; count: string }) => ({ type: row.type, count: Number(row.count) })),
   });
 });
 
