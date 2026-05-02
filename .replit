@@ -26,10 +26,6 @@ args = "GraphHopper"
 
 [[workflows.workflow.tasks]]
 task = "workflow.run"
-args = "API Server"
-
-[[workflows.workflow.tasks]]
-task = "workflow.run"
 args = "Web App"
 
 [[workflows.workflow]]
@@ -55,28 +51,16 @@ args = "bash stack/graphhopper/run.sh"
 outputType = "console"
 
 [[workflows.workflow]]
-name = "API Server"
-author = "agent"
-
-[workflows.workflow.metadata]
-outputType = "console"
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "bash scripts/start-api.sh"
-waitForPort = 8080
-
-[[workflows.workflow]]
 name = "Web App"
 author = "agent"
-
-[workflows.workflow.metadata]
-outputType = "webview"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
 args = "bash scripts/start-webapp.sh"
 waitForPort = 5000
+
+[workflows.workflow.metadata]
+outputType = "webview"
 
 [agent]
 stack = "BEST_EFFORT_FALLBACK"
