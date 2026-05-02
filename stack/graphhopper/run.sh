@@ -15,11 +15,17 @@ is_valid() {
   [ -f "$f" ] && [ "$(stat -c%s "$f")" -ge "$min_bytes" ]
 }
 
-if ! is_valid "$JAR" 10000000; then
-  echo "[gh/run.sh] ERROR: $JAR missing or invalid" >&2
-  sleep 5
-  exit 1
-fi
+# Wait up to 15 min for bootstrap to finish downloading the JAR.
+WAIT_JAR=0
+while ! is_valid "$JAR" 10000000; do
+  if [ "$WAIT_JAR" -ge 900 ]; then
+    echo "[gh/run.sh] ERROR: $JAR still not ready after 15 min — bootstrap may have failed" >&2
+    exit 1
+  fi
+  echo "[gh/run.sh] Waiting for $JAR (bootstrap downloading GraphHopper JAR)… ${WAIT_JAR}s"
+  sleep 15
+  WAIT_JAR=$((WAIT_JAR + 15))
+done
 
 # Wait up to 15 min for bootstrap to finish downloading/generating OSM data.
 WAIT=0

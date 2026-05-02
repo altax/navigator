@@ -34,5 +34,17 @@ if [ "$NEED_BUILD" = "true" ]; then
   echo "[martin/run.sh] PMTiles built: $(ls -lh $PMTILES | awk '{print $5}')"
 fi
 
+# Wait up to 5 min for bootstrap to finish downloading fonts
+WAIT_FONTS=0
+while [ ! -f "data/fonts/NotoSans-Regular.ttf" ] || [ "$(stat -c%s "data/fonts/NotoSans-Regular.ttf")" -lt 10000 ]; do
+  if [ "$WAIT_FONTS" -ge 300 ]; then
+    echo "[martin/run.sh] WARNING: fonts not ready after 5 min — starting anyway (map labels may be missing)"
+    break
+  fi
+  echo "[martin/run.sh] Waiting for fonts (bootstrap downloading)… ${WAIT_FONTS}s"
+  sleep 10
+  WAIT_FONTS=$((WAIT_FONTS + 10))
+done
+
 echo "[martin/run.sh] Starting Martin tile server on :3000…"
 exec ./tools/martin --config stack/martin/config.yaml

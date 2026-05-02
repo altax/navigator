@@ -142,14 +142,14 @@ fi
 # ── 3e. Map fonts ─────────────────────────────────────────────────────
 mkdir -p data/fonts
 for FONT in NotoSans-Regular.ttf NotoSans-Bold.ttf; do
-  if [ ! -f "data/fonts/$FONT" ]; then
+  if [ ! -f "data/fonts/$FONT" ] || [ "$(stat -c%s "data/fonts/$FONT" 2>/dev/null || echo 0)" -lt 10000 ]; then
     echo "[bootstrap] Downloading font $FONT…"
     curl -L --fail --retry 3 --silent \
       -o "data/fonts/$FONT" \
-      "https://github.com/notofonts/latin-greek-cyrillic/raw/main/fonts/NotoSans/hinted/ttf/$FONT" \
+      "https://github.com/notofonts/noto-fonts/raw/main/hinted/ttf/NotoSans/$FONT" \
     || curl -L --fail --retry 3 --silent \
          -o "data/fonts/$FONT" \
-         "https://github.com/notofonts/noto-fonts/raw/main/hinted/ttf/NotoSans/$FONT" \
+         "https://github.com/notofonts/latin-greek-cyrillic/raw/main/fonts/NotoSans/hinted/ttf/$FONT" \
     || echo "[bootstrap] WARNING: could not download $FONT — map labels may be missing."
   fi
 done
