@@ -1,7 +1,8 @@
 #!/bin/bash
-# API server startup: DB setup + build + run.
-# The heavy GIS data pipeline (bootstrap.sh) runs in the background
-# so the API server starts immediately without waiting for downloads.
+# API server startup: DB setup + bootstrap.
+# The actual HTTP server (port 8080) is managed by the
+# "artifacts/api-server: API Server" workflow which runs start-api-artifact.sh.
+# This script handles one-time setup so the Project workflow stays clean.
 set -euo pipefail
 cd /home/runner/workspace
 
@@ -14,7 +15,7 @@ pnpm install --frozen-lockfile --prefer-offline 2>/dev/null \
   || pnpm install --frozen-lockfile
 echo "[api] Dependencies OK."
 
-# ── 2. Database setup only (fast — skips GIS data pipeline) ──────────
+# ── 2. Database setup ─────────────────────────────────────────────────
 if [ -z "${DATABASE_URL:-}" ]; then
   echo "[api] WARNING: DATABASE_URL not set — skipping DB setup."
 else
@@ -54,19 +55,22 @@ SQL
   echo "[api] Database OK."
 fi
 
-# ── 3. Start GIS data pipeline in the background ─────────────────────
-# bootstrap.sh handles OSM download, GeoJSON export, fonts, and GraphHopper JAR.
-# It is idempotent — safe to run when data already exists (fast no-op).
-# Run in its own subshell so it doesn't block the API server.
+# ── 3. Start GIS data pipeline in background ──────────────────────────
 (bash scripts/bootstrap.sh >> /tmp/bootstrap.log 2>&1) &
 echo "[api] GIS data pipeline running in background. Logs: /tmp/bootstrap.log"
 
-# ── 4. Build and start the API server immediately ─────────────────────
-# Освобождаем порт на случай если предыдущий инстанс завис
-fuser -k ${PORT}/tcp 2>/dev/null || true
-sleep 0.5
-echo "[api] Building API server…"
-cd artifacts/api-server
-pnpm run build
-echo "[api] Starting API server on port $PORT…"
-exec node --enable-source-maps ./dist/index.mjs
+# ── 4. Wait for the artifact API server to come up on port 8080 ──────
+echo "[api] Waiting for API server on port $PORT (started by artifact workflow)..."
+HEX=$(printf "%04X" "$PORT")
+for i in $(seq 1 60); do
+  if awk -v hex="$HEX" \
+    'NR>1{split($2,a,":");if(toupper(a[2])==hex && $4=="0A"){found=1;exit}} END{exit !found}' \
+    /proc/net/tcp /proc/net/tcp6 2>/dev/null; then
+    echo "[api] API server is up on port $PORT."
+    break
+  fi
+  sleep 2
+done
+
+# Stay alive so this workflow keeps running
+exec tail -f /dev/null

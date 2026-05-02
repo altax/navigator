@@ -1,22 +1,23 @@
 #!/bin/bash
-# Artifact workflow: API server runs on port 8081. The artifact runner expects
-# port 8080 to be open — the main "API Server" workflow handles that.
-# This script starts a second API instance on 8081 for artifact isolation.
+# Artifact API workflow — the authoritative API server on port 8080.
+# Kills any existing process on 8080 before starting.
 set -euo pipefail
 cd /home/runner/workspace
 
-export PORT=8081
+export PORT=8080
 export NODE_ENV=development
 
-# Kill anything lingering on port 8081 via inode lookup
+# Kill anything on port 8080 via inode lookup
 HEX=$(printf "%04X" "$PORT")
-INODES=$(awk -v hex="$HEX" 'NR>1{split($2,a,":");if(toupper(a[2])==hex && $4=="0A")print $10}' \
+INODES=$(awk -v hex="$HEX" \
+  'NR>1{split($2,a,":");if(toupper(a[2])==hex && $4=="0A")print $10}' \
   /proc/net/tcp /proc/net/tcp6 2>/dev/null | sort -u)
 if [ -n "$INODES" ]; then
   for inode in $INODES; do
     for pid in $(ls /proc/ 2>/dev/null | grep -E '^[0-9]+$'); do
-      ls -la /proc/$pid/fd 2>/dev/null | grep -q "socket:\[$inode\]" && \
-        kill -9 "$pid" 2>/dev/null && echo "[api-artifact] Killed PID $pid (port $PORT)" || true
+      ls -la /proc/$pid/fd 2>/dev/null | grep -q "socket:\[$inode\]" \
+        && kill -9 "$pid" 2>/dev/null \
+        && echo "[api-artifact] Killed PID $pid (port $PORT)" || true
     done
   done
   sleep 1
