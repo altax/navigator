@@ -63,7 +63,7 @@ outputType = "console"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "bash scripts/bootstrap.sh && PORT=8080 pnpm --filter @workspace/api-server run dev"
+args = "bash scripts/start-api.sh"
 waitForPort = 8080
 
 [[workflows.workflow]]
@@ -71,12 +71,11 @@ name = "Web App"
 author = "agent"
 
 [workflows.workflow.metadata]
-outputType = "webview"
+outputType = "console"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "pnpm install --frozen-lockfile --prefer-offline 2>/dev/null || pnpm install --frozen-lockfile && bash scripts/start-webapp.sh"
-waitForPort = 5000
+args = "bash scripts/start-webapp-relay.sh"
 
 [agent]
 stack = "BEST_EFFORT_FALLBACK"
@@ -93,6 +92,10 @@ externalPort = 3001
 [[ports]]
 localPort = 5000
 externalPort = 80
+
+[[ports]]
+localPort = 8000
+externalPort = 8000
 
 [[ports]]
 localPort = 8001
