@@ -50,3 +50,14 @@ Thumbs.db
 
 # Temporary download file (used by bootstrap.sh, cleaned up after extraction)
 /tmp/nw-fed-district.osm.pbf
+
+# Large GIS data files — generated automatically by scripts/bootstrap.sh.
+# Do NOT commit these to GitHub (too large, regenerated on every fresh install).
+data/spb-lo-filtered.osm.pbf
+data/spb-lo-filtered.geojsonseq
+data/spb-lo.pmtiles
+data/spb-lo.osm.pbf
+data/northwest-fed.osm.pbf
+data/graphhopper-web-10.0.jar
+data/graphhopper/
+data/fonts/
