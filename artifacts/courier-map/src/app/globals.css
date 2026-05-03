@@ -1801,50 +1801,26 @@ html, body {
 }
 .ob-skip-link:hover { color: #2e4a6a; }
 
-/* ── Горизонтальный сплит в шаге выбора районов ── */
-.ob-choose-row {
-  flex: 1;
-  display: flex;
-  gap: 12px;
-  overflow: hidden;
-  min-height: 0;
-}
-
-.ob-choose-left {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-  min-width: 0;
-}
-
-/* SVG мини-карта */
-.ob-minimap {
-  width: 154px;
-  flex-shrink: 0;
-  background: #060e1b;
-  border: 1px solid #122030;
-  border-radius: 10px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  padding: 10px 8px;
-}
-
-.ob-minimap-label {
-  font-size: 11px;
-  font-weight: 600;
-  color: #60a5fa;
-  text-align: center;
-  line-height: 1.3;
-}
-
-.ob-minimap-hint {
-  font-size: 10px;
-  color: #1a2f48;
-  text-align: center;
+/* ── Шаг выбора районов: сайдбар справа, карта видна слева ── */
+/* На широких экранах (планшет горизонтально) панель уходит в правый сайдбар,
+   карта с подсветкой районов видна на всём экране слева */
+@media (min-width: 700px) {
+  .ob-overlay.ob-overlay--choose {
+    background: transparent;
+    pointer-events: none;
+    justify-content: flex-end;
+  }
+  .ob-overlay.ob-overlay--choose .ob-wrap {
+    pointer-events: all;
+    height: 100%;
+    max-width: 380px;
+    background: rgba(3, 10, 22, 0.97);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-left: 1px solid #0f1e30;
+    box-shadow: -6px 0 36px rgba(0, 0, 0, 0.7);
+    padding: 0 20px 20px;
+  }
 }
 
 /* Адаптив для маленьких телефонов */
@@ -1852,5 +1828,4 @@ html, body {
   .ob-wrap { padding: 0 14px 16px; }
   .ob-tab  { height: 60px; }
   .ob-tab-name { font-size: 12px; }
-  .ob-minimap { display: none; }
 }
