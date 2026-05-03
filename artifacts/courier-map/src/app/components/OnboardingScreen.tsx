@@ -5,6 +5,83 @@ import type { MapMode } from "../hooks/useMapSetup";
 import { DISTRICTS, DISTRICT_GROUPS, districtById } from "../data/districts";
 import { geocodeAddress, districtIdsInRadius, circleTileBounds, RADIUS_KM } from "../hooks/useWarehouseRadius";
 
+// ── SVG мини-карта ────────────────────────────────────────────────────────────
+
+const CITY = { west: 29.5, east: 31.2, south: 59.4, north: 60.4 };
+const MW = 154, MH = Math.round(154 * (CITY.north - CITY.south) / (CITY.east - CITY.west));
+
+function mpx(lng: number) { return (lng - CITY.west) / (CITY.east - CITY.west) * MW; }
+function mpy(lat: number) { return (CITY.north - lat) / (CITY.north - CITY.south) * MH; }
+
+function DistrictMiniMap({ hoveredId, selectedIds, inRadiusIds, warehouseCoords }: {
+  hoveredId:       string | null;
+  selectedIds:     string[];
+  inRadiusIds:     string[];
+  warehouseCoords: [number, number] | null;
+}) {
+  const hovered = hoveredId ? districtById(hoveredId) : null;
+
+  return (
+    <div className="ob-minimap">
+      <svg width={MW} height={MH} viewBox={`0 0 ${MW} ${MH}`} style={{ display: "block" }}>
+        {DISTRICTS.map(d => {
+          const x = mpx(d.bounds.west);
+          const y = mpy(d.bounds.north);
+          const w = mpx(d.bounds.east) - x;
+          const h = mpy(d.bounds.south) - y;
+          const isHov = d.id === hoveredId;
+          const isSel = selectedIds.includes(d.id);
+          const inRad = inRadiusIds.includes(d.id);
+          return (
+            <rect
+              key={d.id}
+              x={x} y={y} width={w} height={h}
+              fill={isHov ? "#3b82f6" : isSel ? "#1e4a8a" : inRad ? "#0d2a44" : "#0a1628"}
+              fillOpacity={isHov ? 0.55 : isSel ? 0.55 : inRad ? 0.8 : 1}
+              stroke={isHov ? "#60a5fa" : isSel ? "#3b82f6" : inRad ? "#1e3a5f" : "#172234"}
+              strokeWidth={isHov ? 1.5 : isSel ? 1.2 : 0.6}
+            />
+          );
+        })}
+
+        {warehouseCoords && (() => {
+          const cx  = mpx(warehouseCoords[0]);
+          const cy  = mpy(warehouseCoords[1]);
+          const rx  = RADIUS_KM / (111.32 * Math.cos(warehouseCoords[1] * Math.PI / 180)) / (CITY.east - CITY.west) * MW;
+          const ry  = RADIUS_KM / 111.32 / (CITY.north - CITY.south) * MH;
+          return (
+            <g key="warehouse">
+              <ellipse cx={cx} cy={cy} rx={rx} ry={ry}
+                fill="#3b82f6" fillOpacity={0.1}
+                stroke="#3b82f6" strokeWidth={1} strokeDasharray="3 2" />
+              <circle cx={cx} cy={cy} r={3}
+                fill="#f59e0b" stroke="#fef3c7" strokeWidth={1} />
+            </g>
+          );
+        })()}
+      </svg>
+
+      {hovered
+        ? <div className="ob-minimap-label">{hovered.name}</div>
+        : <div className="ob-minimap-hint">наведите на район</div>
+      }
+    </div>
+  );
+}
+
+// ── Helpers ───────────────────────────────────────────────────────────────────
+
+function plural(n: number) { return n === 1 ? "район" : n <= 4 ? "района" : "районов"; }
+
+const CheckIcon = () => (
+  <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+    strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round">
+    <polyline points="20 6 9 17 4 12"/>
+  </svg>
+);
+
+// ── Компонент ─────────────────────────────────────────────────────────────────
+
 interface Props {
   downloadStatus:    DownloadStatus;
   pendingQueue:      DownloadRequest[];
@@ -18,15 +95,6 @@ interface Props {
 
 type Step = "address" | "choose" | "downloading" | "done";
 
-function plural(n: number) { return n === 1 ? "район" : n <= 4 ? "района" : "районов"; }
-
-const CheckIcon = () => (
-  <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-    strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round">
-    <polyline points="20 6 9 17 4 12"/>
-  </svg>
-);
-
 export function OnboardingScreen({
   downloadStatus, pendingQueue, onEnqueue, onCancelAll, onComplete,
   mapRef, onWarehouseChange, onDistrictHover,
@@ -34,6 +102,7 @@ export function OnboardingScreen({
   const [step,            setStep]           = useState<Step>("address");
   const [mode,            setMode]           = useState<MapMode>("districts");
   const [pickedIds,       setPickedIds]      = useState<string[]>([]);
+  const [hoveredId,       setHoveredId]      = useState<string | null>(null);
   const [addressInput,    setAddressInput]   = useState("");
   const [geocoding,       setGeocoding]      = useState(false);
   const [geocodeError,    setGeocodeError]   = useState<string | null>(null);
@@ -56,7 +125,7 @@ export function OnboardingScreen({
     setGeocoding(true);
     setGeocodeError(null);
     try {
-      const coords  = await geocodeAddress(addressInput);
+      const coords   = await geocodeAddress(addressInput);
       const inRadius = districtIdsInRadius(DISTRICTS, coords, RADIUS_KM);
       setWarehouseCoords(coords);
       setInRadiusIds(inRadius);
@@ -70,6 +139,7 @@ export function OnboardingScreen({
   };
 
   const handleChipHover = (id: string | null) => {
+    setHoveredId(id);
     onDistrictHover(id);
     if (id) {
       const d = districtById(id);
@@ -112,15 +182,14 @@ export function OnboardingScreen({
   const canStart = mode === "all" || (warehouseCoords ? inRadiusIds.length > 0 : pickedIds.length > 0);
 
   const shownGroups = inRadiusIds.length > 0
-    ? DISTRICT_GROUPS
-        .map(g => ({ ...g, ids: g.ids.filter(id => inRadiusIds.includes(id)) }))
-        .filter(g => g.ids.length > 0)
+    ? DISTRICT_GROUPS.map(g => ({ ...g, ids: g.ids.filter(id => inRadiusIds.includes(id)) })).filter(g => g.ids.length > 0)
     : DISTRICT_GROUPS;
 
   return (
     <div className="ob-overlay">
       <div className="ob-wrap">
 
+        {/* ── Шапка ── */}
         <header className="ob-hdr">
           <div className="ob-hdr-icon">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#3b82f6"
@@ -135,7 +204,7 @@ export function OnboardingScreen({
           </div>
         </header>
 
-        {/* ── Шаг 0: адрес цеха / даркстора ── */}
+        {/* ── Шаг 0: адрес цеха ── */}
         {step === "address" && (
           <div className="ob-choose">
             <div className="ob-addr-card">
@@ -165,9 +234,7 @@ export function OnboardingScreen({
                   {geocoding ? <span className="ob-addr-spin" /> : "Найти"}
                 </button>
               </div>
-              {geocodeError && (
-                <div className="ob-addr-error">{geocodeError}</div>
-              )}
+              {geocodeError && <div className="ob-addr-error">{geocodeError}</div>}
               {warehouseCoords && !geocodeError && (
                 <div className="ob-addr-result">
                   <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#4ade80"
@@ -178,7 +245,6 @@ export function OnboardingScreen({
                 </div>
               )}
             </div>
-
             <button
               className={`ob-cta${!warehouseCoords ? " dim" : ""}`}
               onClick={() => setStep("choose")}
@@ -212,9 +278,10 @@ export function OnboardingScreen({
               </button>
             </div>
 
-            <div className="ob-content">
-              {mode === "districts" && (
-                <>
+            {/* ── Тело: сплит chips + мини-карта ── */}
+            {mode === "districts" && (
+              <div className="ob-choose-row">
+                <div className="ob-choose-left">
                   <div className="ob-pick-bar">
                     <span className="ob-pick-label">
                       {warehouseCoords ? "Районы в вашей зоне" : "Выберите районы"}
@@ -251,9 +318,19 @@ export function OnboardingScreen({
                       </div>
                     ))}
                   </div>
-                </>
-              )}
-              {mode === "all" && (
+                </div>
+
+                <DistrictMiniMap
+                  hoveredId={hoveredId}
+                  selectedIds={pickedIds}
+                  inRadiusIds={inRadiusIds}
+                  warehouseCoords={warehouseCoords}
+                />
+              </div>
+            )}
+
+            {mode === "all" && (
+              <div className="ob-content">
                 <div className="ob-all-body">
                   <div className="ob-all-list">
                     <div className="ob-all-row"><span className="ob-all-icon">🏙</span><span>20 районов Санкт-Петербурга</span></div>
@@ -262,8 +339,8 @@ export function OnboardingScreen({
                     <div className="ob-all-row ob-all-warn"><span className="ob-all-icon">⏱</span><span>Загрузка займёт несколько минут</span></div>
                   </div>
                 </div>
-              )}
-            </div>
+              </div>
+            )}
 
             <button
               className={`ob-cta${!canStart ? " dim" : ""}`}
@@ -317,7 +394,7 @@ export function OnboardingScreen({
             <div className="ob-done-title">Карта загружена</div>
             <div className="ob-done-sub">
               {warehouseCoords && addressInput
-                ? `Зона ${RADIUS_KM} км от ${addressInput}`
+                ? `Зона ${RADIUS_KM} км от «${addressInput}»`
                 : mode === "all"
                   ? "Весь город и ЛО доступны офлайн"
                   : pickedIds.map(id => DISTRICTS.find(d => d.id === id)?.name).filter(Boolean).join(", ")
