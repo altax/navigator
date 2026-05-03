@@ -5,6 +5,7 @@ import "maplibre-gl/dist/maplibre-gl.css";
 import { buildStyle, SPB_CENTER } from "./mapStyle";
 import { drawMetroIcon, drawMetroEntranceIcon, drawZebraIcon } from "./mapIcons";
 import { SearchBar } from "./components/SearchBar";
+import { ZoneLoader } from "./components/ZoneLoader";
 
 export default function App() {
   const mapRef = useRef<MlMap | null>(null);
@@ -272,6 +273,7 @@ export default function App() {
       )}
 
       <SearchBar onSelect={flyToAndHighlight} />
+      <ZoneLoader mapRef={mapRef} />
 
       {selectedBuildingInfo && (
         <button className="selection-pill" onClick={() => setSelectedBuilding(null, null)} title="Снять выделение здания">

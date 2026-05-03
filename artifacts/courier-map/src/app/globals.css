@@ -277,6 +277,276 @@ html, body {
 }
 .selection-pill:hover .selection-x { background: rgba(251, 146, 60, 0.28); color: #fff; }
 
+/* ============= Зона доставки — кнопка ============= */
+.zone-trigger {
+  position: absolute;
+  top: 68px;
+  left: 14px;
+  z-index: 20;
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  border: 1px solid #2a323a;
+  background: rgba(17, 21, 26, 0.96);
+  color: #cfd6dc;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(6px);
+  transition: background 0.15s, color 0.15s;
+}
+.zone-trigger:hover { background: #1a2128; color: #93c5fd; }
+.zone-trigger:active { transform: scale(0.95); }
+.zone-trigger--active { border-color: #3b82f6; color: #60a5fa; }
+.zone-trigger--active:hover { color: #93c5fd; }
+
+.zone-trigger-dot {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #22c55e;
+  box-shadow: 0 0 5px rgba(34, 197, 94, 0.7);
+}
+
+/* ============= Зона доставки — панель ============= */
+.zone-panel {
+  position: absolute;
+  top: 68px;
+  left: 68px;
+  z-index: 22;
+  width: 290px;
+  background: #0f1318;
+  border: 1px solid #1d2530;
+  border-radius: 14px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(10px);
+  animation: zonePanelIn 0.16s ease-out;
+  overflow: hidden;
+}
+@keyframes zonePanelIn {
+  from { opacity: 0; transform: translateX(-8px) scale(0.97); }
+  to   { opacity: 1; transform: translateX(0)    scale(1); }
+}
+
+.zone-panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 14px 10px;
+  border-bottom: 1px solid #1a2129;
+}
+.zone-panel-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: #c8d0dc;
+  letter-spacing: 0.02em;
+}
+.zone-panel-close {
+  background: transparent;
+  border: none;
+  color: #5a6370;
+  font-size: 20px;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0 2px;
+  transition: color 0.12s;
+}
+.zone-panel-close:hover { color: #fca5a5; }
+
+.zone-section {
+  padding: 10px 14px 4px;
+  border-bottom: 1px solid #13191f;
+}
+.zone-section:last-of-type { border-bottom: none; }
+
+.zone-label {
+  display: block;
+  font-size: 11px;
+  color: #5a6370;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+.zone-radius-val {
+  color: #60a5fa;
+  font-weight: 700;
+}
+
+/* ── Адресный инпут ── */
+.zone-input-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: #13191f;
+  border: 1px solid #1d2530;
+  border-radius: 8px;
+  padding: 0 8px;
+  margin-bottom: 2px;
+}
+.zone-input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  color: #e2e8ef;
+  font-size: 13px;
+  outline: none;
+  padding: 8px 0;
+  min-width: 0;
+}
+.zone-input::placeholder { color: #3d4858; }
+.zone-input-clear {
+  background: transparent;
+  border: none;
+  color: #4a5568;
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: color 0.12s;
+}
+.zone-input-clear:hover { color: #fca5a5; }
+
+.zone-spinner {
+  width: 14px;
+  height: 14px;
+  border: 2px solid #1d2530;
+  border-top-color: #3b82f6;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+  flex-shrink: 0;
+}
+
+/* ── Подсказки геокодера ── */
+.zone-suggestions {
+  list-style: none;
+  margin: 4px 0 0;
+  padding: 0;
+  background: #0d1117;
+  border: 1px solid #1a2129;
+  border-radius: 8px;
+  overflow: hidden;
+  max-height: 180px;
+  overflow-y: auto;
+}
+.zone-suggestion {
+  display: flex;
+  align-items: flex-start;
+  gap: 7px;
+  padding: 9px 10px;
+  font-size: 12px;
+  color: #c0c8d4;
+  cursor: pointer;
+  border-bottom: 1px solid #12171d;
+  transition: background 0.1s;
+  line-height: 1.35;
+}
+.zone-suggestion:last-child { border-bottom: none; }
+.zone-suggestion:hover { background: #141c26; color: #93c5fd; }
+.zone-suggestion-icon { margin-top: 1px; flex-shrink: 0; opacity: 0.45; }
+
+/* ── Слайдер радиуса ── */
+.zone-slider {
+  width: 100%;
+  margin: 2px 0 4px;
+  accent-color: #3b82f6;
+  cursor: pointer;
+}
+.zone-slider-marks {
+  display: flex;
+  justify-content: space-between;
+  font-size: 10px;
+  color: #3d4858;
+  padding: 0 1px;
+  margin-bottom: 6px;
+}
+
+/* ── Оценка тайлов ── */
+.zone-estimate {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 7px 14px;
+  font-size: 11px;
+  color: #5a6882;
+  background: #0b0e13;
+  border-top: 1px solid #13191f;
+  border-bottom: 1px solid #13191f;
+}
+.zone-sep { color: #2a3040; }
+.zone-zoom-hint { color: #334155; }
+
+/* ── Прогресс-бар ── */
+.zone-progress {
+  padding: 8px 14px;
+  border-bottom: 1px solid #13191f;
+}
+.zone-progress-track {
+  height: 4px;
+  background: #1a2129;
+  border-radius: 2px;
+  overflow: hidden;
+  margin-bottom: 5px;
+}
+.zone-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #2563eb, #3b82f6);
+  border-radius: 2px;
+  transition: width 0.15s ease;
+}
+.zone-progress-label {
+  font-size: 11px;
+  color: #4a5e7a;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── Кнопки действий ── */
+.zone-actions {
+  display: flex;
+  gap: 8px;
+  padding: 10px 14px;
+}
+.zone-btn-primary {
+  flex: 1;
+  padding: 8px 0;
+  border-radius: 8px;
+  border: none;
+  background: #2563eb;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.zone-btn-primary:hover:not(:disabled) { background: #1d4ed8; }
+.zone-btn-primary:disabled { background: #1a2535; color: #3d4d60; cursor: not-allowed; }
+.zone-btn-ghost {
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1px solid #1d2530;
+  background: transparent;
+  color: #6c7a8a;
+  font-size: 12px;
+  cursor: pointer;
+  transition: background 0.13s, color 0.13s;
+}
+.zone-btn-ghost:hover { background: #141c26; color: #fca5a5; }
+
+/* ── Информация о загруженной зоне ── */
+.zone-saved-info {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 14px 10px;
+  font-size: 11px;
+  color: #3d5040;
+}
+
 /* ============= WebGL ошибка ============= */
 .webgl-error {
   position: absolute;
