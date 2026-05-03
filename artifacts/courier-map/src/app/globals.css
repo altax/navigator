@@ -1371,167 +1371,215 @@ html, body {
    Онбординг-экран (первый визит, выбор и загрузка районов)
    ===================================================================== */
 
+/* Полноэкранный оверлей — без прокрутки страницы */
 .ob-overlay {
   position: fixed;
   inset: 0;
   z-index: 9000;
-  background: #030810;
-  display: flex;
-  align-items: flex-start;
-  justify-content: center;
-  overflow-y: auto;
-  padding: 20px 16px 40px;
-}
-
-.ob-card {
-  width: 100%;
-  max-width: 460px;
+  background: #020913;
   display: flex;
   flex-direction: column;
-  gap: 0;
+  overflow: hidden;
+}
+
+/* Центральная колонка */
+.ob-wrap {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 520px;
+  margin: 0 auto;
+  padding: 0 20px 20px;
+  overflow: hidden;
 }
 
 /* ── Шапка ── */
-.ob-header {
+.ob-hdr {
   display: flex;
-  flex-direction: column;
   align-items: center;
-  text-align: center;
-  padding: 32px 0 28px;
+  gap: 12px;
+  padding: 18px 0 14px;
+  border-bottom: 1px solid #0f1e30;
+  margin-bottom: 16px;
+  flex-shrink: 0;
 }
 
-.ob-logo-icon {
-  width: 64px;
-  height: 64px;
-  background: #0d1e38;
+.ob-hdr-icon {
+  width: 44px;
+  height: 44px;
+  background: #0c1e38;
   border: 1.5px solid #1e3a5f;
-  border-radius: 18px;
+  border-radius: 12px;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 14px;
+  flex-shrink: 0;
 }
 
+.ob-hdr-text { flex: 1; }
+
 .ob-title {
-  font-size: 24px;
+  font-size: 18px;
   font-weight: 700;
   color: #f1f5f9;
-  margin: 0 0 6px;
-  letter-spacing: -0.02em;
+  margin: 0 0 2px;
+  letter-spacing: -0.01em;
 }
 
 .ob-subtitle {
-  font-size: 13px;
+  font-size: 12px;
   color: #475569;
   margin: 0;
 }
 
-/* ── Заголовок раздела ── */
-.ob-section-title {
-  font-size: 11px;
-  font-weight: 700;
-  color: #475569;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  margin: 0 0 12px;
-}
-
-/* ── Выбор режима ── */
-.ob-mode-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
-  margin-bottom: 22px;
-}
-
-.ob-mode-card {
-  background: #0a1220;
-  border: 2px solid #1a2840;
-  border-radius: 14px;
-  padding: 18px 14px;
-  cursor: pointer;
+/* ── Шаг "choose" — растягивается на всю высоту ── */
+.ob-choose {
+  flex: 1;
   display: flex;
   flex-direction: column;
+  overflow: hidden;
+  gap: 12px;
+}
+
+/* Переключатель режима */
+.ob-tabs {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.ob-tab {
+  flex: 1;
+  height: 68px;
+  background: #0a1220;
+  border: 2px solid #172234;
+  border-radius: 12px;
+  cursor: pointer;
+  display: flex;
   align-items: center;
-  gap: 7px;
-  text-align: center;
-  transition: border-color 0.15s, background 0.15s;
+  gap: 10px;
+  padding: 0 14px;
+  transition: border-color 0.14s, background 0.14s;
+  text-align: left;
 }
-.ob-mode-card:hover {
-  border-color: #2d4a70;
-  background: #0d1628;
-}
-.ob-mode-card.selected {
-  border-color: #3b82f6;
-  background: #0c1e3a;
+.ob-tab:hover { border-color: #243850; background: #0c1628; }
+.ob-tab.sel   { border-color: #3b82f6; background: #0c1e3a; }
+
+.ob-tab-icon { font-size: 20px; flex-shrink: 0; }
+.ob-tab-text { display: flex; flex-direction: column; gap: 2px; }
+.ob-tab-name { font-size: 13px; font-weight: 600; color: #94a3b8; }
+.ob-tab-sub  { font-size: 11px; color: #2e4462; }
+.ob-tab.sel .ob-tab-name { color: #93c5fd; }
+.ob-tab.sel .ob-tab-sub  { color: #3d6696; }
+
+/* Основная область — берёт оставшееся пространство */
+.ob-content {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
 }
 
-.ob-mode-icon { font-size: 26px; line-height: 1; }
-.ob-mode-name { font-size: 14px; font-weight: 600; color: #e2e8f0; }
-.ob-mode-desc { font-size: 11px; color: #4b6080; line-height: 1.4; }
-
-/* ── Пикер районов ── */
-.ob-picker {
-  margin-bottom: 20px;
+/* Строка с лейблом и счётчиком */
+.ob-pick-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 0 8px;
+  flex-shrink: 0;
 }
-
-.ob-picker-hint {
+.ob-pick-label { font-size: 12px; color: #3d5876; font-weight: 500; }
+.ob-pick-count {
   font-size: 12px;
+  font-weight: 700;
   color: #60a5fa;
-  margin-bottom: 14px;
+  background: #0c1e38;
+  border: 1px solid #1e3a5f;
+  padding: 2px 9px;
+  border-radius: 10px;
 }
-.ob-picker-hint strong { font-weight: 700; }
 
-.ob-group { margin-bottom: 14px; }
+/* Прокручиваемый список районов */
+.ob-scroll {
+  flex: 1;
+  overflow-y: auto;
+  min-height: 0;
+  background: #060e1b;
+  border: 1px solid #122030;
+  border-radius: 10px;
+  padding: 10px 12px;
+  scrollbar-width: thin;
+  scrollbar-color: #1a3050 transparent;
+}
+.ob-scroll::-webkit-scrollbar { width: 4px; }
+.ob-scroll::-webkit-scrollbar-track { background: transparent; }
+.ob-scroll::-webkit-scrollbar-thumb { background: #1a3050; border-radius: 2px; }
+
+.ob-group { margin-bottom: 10px; }
+.ob-group:last-child { margin-bottom: 0; }
 
 .ob-group-label {
   font-size: 10px;
   font-weight: 700;
-  color: #334155;
+  color: #1e3450;
   text-transform: uppercase;
   letter-spacing: 0.09em;
-  margin-bottom: 7px;
+  margin-bottom: 5px;
 }
 
-.ob-district-grid {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-}
+.ob-chips { display: flex; flex-wrap: wrap; gap: 5px; }
 
-.ob-district-btn {
-  background: #0a1220;
-  border: 1.5px solid #1a2840;
-  border-radius: 7px;
-  padding: 6px 11px;
+.ob-chip {
+  background: #0a1628;
+  border: 1.5px solid #172234;
+  border-radius: 6px;
+  padding: 5px 9px;
   font-size: 12px;
-  color: #7c9cbf;
+  color: #4a6a8a;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
-  gap: 5px;
-  transition: border-color 0.12s, color 0.12s, background 0.12s;
-  line-height: 1.3;
+  gap: 4px;
+  transition: border-color 0.1s, color 0.1s, background 0.1s;
 }
-.ob-district-btn:hover:not(.maxed) {
-  border-color: #2d4a70;
-  color: #a8c4e0;
-  background: #0d1628;
-}
-.ob-district-btn.checked {
-  border-color: #3b82f6;
-  color: #93c5fd;
-  background: #0c1e3a;
-}
-.ob-district-btn.maxed {
-  opacity: 0.28;
-  cursor: not-allowed;
-}
+.ob-chip:hover:not(.off) { border-color: #253d58; color: #6a8aaa; background: #0d1e30; }
+.ob-chip.on  { border-color: #3b82f6; color: #93c5fd; background: #0c1e3a; }
+.ob-chip.off { opacity: 0.22; cursor: not-allowed; }
 
-/* ── Кнопка старта ── */
-.ob-start-btn {
+/* "Весь город" — инфо по центру */
+.ob-all-body {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.ob-all-list {
+  background: #060e1b;
+  border: 1px solid #122030;
+  border-radius: 12px;
+  padding: 22px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
   width: 100%;
-  padding: 15px;
+}
+.ob-all-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 14px;
+  color: #5a7a9a;
+}
+.ob-all-icon { font-size: 18px; width: 24px; text-align: center; flex-shrink: 0; }
+.ob-all-warn { color: #8a6a3a; }
+
+/* CTA — всегда внизу */
+.ob-cta {
+  flex-shrink: 0;
+  width: 100%;
+  height: 52px;
   background: #2563eb;
   color: #fff;
   border: none;
@@ -1542,86 +1590,62 @@ html, body {
   transition: background 0.15s;
   margin-top: 4px;
 }
-.ob-start-btn:hover:not(:disabled) { background: #1d4ed8; }
-.ob-start-btn:disabled {
-  background: #141e30;
-  color: #2d4a6a;
-  cursor: not-allowed;
-}
+.ob-cta:hover:not(:disabled) { background: #1d4ed8; }
+.ob-cta.dim, .ob-cta:disabled { background: #0f1e2f; color: #233448; cursor: not-allowed; }
 
-/* ── Вид загрузки ── */
-.ob-progress-view {
+/* ── Загрузка и «готово» — по центру ── */
+.ob-center {
+  flex: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   gap: 14px;
-  padding: 32px 0 20px;
   text-align: center;
+  padding: 0 10px;
 }
 
-/* Спиннер */
-.ob-progress-spinner {
-  width: 40px;
-  height: 40px;
-  border: 3px solid #1e3352;
+.ob-spinner {
+  width: 44px;
+  height: 44px;
+  border: 3px solid #122030;
   border-top-color: #3b82f6;
   border-radius: 50%;
   animation: ob-spin 0.8s linear infinite;
 }
 @keyframes ob-spin { to { transform: rotate(360deg); } }
 
-.ob-progress-label {
-  font-size: 16px;
-  font-weight: 500;
-  color: #e2e8f0;
-}
-.ob-progress-count {
-  font-size: 13px;
-  color: #4b6080;
-}
+.ob-dl-name  { font-size: 17px; font-weight: 500; color: #e2e8f0; }
+.ob-dl-count { font-size: 13px; color: #2e4462; }
 
-.ob-progress-track {
+.ob-track {
   width: 100%;
+  max-width: 340px;
   height: 6px;
-  background: #0f1e2f;
+  background: #0c1728;
   border-radius: 3px;
   overflow: hidden;
 }
-.ob-progress-fill {
+.ob-fill {
   height: 100%;
   background: linear-gradient(90deg, #2563eb, #3b82f6);
   border-radius: 3px;
   transition: width 0.4s ease;
 }
 
-.ob-queue-hint {
-  font-size: 12px;
-  color: #334155;
-  max-width: 320px;
-}
+.ob-queue-hint { font-size: 12px; color: #1e3450; max-width: 320px; }
 
 .ob-cancel-btn {
-  margin-top: 6px;
   padding: 9px 28px;
   background: transparent;
-  border: 1.5px solid #1e2d3f;
-  color: #4b6080;
-  border-radius: 9px;
+  border: 1.5px solid #172234;
+  color: #2e4462;
+  border-radius: 8px;
   font-size: 13px;
   cursor: pointer;
   transition: border-color 0.15s, color 0.15s;
 }
 .ob-cancel-btn:hover { border-color: #ef4444; color: #f87171; }
-
-/* ── Вид "готово" ── */
-.ob-done-view {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 14px;
-  padding: 32px 0 20px;
-  text-align: center;
-}
 
 .ob-done-check {
   width: 60px;

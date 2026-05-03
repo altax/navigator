@@ -41,7 +41,7 @@ function zoneFeatures(selectedIds: string[], activeId: string | null) {
   });
 }
 
-const LAYERS  = ["district-mask-fill", "district-zones-dim", "district-zones-raise", "district-zones-border"];
+const LAYERS  = ["district-mask-fill", "district-zones-dim", "district-zones-raise", "district-zones-border", "district-zones-label"];
 const SOURCES = ["district-mask", "district-zones"];
 
 export function useDistrictOverlay(
@@ -104,6 +104,25 @@ export function useDistrictOverlay(
           "line-color": ["case", ["==", ["get", "active"], true], "#60a5fa", "#1e3a5f"],
           "line-width": ["case", ["==", ["get", "active"], true], 2.5, 1.2],
           "line-opacity": ["case", ["==", ["get", "active"], true], 1, 0.55],
+        },
+      });
+
+      // Название района по центру полигона
+      map.addLayer({
+        id: "district-zones-label", type: "symbol", source: "district-zones",
+        layout: {
+          "text-field": ["get", "name"],
+          "text-size": 13,
+          "text-anchor": "center",
+          "text-justify": "center",
+          "symbol-placement": "point",
+          "text-allow-overlap": false,
+          "text-ignore-placement": false,
+        },
+        paint: {
+          "text-color": ["case", ["==", ["get", "active"], true], "#93c5fd", "#2e4d6a"],
+          "text-halo-color": "#020913",
+          "text-halo-width": 2,
         },
       });
     };
