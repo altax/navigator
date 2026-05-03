@@ -1,19 +1,24 @@
 import { Router, type IRouter } from "express";
 import { exec, spawn } from "node:child_process";
 import { logger } from "../lib/logger";
+import { WORKSPACE } from "../lib/workspace";
+import { invalidateServiceCache } from "../lib/services";
 
 const router: IRouter = Router();
 
-const WORKSPACE = "/home/runner/workspace";
-
-const SERVICES: Record<string, { killPort: number; runScript: string }> = {
+const SERVICES: Record<
+  string,
+  { killPort: number; runScript: string; cacheKey: "martin" | "graphhopper" | "pelias" | null }
+> = {
   martin: {
-    killPort: 3000,
+    killPort:  3000,
     runScript: "stack/martin/run.sh",
+    cacheKey:  "martin",
   },
   graphhopper: {
-    killPort: 8000,
+    killPort:  8000,
     runScript: "stack/graphhopper/run.sh",
+    cacheKey:  "graphhopper",
   },
 };
 
@@ -36,14 +41,16 @@ router.post("/admin/restart/:service", (req, res) => {
   restarting[service] = true;
   logger.info({ service }, "Admin: manual restart requested");
 
+  // Invalidate the cached health status so the next check is live.
+  if (svc.cacheKey) invalidateServiceCache(svc.cacheKey);
+
   // Kill whatever is holding the port, then let the run.sh start fresh.
-  // run.sh itself also calls fuser -k so there is no double-bind risk.
   exec(`fuser -k ${svc.killPort}/tcp`, () => {
     setTimeout(() => {
       const child = spawn("bash", [svc.runScript], {
-        cwd: WORKSPACE,
+        cwd:      WORKSPACE,
         detached: true,
-        stdio: "ignore",
+        stdio:    "ignore",
       });
       child.unref();
 

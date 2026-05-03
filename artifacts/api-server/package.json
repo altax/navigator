@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "bash /home/runner/workspace/scripts/start-api-artifact.sh",
+    "dev": "bash /home/runner/workspace/scripts/start-api.sh",
     "build": "node ./build.mjs",
     "start": "node --enable-source-maps ./dist/index.mjs",
     "typecheck": "tsc -p tsconfig.json --noEmit"

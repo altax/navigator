@@ -1,9 +1,11 @@
 import { Router, type IRouter } from "express";
 import { pool } from "@workspace/db";
+import { PoiType } from "@workspace/api-zod";
 
 const router: IRouter = Router();
 
-const POI_TYPES = new Set(["entrance", "gate", "passage", "note", "parking", "stairs"]);
+// POI_TYPES is derived from the generated OpenAPI enum — single source of truth.
+const POI_TYPES = new Set(Object.values(PoiType));
 
 type PoiRow = {
   id: number;
@@ -81,16 +83,23 @@ router.get("/pois/stats", async (_req, res) => {
   const r = await pool.query<{ type: string; count: string }>(
     `SELECT type, COUNT(*)::text AS count FROM pois GROUP BY type ORDER BY type`,
   );
-  const total = r.rows.reduce((acc: number, row: { type: string; count: string }) => acc + Number(row.count), 0);
+  const total = r.rows.reduce(
+    (acc: number, row: { type: string; count: string }) => acc + Number(row.count),
+    0,
+  );
   res.json({
     total,
-    byType: r.rows.map((row: { type: string; count: string }) => ({ type: row.type, count: Number(row.count) })),
+    byType: r.rows.map((row: { type: string; count: string }) => ({
+      type: row.type,
+      count: Number(row.count),
+    })),
   });
 });
 
 router.get("/pois/h3", async (req, res) => {
   const resolution = Math.max(5, Math.min(11, Number(req.query.resolution ?? 8) || 8));
-  const r = await pool.query<{ h3: string; count: string; lng: number; lat: number }>(
+  type H3Row = { h3: string; count: string; lng: number; lat: number };
+  const r = await pool.query<H3Row>(
     `WITH cells AS (
        SELECT h3_lat_lng_to_cell(geom::point, $1::int) AS cell FROM pois
      )
@@ -101,7 +110,7 @@ router.get("/pois/h3", async (req, res) => {
     [resolution],
   );
   res.json(
-    r.rows.map((row) => ({
+    r.rows.map((row: H3Row) => ({
       h3: row.h3,
       count: Number(row.count),
       lng: Number(row.lng),

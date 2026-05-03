@@ -7,16 +7,16 @@
  */
 import { exec, spawn } from "node:child_process";
 import { logger } from "./logger";
+import { WORKSPACE } from "./workspace";
 
 const CHECK_INTERVAL_MS = 60_000;   // check every 60 s
 const FAIL_THRESHOLD    = 3;         // restart after 3 consecutive failures (~3 min)
-const WORKSPACE         = "/home/runner/workspace";
 
 interface ServiceConfig {
-  name:       string;
-  healthUrl:  string;
-  killPattern: string;      // pattern passed to pkill -f
-  runScript:  string;       // relative to WORKSPACE
+  name:        string;
+  healthUrl:   string;
+  killPattern: string;   // pattern passed to pkill -f
+  runScript:   string;   // relative to WORKSPACE
 }
 
 const SERVICES: ServiceConfig[] = [
@@ -58,8 +58,11 @@ function restartService(svc: ServiceConfig): void {
     exec("pgrep tippecanoe", (err, stdout) => {
       const running = !err && stdout.trim().length > 0;
       if (running) {
-        logger.info({ service: svc.name }, "Watchdog: tippecanoe building PMTiles — skipping Martin restart");
-        failCounts[svc.name] = 0;  // reset so we don't immediately retry
+        logger.info(
+          { service: svc.name },
+          "Watchdog: tippecanoe building PMTiles — skipping Martin restart",
+        );
+        failCounts[svc.name] = 0;
         return;
       }
       _doRestart(svc);
@@ -76,9 +79,7 @@ function _doRestart(svc: ServiceConfig): void {
 
   logger.warn({ service: svc.name }, "Watchdog: restarting service");
 
-  // Kill any stuck process first (ignore errors if already dead)
   exec(`pkill -f "${svc.killPattern}"`, () => {
-    // Wait a moment for the port to release
     setTimeout(() => {
       const child = spawn("bash", [svc.runScript], {
         cwd:      WORKSPACE,

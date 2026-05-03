@@ -1,11 +1,8 @@
 import { Router, type IRouter } from "express";
 import { statSync } from "node:fs";
 import { join } from "node:path";
+import { WORKSPACE } from "../lib/workspace";
 
-// __dirname injected by build.mjs banner for ESM bundles.
-// Compiled output: artifacts/api-server/dist/index.mjs → 3 levels up = workspace root.
-declare const __dirname: string;
-const WORKSPACE = join(__dirname, "..", "..", "..");
 const DATA = join(WORKSPACE, "data");
 
 function sz(rel: string): number {
@@ -26,13 +23,16 @@ function mb(bytes: number): string {
   return `${(bytes / 1_048_576).toFixed(0)} МБ`;
 }
 
+// Silence unused import warning — isValid is available for future step guards.
+void isValid;
+
 const router: IRouter = Router();
 
 router.get("/stack/progress", (_req, res) => {
-  const osmSize    = sz("spb-lo-filtered.osm.pbf");
+  const osmSize     = sz("spb-lo-filtered.osm.pbf");
   const geojsonSize = sz("spb-lo-filtered.geojsonseq");
   const pmtilesSize = sz("spb-lo.pmtiles");
-  const ghJarSize  = sz("graphhopper-web-10.0.jar");
+  const ghJarSize   = sz("graphhopper-web-10.0.jar");
   const ghEdgesSize = sz("graphhopper/spb-lo-ebike-gh/edges");
   const fontRegSize = sz("fonts/NotoSans-Regular.ttf");
   const fontBoldSize = sz("fonts/NotoSans-Bold.ttf");

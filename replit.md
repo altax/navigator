@@ -14,55 +14,71 @@ Personal courier application for Saint Petersburg and Leningrad Oblast. Provides
 | **GraphHopper** | 8000 | `GraphHopper` workflow → `bash stack/graphhopper/run.sh` |
 | **PostgreSQL + PostGIS** | 5432 | Replit-managed, host=`helium` db=`heliumdb` |
 
-### Workflows (4 active, 3 disabled)
+### Workflows (4 active)
 Active workflows (do not remove):
 - `Web App` → `bash scripts/start-webapp.sh`
 - `API Server` → `bash scripts/start-api.sh`
 - `Martin tile server` → `bash stack/martin/run.sh`
 - `GraphHopper` → `bash stack/graphhopper/run.sh`
 
-Disabled workflows (they FAIL intentionally — `dev` script set to `sleep infinity` to prevent port conflicts):
-- `artifacts/courier-map: web` — duplicate of Web App
-- `artifacts/api-server: API Server` — duplicate of API Server
-- `artifacts/mockup-sandbox: Component Preview Server` — not used in production
-
 ### Frontend (`artifacts/courier-map`)
-- **Framework**: Vite + React + TypeScript (converted from Next.js — 165ms cold start vs 40s)
+- **Framework**: Vite 7 + React 19 + TypeScript (converted from Next.js)
 - **Entry**: `index.html` → `src/main.tsx` → `src/app/App.tsx`
 - **Map**: MapLibre GL JS v4.7+ with PMTiles protocol
-- **Config**: `vite.config.ts` — port 5000, proxy `/api` → localhost:8080, `allowedHosts: "all"`
+- **Config**: `vite.config.ts` — port 5000, proxy `/api` → localhost:8080, `allowedHosts: true`
 - **Key files**:
-  - `src/app/App.tsx` — main component (2378 lines, map init + all logic)
-  - `src/app/BootstrapPanel.tsx` — startup progress overlay
-  - `src/app/globals.css` — all CSS (dark theme, 1068 lines)
-  - `src/app/api.ts` — typed fetch wrappers for `/api/*`
+  - `src/main.tsx` — bootstrap: adaptive worker count `Math.min(4, hardwareConcurrency - 1)`, SW registration
+  - `src/app/App.tsx` — main component (map init, icons, click handler, route rendering)
+  - `src/app/components/SearchBar.tsx` — debounced geocode search with abort
+  - `src/app/globals.css` — all CSS (dark theme)
   - `src/app/types.ts` — shared TypeScript types
-  - `public/sw.js` — Service Worker (5000-tile LRU cache, v3)
+  - `public/sw.js` — Service Worker (tile/POI/font LRU cache, stale-while-revalidate)
 
 ### Backend (`artifacts/api-server`)
-- **Framework**: Express 5 + TypeScript, built with esbuild
-- **Routes**: `/api/pois`, `/api/geo/geocode`, `/api/geo/route`, `/api/tiles/*` (Martin proxy), `/api/stack/status`, `/api/stack/progress`
-- **DB**: Drizzle ORM + PostGIS (lib/db)
-- **Geocoding**: Nominatim (primary) with SPb address normalizer
-- **Routing**: GraphHopper e-bike profile, fallback to OSRM
+- **Framework**: Express 5 + TypeScript, bundled with esbuild
+- **Build**: `pnpm --filter @workspace/api-server run build` → `artifacts/api-server/dist/index.mjs`
+- **Entry**: `src/index.ts` → starts server, tile warmup, watchdog
+- **Global error handler**: `src/app.ts` — all unhandled async errors → JSON (not HTML)
+- **Routes**:
+  - `GET /api/healthz` — liveness probe
+  - `GET/POST/PATCH/DELETE /api/pois/*` — POI CRUD (PostGIS)
+  - `GET/POST/DELETE /api/routes/*` — courier routes
+  - `GET /api/geo/geocode` — Nominatim with SPb address parser, Pelias fallback
+  - `GET /api/geo/reverse` — reverse geocode
+  - `GET /api/geo/route` — GraphHopper e-bike, OSRM fallback
+  - `GET /api/stack/status` — service health (10s TTL cache)
+  - `GET /api/stack/progress` — data pipeline progress
+  - `GET /api/tiles/*` — Martin proxy (PMTiles + POI layer + fonts)
+  - `POST /api/admin/restart/:service` — manual service restart
+- **Lib modules**:
+  - `src/lib/workspace.ts` — single WORKSPACE root constant (env → cwd)
+  - `src/lib/services.ts` — service health checks with 30s TTL cache
+  - `src/lib/watchdog.ts` — auto-restart Martin/GraphHopper after 3 failures
+  - `src/lib/logger.ts` — Pino structured logger
+  - `src/lib/spbAddress.ts` — SPb address normalizer/parser
+
+### Libraries (`lib/`)
+- `lib/db` — Drizzle ORM + pg pool (`db`, `pool`, schema exports)
+- `lib/api-spec/openapi.yaml` — OpenAPI 3.1 contract (single source of truth)
+- `lib/api-zod` — Orval-generated Zod schemas from openapi.yaml (`PoiType`, etc.)
+- `lib/api-client-react` — Orval-generated TanStack Query hooks from openapi.yaml
 
 ### Tile Data (`data/`)
-- `data/spb-lo.pmtiles` — 532MB, z5-z14, vector tiles (mvt+gzip) for all of SPb + Leningrad Oblast
+- `data/spb-lo.pmtiles` — ~750MB, z5-z14, vector tiles for SPb + Leningrad Oblast
 - `data/fonts/` — Noto Sans Regular + Bold for MapLibre glyphs
-- Build script: `scripts/z14-bg-build.sh` (tippecanoe → pmtiles convert → pmtiles edit)
+- Build script: `scripts/z14-bg-build.sh` (osmium → tippecanoe → pmtiles)
 
 ### Map Features
 - **3D Buildings**: `fill-extrusion` at zoom 15+, height from `building:levels * 3m`
 - **House Numbers**: always visible zoom 13+
-- **POI Clustering**: native MapLibre clustering (clusterMaxZoom=15)
-- **Animated Route**: RAF-animated "ant march" dash sequence
-- **Turn-by-Turn**: GraphHopper steps with distances
-- **Building Highlight**: persistent orange/yellow highlight until dismissed
-- **Speed**: `fadeDuration:0`, `setWorkerCount(6)`, `maxTileCacheSize:600`, Service Worker LRU
+- **POI Layer**: PostGIS dynamic layer via Martin, cluster at zoom < 15
+- **Address Search**: debounced 420ms, abort on rapid typing, structured + free Nominatim
+- **Building Highlight**: orange selection pill, persists until dismissed
+- **Speed**: `fadeDuration:0`, adaptive worker count (2-4), `maxTileCacheSize:600`, SW LRU
 
 ## Key Scripts
-- `scripts/start-webapp.sh` — starts Vite on port 5000 (used by `Web App` workflow)
-- `scripts/start-api.sh` — builds and starts Express API on port 8080
+- `scripts/start-webapp.sh` — starts Vite on port 5000
+- `scripts/start-api.sh` — installs deps, inits DB, builds and starts API on 8080
 - `scripts/z14-bg-build.sh` — background z14 PMTiles rebuild
 - `stack/martin/run.sh` — starts Martin, auto-triggers z14 rebuild if maxzoom < 14
 - `stack/graphhopper/run.sh` — starts GraphHopper with e-bike profile
@@ -71,3 +87,21 @@ Disabled workflows (they FAIL intentionally — `dev` script set to `sleep infin
 - PostgreSQL 16 / PostGIS 3.5 / h3_postgis
 - Tables: `pois` (with h3_r9 trigger), `courier_routes` (auto distance_m)
 - Connection: `DATABASE_URL` env var (Replit managed)
+
+## Codegen Pipeline
+Run from `lib/api-spec/`:
+```bash
+pnpm orval
+```
+Regenerates:
+- `lib/api-client-react/src/generated/` — TanStack Query hooks
+- `lib/api-zod/src/generated/` — Zod schemas + TypeScript enums
+
+Always run codegen after changing `openapi.yaml`.
+
+## Architecture Notes
+- **POI type validation** (`pois.ts`) uses `PoiType` enum from `@workspace/api-zod` — single source of truth from OpenAPI spec. No hardcoded string sets.
+- **Service health checks** are TTL-cached (30s) in `services.ts` — geocode and route requests do NOT fire live HTTP checks per request.
+- **WORKSPACE path** resolved via `src/lib/workspace.ts` — never hardcoded. Uses `WORKSPACE_ROOT` env var or `process.cwd()`.
+- **Error handling** — Express 5 global error handler in `app.ts` ensures all unhandled async errors return JSON (not HTML).
+- **Watchdog** auto-restarts Martin/GraphHopper after 3 consecutive failed health checks (~3 min). Skips Martin restart if tippecanoe is building PMTiles.
