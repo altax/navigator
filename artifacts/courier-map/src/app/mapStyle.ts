@@ -429,22 +429,15 @@ export function buildStyle(stack: StackStatus | null): StyleSpecification {
           },
         },
         {
-          id: "selected-building-fill",
-          type: "fill" as const,
-          source: "selected-building",
-          maxzoom: 15,
-          paint: { "fill-color": "#fb923c", "fill-opacity": 1 },
-        },
-        {
           id: "selected-building-3d",
           type: "fill-extrusion" as const,
           source: "selected-building",
-          minzoom: 15,
           paint: {
             "fill-extrusion-color": "#fb923c",
-            "fill-extrusion-height": ["*", ["coalesce", ["to-number", ["get", "building:levels"]], 1], 3],
+            "fill-extrusion-height": ["max", ["*", ["coalesce", ["to-number", ["get", "building:levels"]], 1], 3], 8],
             "fill-extrusion-base": ["coalesce", ["to-number", ["get", "min_height"]], 0],
             "fill-extrusion-opacity": 1,
+            "fill-extrusion-vertical-gradient": false,
           },
         },
         {

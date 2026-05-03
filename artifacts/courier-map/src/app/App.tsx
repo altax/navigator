@@ -3,6 +3,7 @@ import maplibregl, { Map as MlMap, type MapLayerMouseEvent } from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
 import { buildStyle, SPB_CENTER } from "./mapStyle";
 import { drawMetroIcon, drawMetroEntranceIcon, drawZebraIcon } from "./mapIcons";
+import { SearchBar } from "./components/SearchBar";
 
 export default function App() {
   const mapRef = useRef<MlMap | null>(null);
@@ -148,7 +149,7 @@ export default function App() {
     }
   }, []);
 
-  const buildBuildingLabel = (props: Record<string, string | number | undefined>): string => {
+  const buildBuildingLabel = useCallback((props: Record<string, string | number | undefined>): string => {
     const housenumber = props["addr:housenumber"];
     const street = props["addr:street"];
     const name = props["name"];
@@ -156,7 +157,43 @@ export default function App() {
     if (housenumber) return `№ ${housenumber}`;
     if (name) return String(name);
     return "Здание";
-  };
+  }, []);
+
+  // ── Try to highlight building at coords ────────────────────────────────────
+  const highlightAt = useCallback((lng: number, lat: number) => {
+    const map = mapRef.current;
+    if (!map) return;
+    const tryHighlight = () => {
+      const pt = map.project([lng, lat]);
+      const r = 24;
+      const feats = map.queryRenderedFeatures(
+        [[pt.x - r, pt.y - r], [pt.x + r, pt.y + r]],
+        { layers: ["buildings"] },
+      );
+      if (feats.length > 0) {
+        const f = feats[0];
+        setSelectedBuilding(
+          f as unknown as GeoJSON.Feature,
+          buildBuildingLabel((f.properties || {}) as Record<string, string | number | undefined>),
+        );
+        return true;
+      }
+      return false;
+    };
+    if (!tryHighlight()) {
+      setTimeout(tryHighlight, 600);
+      setTimeout(tryHighlight, 1200);
+    }
+  }, [setSelectedBuilding, buildBuildingLabel]);
+
+  // ── Fly to + highlight ─────────────────────────────────────────────────────
+  const flyToAndHighlight = useCallback((lng: number, lat: number, label: string) => {
+    const map = mapRef.current;
+    if (!map) return;
+    setSelectedBuildingInfo({ label });
+    map.flyTo({ center: [lng, lat], zoom: 17, duration: 1100, essential: true });
+    map.once("moveend", () => highlightAt(lng, lat));
+  }, [highlightAt]);
 
   // ── Click handler ──────────────────────────────────────────────────────────
   useEffect(() => {
@@ -203,7 +240,7 @@ export default function App() {
       map.off("mouseenter", "buildings", onEnter);
       map.off("mouseleave", "buildings", onLeave);
     };
-  }, [setSelectedBuilding]);
+  }, [setSelectedBuilding, buildBuildingLabel]);
 
   // ── Render ─────────────────────────────────────────────────────────────────
   return (
@@ -217,6 +254,8 @@ export default function App() {
           <p>Откройте приложение в обычном браузере (Chrome, Firefox, Safari).</p>
         </div>
       )}
+
+      <SearchBar onSelect={flyToAndHighlight} />
 
       {selectedBuildingInfo && (
         <button className="selection-pill" onClick={() => setSelectedBuilding(null, null)} title="Снять выделение здания">
