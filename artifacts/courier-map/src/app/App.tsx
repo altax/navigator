@@ -69,6 +69,23 @@ export default function App() {
     };
 
     let prefetchRaf: ReturnType<typeof setTimeout> | null = null;
+    let prefetchAbort: AbortController | null = null;
+
+    const runQueue = (urls: string[], concurrency: number) => {
+      if (prefetchAbort) prefetchAbort.abort();
+      prefetchAbort = new AbortController();
+      const signal = prefetchAbort.signal;
+      let idx = 0;
+      const next = () => {
+        if (signal.aborted || idx >= urls.length) return;
+        const url = urls[idx++];
+        fetch(url, { priority: "low", signal } as RequestInit)
+          .catch(() => {})
+          .finally(next);
+      };
+      for (let i = 0; i < Math.min(concurrency, urls.length); i++) next();
+    };
+
     const schedulePrefetch = () => {
       if (prefetchRaf) clearTimeout(prefetchRaf);
       prefetchRaf = setTimeout(() => {
@@ -76,24 +93,21 @@ export default function App() {
         if (!m) return;
         const b = m.getBounds();
         const rawZ = m.getZoom();
-        const buf = 2;
+        const buf = 1;
         const urls: string[] = [];
-        for (const z of [Math.floor(rawZ), Math.max(10, Math.floor(rawZ) - 1)]) {
-          const nw = tileCoord(b.getWest(), b.getNorth(), z);
-          const se = tileCoord(b.getEast(), b.getSouth(), z);
-          for (let tx = nw.x - buf; tx <= se.x + buf; tx++) {
-            for (let ty = nw.y - buf; ty <= se.y + buf; ty++) {
-              if (tx >= nw.x && tx <= se.x && ty >= nw.y && ty <= se.y) continue;
-              const n = 1 << z;
-              if (tx < 0 || ty < 0 || tx >= n || ty >= n) continue;
-              urls.push(`/api/tiles/spb-lo/${z}/${tx}/${ty}`);
-            }
+        const z = Math.floor(rawZ);
+        const nw = tileCoord(b.getWest(), b.getNorth(), z);
+        const se = tileCoord(b.getEast(), b.getSouth(), z);
+        for (let tx = nw.x - buf; tx <= se.x + buf; tx++) {
+          for (let ty = nw.y - buf; ty <= se.y + buf; ty++) {
+            if (tx >= nw.x && tx <= se.x && ty >= nw.y && ty <= se.y) continue;
+            const n = 1 << z;
+            if (tx < 0 || ty < 0 || tx >= n || ty >= n) continue;
+            urls.push(`/api/tiles/spb-lo/${z}/${tx}/${ty}`);
           }
         }
-        urls.forEach((url) =>
-          fetch(url, { priority: "low" } as RequestInit).catch(() => {}),
-        );
-      }, 300);
+        runQueue(urls, 4);
+      }, 500);
     };
 
     map.on("moveend", schedulePrefetch);
@@ -102,6 +116,7 @@ export default function App() {
 
     return () => {
       if (prefetchRaf) clearTimeout(prefetchRaf);
+      if (prefetchAbort) prefetchAbort.abort();
       try { map.remove(); } catch {}
       mapRef.current = null;
     };
