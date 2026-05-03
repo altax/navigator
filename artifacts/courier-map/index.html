@@ -6,26 +6,13 @@
     <title>Карта курьера — СПб и ЛО</title>
     <meta name="description" content="Личная карта курьера: подъезды, проходы, заметки. PostGIS + MapLibre + PMTiles + GraphHopper." />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-
     <!--
-      Шрифты карты: загружаем до того, как MapLibre начнёт рендерить лейблы.
-      Без preload шрифты грузятся в момент первого рендера тайлов — пустые лейблы
-      мигают 200-500 мс. С preload они уже в кеше к нужному моменту.
-
-      Диапазоны:
-        0-255    — ASCII + Latin (адреса, POI на латинице)
-        256-511  — Latin Extended (европейские символы)
-        1024-1279 — Кириллица (русские названия — основной алфавит)
+      Шрифты карты НЕ грузим через <link rel="preload">.
+      MapLibre запрашивает их через WebWorker — браузер не может сопоставить
+      preload с воркерным запросом и выбрасывает предупреждения в консоль.
+      Service Worker прогревает шрифты при установке (WARMUP_FONTS в sw.js)
+      и отдаёт их из кеша напрямую — без лишних запросов.
     -->
-    <link rel="preload" as="fetch" crossorigin href="/api/tiles/font/Noto%20Sans%20Regular/0-255.pbf" />
-    <link rel="preload" as="fetch" crossorigin href="/api/tiles/font/Noto%20Sans%20Regular/256-511.pbf" />
-    <link rel="preload" as="fetch" crossorigin href="/api/tiles/font/Noto%20Sans%20Regular/1024-1279.pbf" />
-    <link rel="preload" as="fetch" crossorigin href="/api/tiles/font/Noto%20Sans%20Bold/0-255.pbf" />
-    <link rel="preload" as="fetch" crossorigin href="/api/tiles/font/Noto%20Sans%20Bold/256-511.pbf" />
-    <link rel="preload" as="fetch" crossorigin href="/api/tiles/font/Noto%20Sans%20Bold/1024-1279.pbf" />
-
-    <!-- Главный модуль: даём браузеру начать парсинг как можно раньше -->
-    <link rel="modulepreload" href="/src/main.tsx" />
   </head>
   <body>
     <div id="root"></div>
