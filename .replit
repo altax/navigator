@@ -24,6 +24,14 @@ args = "Martin tile server"
 task = "workflow.run"
 args = "GraphHopper"
 
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "Web App"
+
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "API Server"
+
 [[workflows.workflow]]
 name = "Martin tile server"
 author = "agent"
@@ -46,6 +54,30 @@ args = "bash stack/graphhopper/run.sh"
 [workflows.workflow.metadata]
 outputType = "console"
 
+[[workflows.workflow]]
+name = "Web App"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "bash scripts/start-webapp.sh"
+waitForPort = 5000
+
+[workflows.workflow.metadata]
+outputType = "webview"
+
+[[workflows.workflow]]
+name = "API Server"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "bash scripts/start-api.sh"
+waitForPort = 8080
+
+[workflows.workflow.metadata]
+outputType = "console"
+
 [agent]
 stack = "BEST_EFFORT_FALLBACK"
 expertMode = true
@@ -63,10 +95,6 @@ localPort = 5000
 externalPort = 80
 
 [[ports]]
-localPort = 5001
-externalPort = 3002
-
-[[ports]]
 localPort = 8000
 externalPort = 8000
 
@@ -77,10 +105,6 @@ externalPort = 3003
 [[ports]]
 localPort = 8080
 externalPort = 8080
-
-[[ports]]
-localPort = 8081
-externalPort = 8081
 
 [[ports]]
 localPort = 8082
