@@ -2,3 +2,4 @@
 # They are listed in .gitignore and are NOT tracked in git.
 # Run scripts/git_untrack_data.sh once before pushing to clean up any
 # previously tracked LFS pointers.
+data/spb-lo.pmtiles.tmp filter=lfs diff=lfs merge=lfs -text

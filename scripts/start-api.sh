@@ -1,8 +1,5 @@
 #!/bin/bash
-# API server startup: DB setup + bootstrap.
-# The actual HTTP server (port 8080) is managed by the
-# "artifacts/api-server: API Server" workflow which runs start-api-artifact.sh.
-# This script handles one-time setup so the Project workflow stays clean.
+# API server startup: DB setup + bootstrap + build + serve.
 set -euo pipefail
 cd /home/runner/workspace
 
@@ -59,18 +56,9 @@ fi
 (bash scripts/bootstrap.sh >> /tmp/bootstrap.log 2>&1) &
 echo "[api] GIS data pipeline running in background. Logs: /tmp/bootstrap.log"
 
-# ── 4. Wait for the artifact API server to come up on port 8080 ──────
-echo "[api] Waiting for API server on port $PORT (started by artifact workflow)..."
-HEX=$(printf "%04X" "$PORT")
-for i in $(seq 1 60); do
-  if awk -v hex="$HEX" \
-    'NR>1{split($2,a,":");if(toupper(a[2])==hex && $4=="0A"){found=1;exit}} END{exit !found}' \
-    /proc/net/tcp /proc/net/tcp6 2>/dev/null; then
-    echo "[api] API server is up on port $PORT."
-    break
-  fi
-  sleep 2
-done
-
-# Stay alive so this workflow keeps running
-exec tail -f /dev/null
+# ── 4. Build and start the API server ────────────────────────────────
+echo "[api] Building API server..."
+cd artifacts/api-server
+pnpm run build
+echo "[api] Starting API server on port $PORT..."
+exec node --enable-source-maps ./dist/index.mjs
