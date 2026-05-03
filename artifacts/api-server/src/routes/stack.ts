@@ -1,6 +1,6 @@
 import { Router, type IRouter } from "express";
 import { pool } from "@workspace/db";
-import { checkMartin, checkGraphHopper, checkPelias, MARTIN_URL } from "../lib/services";
+import { checkMartin, checkGraphHopper, checkPelias } from "../lib/services";
 
 const router: IRouter = Router();
 

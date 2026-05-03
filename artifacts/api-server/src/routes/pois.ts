@@ -5,7 +5,8 @@ import { PoiType } from "@workspace/api-zod";
 const router: IRouter = Router();
 
 // POI_TYPES is derived from the generated OpenAPI enum — single source of truth.
-const POI_TYPES = new Set(Object.values(PoiType));
+// Typed as Set<string> so .has(s: string) doesn't require a narrowed PoiType argument.
+const POI_TYPES = new Set<string>(Object.values(PoiType));
 
 type PoiRow = {
   id: number;

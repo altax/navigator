@@ -37,6 +37,31 @@ export interface StackStatus {
   basemap: StackStatusBasemap;
 }
 
+export interface ProgressStep {
+  id: string;
+  label: string;
+  done: boolean;
+  /**
+   * @minimum 0
+   * @maximum 100
+   */
+  pct: number;
+  /** @nullable */
+  detail?: string | null;
+  active: boolean;
+}
+
+export interface StackProgress {
+  steps: ProgressStep[];
+  allDone: boolean;
+}
+
+export interface RestartResponse {
+  ok: boolean;
+  service: string;
+  message: string;
+}
+
 export type PoiType = (typeof PoiType)[keyof typeof PoiType];
 
 export const PoiType = {

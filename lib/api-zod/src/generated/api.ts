@@ -45,6 +45,42 @@ export const GetStackStatusResponse = zod.object({
 });
 
 /**
+ * @summary Progress of the data pipeline (OSM → GeoJSON → PMTiles → GraphHopper)
+ */
+export const getStackProgressResponseStepsItemPctMin = 0;
+export const getStackProgressResponseStepsItemPctMax = 100;
+
+export const GetStackProgressResponse = zod.object({
+  steps: zod.array(
+    zod.object({
+      id: zod.string(),
+      label: zod.string(),
+      done: zod.boolean(),
+      pct: zod
+        .number()
+        .min(getStackProgressResponseStepsItemPctMin)
+        .max(getStackProgressResponseStepsItemPctMax),
+      detail: zod.string().nullish(),
+      active: zod.boolean(),
+    }),
+  ),
+  allDone: zod.boolean(),
+});
+
+/**
+ * @summary Manually restart a self-hosted service (Martin or GraphHopper)
+ */
+export const RestartServiceParams = zod.object({
+  service: zod.enum(["martin", "graphhopper"]),
+});
+
+export const RestartServiceResponse = zod.object({
+  ok: zod.boolean(),
+  service: zod.string(),
+  message: zod.string(),
+});
+
+/**
  * @summary List POIs (optionally filtered by bbox and types)
  */
 export const listPoisQueryLimitDefault = 1000;

@@ -9,10 +9,6 @@ function sz(rel: string): number {
   try { return statSync(join(DATA, rel)).size; } catch { return 0; }
 }
 
-function isValid(rel: string, minBytes: number): boolean {
-  return sz(rel) >= minBytes;
-}
-
 function pct(current: number, expected: number): number {
   return Math.min(99, Math.round((current / expected) * 100));
 }
@@ -22,9 +18,6 @@ function mb(bytes: number): string {
   if (bytes < 1_048_576) return `${Math.round(bytes / 1024)} КБ`;
   return `${(bytes / 1_048_576).toFixed(0)} МБ`;
 }
-
-// Silence unused import warning — isValid is available for future step guards.
-void isValid;
 
 const router: IRouter = Router();
 

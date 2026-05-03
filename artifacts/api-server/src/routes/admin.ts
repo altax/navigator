@@ -1,4 +1,4 @@
-import { Router, type IRouter } from "express";
+import { Router, type IRouter, type RequestHandler } from "express";
 import { exec, spawn } from "node:child_process";
 import { logger } from "../lib/logger";
 import { WORKSPACE } from "../lib/workspace";
@@ -24,8 +24,28 @@ const SERVICES: Record<
 
 const restarting: Record<string, boolean> = {};
 
-router.post("/admin/restart/:service", (req, res) => {
-  const { service } = req.params;
+// ── Optional secret-based auth ──────────────────────────────────────────────
+// If ADMIN_SECRET env var is set, the request must include
+// Authorization: Bearer <secret>. If not set, the endpoint is unrestricted
+// (acceptable for a personal self-hosted tool on a trusted network).
+const adminAuth: RequestHandler = (req, res, next) => {
+  const secret = process.env.ADMIN_SECRET;
+  if (!secret) {
+    next();
+    return;
+  }
+  const authHeader = req.headers.authorization ?? "";
+  const token = authHeader.startsWith("Bearer ") ? authHeader.slice(7) : "";
+  if (token !== secret) {
+    res.status(401).json({ error: "unauthorized" });
+    return;
+  }
+  next();
+};
+
+router.post("/admin/restart/:service", adminAuth, (req, res) => {
+  // Coerce to string — Express 5 params can be string | string[] for regex routes.
+  const service = String(req.params["service"] ?? "");
   const svc = SERVICES[service];
 
   if (!svc) {

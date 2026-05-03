@@ -1,10 +1,22 @@
-import express, { type Express, type ErrorRequestHandler } from "express";
+import express, { type Express, type ErrorRequestHandler, type RequestHandler } from "express";
 import cors from "cors";
 import pinoHttp from "pino-http";
 import router from "./routes";
 import { logger } from "./lib/logger";
 
 const app: Express = express();
+
+// ── Security headers ────────────────────────────────────────────────────────
+// Applied before all routes. Minimal set that is safe for a JSON API server.
+// No X-Frame-Options (this API is not a page), no full CSP (not serving HTML).
+const securityHeaders: RequestHandler = (_req, res, next) => {
+  res.setHeader("X-Content-Type-Options", "nosniff");
+  res.setHeader("Referrer-Policy", "strict-origin-when-cross-origin");
+  res.setHeader("X-DNS-Prefetch-Control", "off");
+  next();
+};
+
+app.use(securityHeaders);
 
 app.use(
   pinoHttp({
@@ -26,8 +38,10 @@ app.use(
   }),
 );
 app.use(cors());
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+
+// Explicit body size limit — prevents accidental or malicious oversized payloads.
+app.use(express.json({ limit: "512kb" }));
+app.use(express.urlencoded({ extended: true, limit: "512kb" }));
 
 app.use("/api", router);
 

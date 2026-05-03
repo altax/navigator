@@ -13,6 +13,7 @@ tags:
   - name: routes
   - name: geo
   - name: stack
+  - name: admin
 paths:
   /healthz:
     get:
@@ -39,6 +40,43 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/StackStatus"
+
+  /stack/progress:
+    get:
+      operationId: getStackProgress
+      tags: [stack]
+      summary: Progress of the data pipeline (OSM → GeoJSON → PMTiles → GraphHopper)
+      responses:
+        "200":
+          description: Pipeline progress
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/StackProgress"
+
+  /admin/restart/{service}:
+    post:
+      operationId: restartService
+      tags: [admin]
+      summary: Manually restart a self-hosted service (Martin or GraphHopper)
+      parameters:
+        - name: service
+          in: path
+          required: true
+          schema:
+            type: string
+            enum: [martin, graphhopper]
+      responses:
+        "200":
+          description: Restart initiated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RestartResponse"
+        "404":
+          description: Unknown service
+        "409":
+          description: Already restarting
 
   /pois:
     get:
@@ -283,6 +321,8 @@ paths:
                     type: array
                     items:
                       $ref: "#/components/schemas/GeocodeResult"
+        "429":
+          description: Rate limit exceeded
 
   /geo/reverse:
     get:
@@ -378,6 +418,36 @@ components:
         label: { type: string }
         detail:
           type: ["string", "null"]
+
+    StackProgress:
+      type: object
+      required: [steps, allDone]
+      properties:
+        steps:
+          type: array
+          items:
+            $ref: "#/components/schemas/ProgressStep"
+        allDone: { type: boolean }
+
+    ProgressStep:
+      type: object
+      required: [id, label, done, pct, active]
+      properties:
+        id: { type: string }
+        label: { type: string }
+        done: { type: boolean }
+        pct: { type: integer, minimum: 0, maximum: 100 }
+        detail:
+          type: ["string", "null"]
+        active: { type: boolean }
+
+    RestartResponse:
+      type: object
+      required: [ok, service, message]
+      properties:
+        ok: { type: boolean }
+        service: { type: string }
+        message: { type: string }
 
     Poi:
       type: object

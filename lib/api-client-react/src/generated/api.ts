@@ -31,10 +31,12 @@ import type {
   Poi,
   PoiStats,
   PoiWithDistance,
+  RestartResponse,
   RouteBetweenParams,
   RouteResponse,
   SearchAddress200,
   SearchAddressParams,
+  StackProgress,
   StackStatus,
   UpdatePoiInput,
 } from "./api.schemas";
@@ -197,6 +199,165 @@ export function useGetStackStatus<
 
   return { ...query, queryKey: queryOptions.queryKey };
 }
+
+/**
+ * @summary Progress of the data pipeline (OSM → GeoJSON → PMTiles → GraphHopper)
+ */
+export const getGetStackProgressUrl = () => {
+  return `/api/stack/progress`;
+};
+
+export const getStackProgress = async (
+  options?: RequestInit,
+): Promise<StackProgress> => {
+  return customFetch<StackProgress>(getGetStackProgressUrl(), {
+    ...options,
+    method: "GET",
+  });
+};
+
+export const getGetStackProgressQueryKey = () => {
+  return [`/api/stack/progress`] as const;
+};
+
+export const getGetStackProgressQueryOptions = <
+  TData = Awaited<ReturnType<typeof getStackProgress>>,
+  TError = ErrorType<unknown>,
+>(options?: {
+  query?: UseQueryOptions<
+    Awaited<ReturnType<typeof getStackProgress>>,
+    TError,
+    TData
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getGetStackProgressQueryKey();
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof getStackProgress>>
+  > = ({ signal }) => getStackProgress({ signal, ...requestOptions });
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof getStackProgress>>,
+    TError,
+    TData
+  > & { queryKey: QueryKey };
+};
+
+export type GetStackProgressQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getStackProgress>>
+>;
+export type GetStackProgressQueryError = ErrorType<unknown>;
+
+/**
+ * @summary Progress of the data pipeline (OSM → GeoJSON → PMTiles → GraphHopper)
+ */
+
+export function useGetStackProgress<
+  TData = Awaited<ReturnType<typeof getStackProgress>>,
+  TError = ErrorType<unknown>,
+>(options?: {
+  query?: UseQueryOptions<
+    Awaited<ReturnType<typeof getStackProgress>>,
+    TError,
+    TData
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+  const queryOptions = getGetStackProgressQueryOptions(options);
+
+  const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
+    queryKey: QueryKey;
+  };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+/**
+ * @summary Manually restart a self-hosted service (Martin or GraphHopper)
+ */
+export const getRestartServiceUrl = (service: "martin" | "graphhopper") => {
+  return `/api/admin/restart/${service}`;
+};
+
+export const restartService = async (
+  service: "martin" | "graphhopper",
+  options?: RequestInit,
+): Promise<RestartResponse> => {
+  return customFetch<RestartResponse>(getRestartServiceUrl(service), {
+    ...options,
+    method: "POST",
+  });
+};
+
+export const getRestartServiceMutationOptions = <
+  TError = ErrorType<void>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof restartService>>,
+    TError,
+    { service: "martin" | "graphhopper" },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof restartService>>,
+  TError,
+  { service: "martin" | "graphhopper" },
+  TContext
+> => {
+  const mutationKey = ["restartService"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof restartService>>,
+    { service: "martin" | "graphhopper" }
+  > = (props) => {
+    const { service } = props ?? {};
+
+    return restartService(service, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type RestartServiceMutationResult = NonNullable<
+  Awaited<ReturnType<typeof restartService>>
+>;
+
+export type RestartServiceMutationError = ErrorType<void>;
+
+/**
+ * @summary Manually restart a self-hosted service (Martin or GraphHopper)
+ */
+export const useRestartService = <
+  TError = ErrorType<void>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof restartService>>,
+    TError,
+    { service: "martin" | "graphhopper" },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof restartService>>,
+  TError,
+  { service: "martin" | "graphhopper" },
+  TContext
+> => {
+  return useMutation(getRestartServiceMutationOptions(options));
+};
 
 /**
  * @summary List POIs (optionally filtered by bbox and types)
@@ -1227,7 +1388,7 @@ export const getSearchAddressQueryKey = (params?: SearchAddressParams) => {
 
 export const getSearchAddressQueryOptions = <
   TData = Awaited<ReturnType<typeof searchAddress>>,
-  TError = ErrorType<unknown>,
+  TError = ErrorType<void>,
 >(
   params: SearchAddressParams,
   options?: {
@@ -1257,7 +1418,7 @@ export const getSearchAddressQueryOptions = <
 export type SearchAddressQueryResult = NonNullable<
   Awaited<ReturnType<typeof searchAddress>>
 >;
-export type SearchAddressQueryError = ErrorType<unknown>;
+export type SearchAddressQueryError = ErrorType<void>;
 
 /**
  * @summary Forward geocoding (via Pelias when up, falls back to Nominatim)
@@ -1265,7 +1426,7 @@ export type SearchAddressQueryError = ErrorType<unknown>;
 
 export function useSearchAddress<
   TData = Awaited<ReturnType<typeof searchAddress>>,
-  TError = ErrorType<unknown>,
+  TError = ErrorType<void>,
 >(
   params: SearchAddressParams,
   options?: {
