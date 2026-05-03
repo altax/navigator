@@ -53,9 +53,10 @@ router.get(/^\/tiles(?:\/(.*))?$/, async (req, res) => {
     const etag = upstream.headers.get("etag");
     if (etag) res.setHeader("etag", etag);
 
-    // ── Content-Encoding (gzip от Martin) ──────────────────────────────────
-    const ce = upstream.headers.get("content-encoding");
-    if (ce) res.setHeader("content-encoding", ce);
+    // NOTE: content-encoding НЕ пробрасываем.
+    // Node.js fetch (undici) автоматически декомпрессирует gzip/br тело —
+    // тело в upstream.body уже разжато. Если переслать заголовок gzip,
+    // браузер попытается разжать уже разжатые байты → ERR_CONTENT_DECODING_FAILED.
 
     // ── 304 Not Modified — тело не нужно ──────────────────────────────────
     if (upstream.status === 304) {
