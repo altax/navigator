@@ -12,7 +12,7 @@ interface Props {
   onCancelAll:       () => void;
   onComplete:        (mode: MapMode, selectedIds: string[], warehouseAddress: string, warehouseCoords: [number, number] | null) => void;
   mapRef:            React.RefObject<MlMap | null>;
-  onWarehouseChange: (coords: [number, number] | null) => void;
+  onWarehouseChange: (coords: [number, number] | null, inRadius: string[]) => void;
   onDistrictHover:   (id: string | null) => void;
 }
 
@@ -39,6 +39,7 @@ export function OnboardingScreen({
   const [geocodeError,    setGeocodeError]   = useState<string | null>(null);
   const [warehouseCoords, setWarehouseCoords] = useState<[number, number] | null>(null);
   const [inRadiusIds,     setInRadiusIds]    = useState<string[]>([]);
+  const [hovering,        setHovering]       = useState(false);
 
   const downloadStartedRef = useRef(false);
   const prevPhaseRef       = useRef(downloadStatus.phase);
@@ -61,7 +62,7 @@ export function OnboardingScreen({
       setWarehouseCoords(coords);
       setInRadiusIds(inRadius);
       setPickedIds(inRadius.slice(0, 4));
-      onWarehouseChange(coords);
+      onWarehouseChange(coords, inRadius);
       mapRef.current?.flyTo({ center: coords, zoom: 11, duration: 1000 });
     } catch (e) {
       setGeocodeError((e as Error).message);
@@ -70,6 +71,7 @@ export function OnboardingScreen({
   };
 
   const handleChipHover = (id: string | null) => {
+    setHovering(id !== null);
     onDistrictHover(id);
     if (id) {
       const d = districtById(id);
@@ -115,8 +117,13 @@ export function OnboardingScreen({
     ? DISTRICT_GROUPS.map(g => ({ ...g, ids: g.ids.filter(id => inRadiusIds.includes(id)) })).filter(g => g.ids.length > 0)
     : DISTRICT_GROUPS;
 
-  // На шаге choose карта видна (сайдбар), на остальных — глухая подложка
-  const overlayClass = `ob-overlay${step === "choose" ? " ob-overlay--choose" : ""}`;
+  // На шаге choose карта видна (сайдбар), на остальных — глухая подложка.
+  // ob-hovering: при наведении на чип — панель уходит, карта открывается полностью.
+  const overlayClass = [
+    "ob-overlay",
+    step === "choose" ? "ob-overlay--choose" : "",
+    step === "choose" && hovering ? "ob-hovering" : "",
+  ].filter(Boolean).join(" ");
 
   return (
     <div className={overlayClass}>

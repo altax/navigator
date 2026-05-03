@@ -45,7 +45,8 @@ export default function App() {
 
   const [obWarehouse, setObWarehouse] = useState<[number, number] | null>(null);
   const [obHovered,   setObHovered]   = useState<string | null>(null);
-  useOnboardingOverlay(mapRef, setup.done ? null : obWarehouse, obHovered);
+  const [obInRadius,  setObInRadius]  = useState<string[]>([]);
+  useOnboardingOverlay(mapRef, setup.done ? null : obWarehouse, obHovered, setup.done ? [] : obInRadius);
 
   const [coord, setCoord] = useState<{ lng: number; lat: number } | null>(null);
   const [webglError, setWebglError] = useState(false);
@@ -559,9 +560,10 @@ export default function App() {
             completeSetup(mode, selectedIds, warehouseAddr, wCoords);
             setObWarehouse(null);
             setObHovered(null);
+            setObInRadius([]);
           }}
           mapRef={mapRef}
-          onWarehouseChange={coords => setObWarehouse(coords)}
+          onWarehouseChange={(coords, inRadius) => { setObWarehouse(coords); setObInRadius(inRadius); }}
           onDistrictHover={setObHovered}
         />
       )}
