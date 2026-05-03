@@ -4,7 +4,7 @@
 //   /api/tiles/pois_layer/* — cache-first + фоновая ревалидация (> 1 дня)
 //   /api/tiles/font/*     — cache-first, бессрочно (шрифты не меняются)
 
-const CACHE_VER = "v4";
+const CACHE_VER = "v5";
 const TILE_CACHE = `courier-tiles-${CACHE_VER}`;
 const POI_CACHE  = `courier-pois-${CACHE_VER}`;
 const FONT_CACHE = `courier-fonts-${CACHE_VER}`;

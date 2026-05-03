@@ -82,12 +82,38 @@ else
       WAIT=$((WAIT + 15))
     done
 
-    echo "[martin/run.sh] Building PMTiles (z5-z14, no tile size limit)…"
+    echo "[martin/run.sh] Building PMTiles (z5-z14, no drop, -y attribute filter)…"
     tippecanoe -o "$PMTILES" -z14 -Z5 \
-      --drop-densest-as-needed \
       --no-feature-limit \
       --no-tile-size-limit \
-      --simplification=4 \
+      --simplification=2 \
+      --buffer=8 \
+      --detect-shared-borders \
+      -y building \
+      -y "building:levels" \
+      -y min_height \
+      -y highway \
+      -y bridge \
+      -y tunnel \
+      -y covered \
+      -y waterway \
+      -y natural \
+      -y water \
+      -y landuse \
+      -y name \
+      -y "name:ru" \
+      -y "addr:housenumber" \
+      -y "addr:street" \
+      -y place \
+      -y railway \
+      -y station \
+      -y subway \
+      -y network \
+      -y cycleway \
+      -y bicycle \
+      -y footway \
+      -y crossing \
+      -y ref \
       --force -l osm "$GEOJSON" 2>&1
 
     EXIT_CODE=$?
