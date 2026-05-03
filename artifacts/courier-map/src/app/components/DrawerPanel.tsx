@@ -71,6 +71,7 @@ interface Props {
   onDownloadDistrict: (d: District) => void;
   onDequeueDistrict: (id: string) => void;
   onSelectPoi: (lng: number, lat: number) => void;
+  onResetSetup?: () => void;
 }
 
 export function DrawerPanel({
@@ -81,6 +82,7 @@ export function DrawerPanel({
   zones, downloadPhase, currentDistrictId, pendingQueue,
   onRemoveZone, onClearZones, onDownloadDistrict, onDequeueDistrict,
   onSelectPoi,
+  onResetSetup,
 }: Props) {
   if (!open) return null;
 
@@ -268,6 +270,18 @@ export function DrawerPanel({
                 <p className="drawer-hint" style={{ marginTop: 4 }}>
                   Нажмите кнопку района выше, чтобы скачать карту для офлайн-работы.
                 </p>
+              )}
+
+              {onResetSetup && (
+                <div style={{ marginTop: 20, borderTop: "1px solid #1e293b", paddingTop: 16 }}>
+                  <button
+                    className="zone-clear-btn"
+                    style={{ width: "100%" }}
+                    onClick={() => { onResetSetup(); onClose(); }}
+                  >
+                    Изменить выбор районов
+                  </button>
+                </div>
               )}
             </div>
           )}

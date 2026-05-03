@@ -1366,3 +1366,304 @@ html, body {
   .search-floating { left: 10px; right: 58px; }
   .draft-grid { grid-template-columns: 1fr; }
 }
+
+/* =====================================================================
+   Онбординг-экран (первый визит, выбор и загрузка районов)
+   ===================================================================== */
+
+.ob-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9000;
+  background: #030810;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  overflow-y: auto;
+  padding: 20px 16px 40px;
+}
+
+.ob-card {
+  width: 100%;
+  max-width: 460px;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+/* ── Шапка ── */
+.ob-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 32px 0 28px;
+}
+
+.ob-logo-icon {
+  width: 64px;
+  height: 64px;
+  background: #0d1e38;
+  border: 1.5px solid #1e3a5f;
+  border-radius: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 14px;
+}
+
+.ob-title {
+  font-size: 24px;
+  font-weight: 700;
+  color: #f1f5f9;
+  margin: 0 0 6px;
+  letter-spacing: -0.02em;
+}
+
+.ob-subtitle {
+  font-size: 13px;
+  color: #475569;
+  margin: 0;
+}
+
+/* ── Заголовок раздела ── */
+.ob-section-title {
+  font-size: 11px;
+  font-weight: 700;
+  color: #475569;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin: 0 0 12px;
+}
+
+/* ── Выбор режима ── */
+.ob-mode-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 22px;
+}
+
+.ob-mode-card {
+  background: #0a1220;
+  border: 2px solid #1a2840;
+  border-radius: 14px;
+  padding: 18px 14px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 7px;
+  text-align: center;
+  transition: border-color 0.15s, background 0.15s;
+}
+.ob-mode-card:hover {
+  border-color: #2d4a70;
+  background: #0d1628;
+}
+.ob-mode-card.selected {
+  border-color: #3b82f6;
+  background: #0c1e3a;
+}
+
+.ob-mode-icon { font-size: 26px; line-height: 1; }
+.ob-mode-name { font-size: 14px; font-weight: 600; color: #e2e8f0; }
+.ob-mode-desc { font-size: 11px; color: #4b6080; line-height: 1.4; }
+
+/* ── Пикер районов ── */
+.ob-picker {
+  margin-bottom: 20px;
+}
+
+.ob-picker-hint {
+  font-size: 12px;
+  color: #60a5fa;
+  margin-bottom: 14px;
+}
+.ob-picker-hint strong { font-weight: 700; }
+
+.ob-group { margin-bottom: 14px; }
+
+.ob-group-label {
+  font-size: 10px;
+  font-weight: 700;
+  color: #334155;
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
+  margin-bottom: 7px;
+}
+
+.ob-district-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.ob-district-btn {
+  background: #0a1220;
+  border: 1.5px solid #1a2840;
+  border-radius: 7px;
+  padding: 6px 11px;
+  font-size: 12px;
+  color: #7c9cbf;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  transition: border-color 0.12s, color 0.12s, background 0.12s;
+  line-height: 1.3;
+}
+.ob-district-btn:hover:not(.maxed) {
+  border-color: #2d4a70;
+  color: #a8c4e0;
+  background: #0d1628;
+}
+.ob-district-btn.checked {
+  border-color: #3b82f6;
+  color: #93c5fd;
+  background: #0c1e3a;
+}
+.ob-district-btn.maxed {
+  opacity: 0.28;
+  cursor: not-allowed;
+}
+
+/* ── Кнопка старта ── */
+.ob-start-btn {
+  width: 100%;
+  padding: 15px;
+  background: #2563eb;
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s;
+  margin-top: 4px;
+}
+.ob-start-btn:hover:not(:disabled) { background: #1d4ed8; }
+.ob-start-btn:disabled {
+  background: #141e30;
+  color: #2d4a6a;
+  cursor: not-allowed;
+}
+
+/* ── Вид загрузки ── */
+.ob-progress-view {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  padding: 32px 0 20px;
+  text-align: center;
+}
+
+/* Спиннер */
+.ob-progress-spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid #1e3352;
+  border-top-color: #3b82f6;
+  border-radius: 50%;
+  animation: ob-spin 0.8s linear infinite;
+}
+@keyframes ob-spin { to { transform: rotate(360deg); } }
+
+.ob-progress-label {
+  font-size: 16px;
+  font-weight: 500;
+  color: #e2e8f0;
+}
+.ob-progress-count {
+  font-size: 13px;
+  color: #4b6080;
+}
+
+.ob-progress-track {
+  width: 100%;
+  height: 6px;
+  background: #0f1e2f;
+  border-radius: 3px;
+  overflow: hidden;
+}
+.ob-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #2563eb, #3b82f6);
+  border-radius: 3px;
+  transition: width 0.4s ease;
+}
+
+.ob-queue-hint {
+  font-size: 12px;
+  color: #334155;
+  max-width: 320px;
+}
+
+.ob-cancel-btn {
+  margin-top: 6px;
+  padding: 9px 28px;
+  background: transparent;
+  border: 1.5px solid #1e2d3f;
+  color: #4b6080;
+  border-radius: 9px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s;
+}
+.ob-cancel-btn:hover { border-color: #ef4444; color: #f87171; }
+
+/* ── Вид "готово" ── */
+.ob-done-view {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  padding: 32px 0 20px;
+  text-align: center;
+}
+
+.ob-done-check {
+  width: 60px;
+  height: 60px;
+  background: #052e16;
+  border: 1.5px solid #14532d;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ob-done-title {
+  font-size: 21px;
+  font-weight: 700;
+  color: #f1f5f9;
+}
+.ob-done-desc {
+  font-size: 13px;
+  color: #475569;
+  max-width: 340px;
+  line-height: 1.5;
+}
+
+.ob-open-btn {
+  margin-top: 8px;
+  padding: 15px 48px;
+  background: #16a34a;
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s;
+  letter-spacing: 0.01em;
+}
+.ob-open-btn:hover { background: #15803d; }
+
+/* Адаптив для мобильных */
+@media (max-width: 480px) {
+  .ob-mode-grid { gap: 8px; }
+  .ob-mode-card { padding: 14px 10px; }
+  .ob-mode-name { font-size: 13px; }
+}
