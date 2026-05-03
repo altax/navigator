@@ -2,7 +2,7 @@ import { useState } from "react";
 import type { Poi, PoiType, StackStatus } from "../types";
 import { POI_TYPE_META } from "../types";
 import type { DownloadedZone } from "../hooks/useDownloadedZones";
-import type { DownloadPhase } from "../hooks/useAreaDownload";
+import type { DownloadPhase, DownloadRequest } from "../hooks/useDownloadQueue";
 import { DISTRICT_GROUPS, DISTRICTS } from "../data/districts";
 import type { District } from "../data/districts";
 
@@ -64,9 +64,12 @@ interface Props {
   stack: StackStatus | null;
   zones: DownloadedZone[];
   downloadPhase: DownloadPhase;
+  currentDistrictId?: string;
+  pendingQueue: DownloadRequest[];
   onRemoveZone: (id: string) => void;
   onClearZones: () => void;
   onDownloadDistrict: (d: District) => void;
+  onDequeueDistrict: (id: string) => void;
   onSelectPoi: (lng: number, lat: number) => void;
 }
 
@@ -75,14 +78,15 @@ export function DrawerPanel({
   drawerTab, setDrawerTab,
   sortedPois, filterTypes, setFilterTypes,
   stack,
-  zones, downloadPhase,
-  onRemoveZone, onClearZones, onDownloadDistrict,
+  zones, downloadPhase, currentDistrictId, pendingQueue,
+  onRemoveZone, onClearZones, onDownloadDistrict, onDequeueDistrict,
   onSelectPoi,
 }: Props) {
   if (!open) return null;
 
   const downloadedDistrictIds = new Set(zones.map((z) => z.districtId).filter(Boolean));
-  const isDownloading = downloadPhase === "downloading";
+  const queuedDistrictIds     = new Set(pendingQueue.map((r) => r.districtId).filter(Boolean));
+  const isBusy = downloadPhase === "downloading";
 
   return (
     <>
@@ -169,16 +173,47 @@ export function DrawerPanel({
                       {group.ids.map((id) => {
                         const d = DISTRICTS.find((x) => x.id === id);
                         if (!d) return null;
-                        const done = downloadedDistrictIds.has(id);
+                        const isActive  = id === currentDistrictId && downloadPhase === "downloading";
+                        const isQueued  = queuedDistrictIds.has(id);
+                        const isDone    = downloadedDistrictIds.has(id) && !isActive && !isQueued;
+                        const queuePos  = isQueued
+                          ? pendingQueue.findIndex((r) => r.districtId === id) + 1
+                          : 0;
+
+                        let cls = "district-btn";
+                        if (isActive) cls += " active";
+                        else if (isQueued) cls += " queued";
+                        else if (isDone)   cls += " done";
+
+                        const handleClick = () => {
+                          if (isQueued) {
+                            onDequeueDistrict(id);
+                          } else if (!isActive) {
+                            onDownloadDistrict(d);
+                            onClose();
+                          }
+                        };
+
                         return (
                           <button
                             key={id}
-                            className={`district-btn${done ? " done" : ""}`}
-                            disabled={isDownloading}
-                            title={done ? `${d.name} — уже в кеше` : `Скачать ${d.name}`}
-                            onClick={() => { onDownloadDistrict(d); onClose(); }}
+                            className={cls}
+                            disabled={false}
+                            title={
+                              isActive  ? `Скачивается: ${d.name}…` :
+                              isQueued  ? `В очереди #${queuePos} — нажмите, чтобы убрать` :
+                              isDone    ? `${d.name} — в кеше. Нажмите для обновления` :
+                                          `Скачать ${d.name}`
+                            }
+                            onClick={handleClick}
                           >
-                            {done && (
+                            {isActive && (
+                              <span className="district-spinner" />
+                            )}
+                            {isQueued && (
+                              <span className="district-queue-num">{queuePos}</span>
+                            )}
+                            {isDone && !isActive && !isQueued && (
                               <svg className="district-check" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
                                 <polyline points="20 6 9 17 4 12" />
                               </svg>

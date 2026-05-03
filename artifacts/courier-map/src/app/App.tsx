@@ -13,7 +13,7 @@ import { useSearch } from "./hooks/useSearch";
 import { useTracking } from "./hooks/useTracking";
 import { useRoute } from "./hooks/useRoute";
 import { useDraft } from "./hooks/useDraft";
-import { useAreaDownload } from "./hooks/useAreaDownload";
+import { useDownloadQueue } from "./hooks/useDownloadQueue";
 import { useDownloadedZones } from "./hooks/useDownloadedZones";
 import { SearchBar } from "./components/SearchBar";
 import { RoutePanel } from "./components/RoutePanel";
@@ -35,7 +35,7 @@ export default function App() {
   const { route, routing, routeError, setRouteError, stepsOpen, setStepsOpen, routeFromMe, clearRoute } = useRoute(mapRef, myLocation, getMyPosition);
   const { draftPoint, setDraftPoint, draftType, setDraftType, draftTitle, setDraftTitle, draftDesc, setDraftDesc, draftAddr, setDraftAddr, saving, saveError, saveDraft, cancelDraft, addMode, setAddMode } = useDraft(reloadPois);
   const { zones, addZone, removeZone, clearAll: clearZones } = useDownloadedZones();
-  const { download: startAreaDownload, cancel: cancelAreaDownload, status: downloadStatus } = useAreaDownload(mapRef, addZone);
+  const { enqueue: enqueueDownload, dequeue: dequeueDownload, cancelAll: cancelAllDownloads, status: downloadStatus, pendingQueue } = useDownloadQueue(mapRef, addZone);
 
   const [coord, setCoord] = useState<{ lng: number; lat: number } | null>(null);
   const [webglError, setWebglError] = useState(false);
@@ -581,7 +581,7 @@ export default function App() {
                 <span className="download-banner-count">
                   {downloadStatus.done} / {downloadStatus.total}
                 </span>
-                <button className="download-banner-cancel" onClick={cancelAreaDownload}>
+                <button className="download-banner-cancel" onClick={cancelAllDownloads}>
                   Стоп
                 </button>
               </div>
@@ -591,6 +591,12 @@ export default function App() {
                   style={{ width: `${downloadStatus.total > 0 ? Math.round((downloadStatus.done / downloadStatus.total) * 100) : 0}%` }}
                 />
               </div>
+              {downloadStatus.queued > 0 && (
+                <div className="download-queue-hint">
+                  +{downloadStatus.queued} в очереди:{" "}
+                  {pendingQueue.map((r) => r.name).join(", ")}
+                </div>
+              )}
             </>
           )}
           {downloadStatus.phase === "done" && (
@@ -613,10 +619,10 @@ export default function App() {
         tracking={tracking}
         downloadPhase={downloadStatus.phase}
         onDownload={() => {
-          if (downloadStatus.phase === "downloading") {
-            cancelAreaDownload();
+          if (downloadStatus.phase === "downloading" || downloadStatus.queued > 0) {
+            cancelAllDownloads();
           } else {
-            startAreaDownload();
+            enqueueDownload();
           }
         }}
         onGeolocate={async () => {
@@ -677,8 +683,11 @@ export default function App() {
         sortedPois={sortedPois} filterTypes={filterTypes} setFilterTypes={setFilterTypes}
         stack={stack}
         zones={zones} downloadPhase={downloadStatus.phase}
+        currentDistrictId={downloadStatus.currentDistrictId}
+        pendingQueue={pendingQueue}
         onRemoveZone={removeZone} onClearZones={clearZones}
-        onDownloadDistrict={(d) => startAreaDownload({ bounds: d.bounds, zMin: d.zMin, zMax: d.zMax, name: d.name, districtId: d.id })}
+        onDownloadDistrict={(d) => enqueueDownload({ bounds: d.bounds, zMin: d.zMin, zMax: d.zMax, name: d.name, districtId: d.id })}
+        onDequeueDistrict={dequeueDownload}
         onSelectPoi={(lng, lat) => flyTo(lng, lat, 17)}
       />
     </div>

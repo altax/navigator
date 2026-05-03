@@ -1,4 +1,4 @@
-import type { DownloadPhase } from "../hooks/useAreaDownload";
+import type { DownloadPhase } from "../hooks/useDownloadQueue";
 
 interface Props {
   addMode: boolean;

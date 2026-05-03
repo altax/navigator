@@ -678,7 +678,59 @@ html, body {
   opacity: 0.45;
   cursor: not-allowed;
 }
+.district-btn.active {
+  border-color: #2563eb;
+  color: #93c5fd;
+  background: #172554;
+  cursor: default;
+}
+.district-btn.queued {
+  border-color: #92400e;
+  color: #fbbf24;
+  background: #1c1508;
+}
+.district-btn.queued:hover {
+  border-color: #ef4444;
+  color: #fca5a5;
+  background: #1f1212;
+}
 .district-check { flex-shrink: 0; }
+
+/* Спиннер на активном районе */
+.district-spinner {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border: 2px solid #3b82f6;
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: district-spin 0.7s linear infinite;
+  flex-shrink: 0;
+}
+@keyframes district-spin { to { transform: rotate(360deg); } }
+
+/* Номер позиции в очереди */
+.district-queue-num {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: #92400e;
+  color: #fbbf24;
+  border-radius: 50%;
+  font-size: 10px;
+  font-weight: 700;
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+}
+
+/* Подсказка об очереди в баннере */
+.download-queue-hint {
+  font-size: 11px;
+  color: #64748b;
+  white-space: normal;
+  line-height: 1.4;
+}
 
 .zones-saved-title {
   font-size: 12px;
