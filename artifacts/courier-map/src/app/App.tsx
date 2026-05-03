@@ -591,12 +591,15 @@ export default function App() {
                   style={{ width: `${downloadStatus.total > 0 ? Math.round((downloadStatus.done / downloadStatus.total) * 100) : 0}%` }}
                 />
               </div>
-              {downloadStatus.queued > 0 && (
-                <div className="download-queue-hint">
-                  +{downloadStatus.queued} в очереди:{" "}
-                  {pendingQueue.map((r) => r.name).join(", ")}
-                </div>
-              )}
+              {(() => {
+                const visibleQueue = pendingQueue.filter((r) => r.districtId !== "__city_base__");
+                return visibleQueue.length > 0 ? (
+                  <div className="download-queue-hint">
+                    +{visibleQueue.length} в очереди:{" "}
+                    {visibleQueue.map((r) => r.name).join(", ")}
+                  </div>
+                ) : null;
+              })()}
             </>
           )}
           {downloadStatus.phase === "done" && (

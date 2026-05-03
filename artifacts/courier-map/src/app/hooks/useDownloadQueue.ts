@@ -3,6 +3,7 @@ import type { Map as MlMap } from "maplibre-gl";
 import { tileUrls } from "../utils/tileUtils";
 import type { TileBounds } from "../utils/tileUtils";
 import type { DownloadedZone } from "./useDownloadedZones";
+import { CITY_BASE_BBOX } from "../data/districts";
 
 export type DownloadPhase = "idle" | "downloading" | "done" | "cancelled";
 
@@ -20,11 +21,36 @@ export interface DownloadStatus {
   total: number;
   name?: string;
   currentDistrictId?: string;
-  queued: number; // сколько ещё ждёт в очереди
+  queued: number;
 }
 
 const BATCH = 20;
 const sleep = (ms: number) => new Promise<void>((r) => setTimeout(r, ms));
+
+// ── Базовый слой всего города: z10-z13 ──────────────────────────────────────
+// Скачивается один раз в 7 дней автоматически перед первым районом в сессии.
+// Гарантирует, что при наклоне (3D pitch) обзорные тайлы всегда из кеша.
+const CITY_BASE_ID   = "__city_base__";
+const CITY_BASE_LS   = "courier_city_base_ts";
+const CITY_BASE_TTL  = 7 * 24 * 3600 * 1000;
+
+const CITY_BASE_REQ: DownloadRequest = {
+  bounds: CITY_BASE_BBOX,
+  zMin: 10,
+  zMax: 13,
+  name: "Базовый слой города (z10–z13)",
+  districtId: CITY_BASE_ID,
+};
+
+function isCityBaseStale(): boolean {
+  try {
+    const ts = localStorage.getItem(CITY_BASE_LS);
+    if (!ts) return true;
+    return Date.now() - Number(ts) > CITY_BASE_TTL;
+  } catch {
+    return true;
+  }
+}
 
 export function useDownloadQueue(
   mapRef: React.RefObject<MlMap | null>,
@@ -35,14 +61,12 @@ export function useDownloadQueue(
   });
   const [pendingQueue, setPendingQueue] = useState<DownloadRequest[]>([]);
 
-  // Ref-based queue — синхронен, не зависит от React batch
   const queueRef   = useRef<DownloadRequest[]>([]);
   const runningRef = useRef(false);
   const cancelRef  = useRef(false);
 
   const syncUI = () => setPendingQueue([...queueRef.current]);
 
-  /** Основной цикл обработки очереди */
   const runQueue = useCallback(async () => {
     if (runningRef.current) return;
     runningRef.current = true;
@@ -78,20 +102,24 @@ export function useDownloadQueue(
       }
 
       if (!cancelRef.current) {
-        onSave({
-          id: String(Date.now()),
-          name: item.name,
-          districtId: item.districtId,
-          downloadedAt: Date.now(),
-          tileCount: total,
-          bounds: item.bounds,
-          zMin: item.zMin,
-          zMax: item.zMax,
-        });
+        if (item.districtId === CITY_BASE_ID) {
+          // Базовый слой — не сохраняем как зону, только ставим метку в localStorage
+          try { localStorage.setItem(CITY_BASE_LS, String(Date.now())); } catch {}
+        } else {
+          onSave({
+            id: String(Date.now()),
+            name: item.name,
+            districtId: item.districtId,
+            downloadedAt: Date.now(),
+            tileCount: total,
+            bounds: item.bounds,
+            zMin: item.zMin,
+            zMax: item.zMax,
+          });
+        }
 
         if (queueRef.current.length > 0) {
-          // Быстрая пауза между районами
-          await sleep(600);
+          await sleep(400);
         } else {
           setStatus({ phase: "done", done: total, total, name: item.name, currentDistrictId: item.districtId, queued: 0 });
           await sleep(3500);
@@ -107,15 +135,13 @@ export function useDownloadQueue(
     } else {
       setStatus({ phase: "idle", done: 0, total: 0, queued: 0 });
     }
-  }, [onSave]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [onSave]);
 
-  /** Добавить в очередь (район или текущий вид) */
   const enqueue = useCallback(
     (req?: DownloadRequest) => {
       let request: DownloadRequest;
 
       if (req) {
-        // Не добавлять дубликат района
         if (
           req.districtId &&
           queueRef.current.some((r) => r.districtId === req.districtId)
@@ -141,20 +167,31 @@ export function useDownloadQueue(
         };
       }
 
-      queueRef.current = [...queueRef.current, request];
+      // Автоматически вставляем базовый слой первым, если он устарел и очередь
+      // сейчас пуста (то есть начинается новая "сессия" скачивания).
+      const needBase =
+        isCityBaseStale() &&
+        !runningRef.current &&
+        queueRef.current.length === 0 &&
+        !queueRef.current.some((r) => r.districtId === CITY_BASE_ID);
+
+      if (needBase) {
+        queueRef.current = [CITY_BASE_REQ, request];
+      } else {
+        queueRef.current = [...queueRef.current, request];
+      }
+
       syncUI();
       runQueue();
     },
     [mapRef, runQueue],
   );
 
-  /** Убрать район из очереди (если ещё не начал скачиваться) */
   const dequeue = useCallback((districtId: string) => {
     queueRef.current = queueRef.current.filter((r) => r.districtId !== districtId);
     syncUI();
   }, []);
 
-  /** Остановить текущее скачивание и очистить всю очередь */
   const cancelAll = useCallback(() => {
     cancelRef.current    = true;
     queueRef.current     = [];

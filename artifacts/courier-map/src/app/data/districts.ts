@@ -8,6 +8,14 @@ export interface District {
   zMax: number;
 }
 
+// Bbox для всего города + ближайшего ЛО — используется для базового слоя z10-z13
+export const CITY_BASE_BBOX: TileBounds = {
+  west: 29.3,
+  south: 59.55,
+  east: 31.3,
+  north: 60.45,
+};
+
 // 18 районов Санкт-Петербурга + 2 ближайших района ЛО
 export const DISTRICTS: District[] = [
   // ── Центр ────────────────────────────────────────────
