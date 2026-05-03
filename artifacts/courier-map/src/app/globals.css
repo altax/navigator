@@ -1685,9 +1685,146 @@ html, body {
 }
 .ob-open-btn:hover { background: #15803d; }
 
-/* Адаптив для мобильных */
+/* ── Шаг с адресом ── */
+.ob-addr-card {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 20px;
+  background: #060e1b;
+  border: 1px solid #122030;
+  border-radius: 12px;
+  padding: 24px 20px;
+}
+
+.ob-addr-intro { display: flex; flex-direction: column; align-items: center; gap: 10px; text-align: center; }
+.ob-addr-emoji { font-size: 32px; line-height: 1; }
+
+.ob-addr-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: #e2e8f0;
+  margin: 0;
+}
+
+.ob-addr-desc {
+  font-size: 13px;
+  color: #3d5876;
+  margin: 0;
+  line-height: 1.5;
+}
+
+.ob-addr-field {
+  display: flex;
+  gap: 8px;
+}
+
+.ob-addr-input {
+  flex: 1;
+  height: 44px;
+  background: #0a1628;
+  border: 1.5px solid #172234;
+  border-radius: 8px;
+  padding: 0 12px;
+  font-size: 14px;
+  color: #e2e8f0;
+  outline: none;
+  transition: border-color 0.14s;
+}
+.ob-addr-input:focus        { border-color: #3b82f6; }
+.ob-addr-input::placeholder { color: #253d58; }
+.ob-addr-input:disabled     { opacity: 0.5; }
+
+.ob-addr-btn {
+  height: 44px;
+  padding: 0 18px;
+  background: #1d4ed8;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.14s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 72px;
+}
+.ob-addr-btn:hover:not(:disabled) { background: #1e40af; }
+.ob-addr-btn:disabled              { opacity: 0.4; cursor: not-allowed; }
+
+.ob-addr-spin {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255,255,255,0.3);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: ob-spin 0.7s linear infinite;
+}
+
+.ob-addr-error {
+  font-size: 12px;
+  color: #f87171;
+  background: rgba(239,68,68,0.08);
+  border: 1px solid rgba(239,68,68,0.2);
+  border-radius: 6px;
+  padding: 8px 10px;
+}
+
+.ob-addr-result {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 13px;
+  color: #4ade80;
+  background: rgba(74,222,128,0.07);
+  border: 1px solid rgba(74,222,128,0.15);
+  border-radius: 6px;
+  padding: 8px 10px;
+}
+
+.ob-skip-link {
+  background: none;
+  border: none;
+  font-size: 12px;
+  color: #1e3450;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  padding: 6px 0 0;
+  text-align: center;
+  transition: color 0.14s;
+}
+.ob-skip-link:hover { color: #2e4a6a; }
+
+/* ── Сайдбар на широких экранах (планшет горизонтально) ── */
+/* Карта видна слева, панель онбординга справа */
+@media (min-width: 700px) {
+  .ob-overlay {
+    background: transparent;
+    pointer-events: none;
+    justify-content: flex-end;
+  }
+  .ob-wrap {
+    pointer-events: all;
+    height: 100%;
+    max-width: 400px;
+    background: rgba(2, 9, 19, 0.95);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-left: 1px solid #0f1e30;
+    box-shadow: -8px 0 40px rgba(0, 0, 0, 0.65);
+    padding: 0 20px 20px;
+  }
+}
+
+/* Адаптив для маленьких телефонов */
 @media (max-width: 480px) {
-  .ob-mode-grid { gap: 8px; }
-  .ob-mode-card { padding: 14px 10px; }
-  .ob-mode-name { font-size: 13px; }
+  .ob-wrap { padding: 0 14px 16px; }
+  .ob-tab  { height: 60px; }
+  .ob-tab-name { font-size: 12px; }
 }

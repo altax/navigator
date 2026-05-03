@@ -17,6 +17,7 @@ import { useDownloadQueue } from "./hooks/useDownloadQueue";
 import { useDownloadedZones } from "./hooks/useDownloadedZones";
 import { useMapSetup } from "./hooks/useMapSetup";
 import { useDistrictOverlay } from "./hooks/useDistrictOverlay";
+import { useOnboardingOverlay } from "./hooks/useOnboardingOverlay";
 import { OnboardingScreen } from "./components/OnboardingScreen";
 import { SearchBar } from "./components/SearchBar";
 import { RoutePanel } from "./components/RoutePanel";
@@ -41,6 +42,10 @@ export default function App() {
   const { enqueue: enqueueDownload, dequeue: dequeueDownload, cancelAll: cancelAllDownloads, status: downloadStatus, pendingQueue } = useDownloadQueue(mapRef, addZone);
   const { setup, completeSetup, resetSetup } = useMapSetup();
   useDistrictOverlay(mapRef, setup);
+
+  const [obWarehouse, setObWarehouse] = useState<[number, number] | null>(null);
+  const [obHovered,   setObHovered]   = useState<string | null>(null);
+  useOnboardingOverlay(mapRef, setup.done ? null : obWarehouse, obHovered);
 
   const [coord, setCoord] = useState<{ lng: number; lat: number } | null>(null);
   const [webglError, setWebglError] = useState(false);
@@ -550,7 +555,14 @@ export default function App() {
           pendingQueue={pendingQueue}
           onEnqueue={enqueueDownload}
           onCancelAll={cancelAllDownloads}
-          onComplete={completeSetup}
+          onComplete={(mode, selectedIds, warehouseAddr, wCoords) => {
+            completeSetup(mode, selectedIds, warehouseAddr, wCoords);
+            setObWarehouse(null);
+            setObHovered(null);
+          }}
+          mapRef={mapRef}
+          onWarehouseChange={coords => setObWarehouse(coords)}
+          onDistrictHover={setObHovered}
         />
       )}
 
