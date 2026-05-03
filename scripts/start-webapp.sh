@@ -1,7 +1,6 @@
 #!/bin/bash
-# Starts the Vite dev server for courier-map on PORT (default 5000).
-# Uses fuser to free the port first so restarts are clean.
-# Called by the "Web App" workflow directly.
+# Starts the Vite dev server for courier-map.
+# Uses PORT env var if set (Replit artifact runner sets it), otherwise 5000.
 set -euo pipefail
 cd /home/runner/workspace
 
