@@ -169,11 +169,14 @@ export function useDownloadQueue(
 
       // Автоматически вставляем базовый слой первым, если он устарел и очередь
       // сейчас пуста (то есть начинается новая "сессия" скачивания).
+      // Исключение: radius_zone уже включает z10–z16 для рабочей зоны,
+      // качать весь город ради 6 км не нужно.
       const needBase =
         isCityBaseStale() &&
         !runningRef.current &&
         queueRef.current.length === 0 &&
-        !queueRef.current.some((r) => r.districtId === CITY_BASE_ID);
+        !queueRef.current.some((r) => r.districtId === CITY_BASE_ID) &&
+        request.districtId !== "radius_zone";
 
       if (needBase) {
         queueRef.current = [CITY_BASE_REQ, request];
