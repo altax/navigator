@@ -13,6 +13,7 @@ import { useSearch } from "./hooks/useSearch";
 import { useTracking } from "./hooks/useTracking";
 import { useRoute } from "./hooks/useRoute";
 import { useDraft } from "./hooks/useDraft";
+import { useAreaDownload } from "./hooks/useAreaDownload";
 import { SearchBar } from "./components/SearchBar";
 import { RoutePanel } from "./components/RoutePanel";
 import { DraftPanel } from "./components/DraftPanel";
@@ -32,6 +33,7 @@ export default function App() {
   const { myLocation, setMyLocation, tracking, startTracking, stopTracking, getMyPosition } = useTracking();
   const { route, routing, routeError, setRouteError, stepsOpen, setStepsOpen, routeFromMe, clearRoute } = useRoute(mapRef, myLocation, getMyPosition);
   const { draftPoint, setDraftPoint, draftType, setDraftType, draftTitle, setDraftTitle, draftDesc, setDraftDesc, draftAddr, setDraftAddr, saving, saveError, saveDraft, cancelDraft, addMode, setAddMode } = useDraft(reloadPois);
+  const { download: startAreaDownload, cancel: cancelAreaDownload, status: downloadStatus } = useAreaDownload(mapRef);
 
   const [coord, setCoord] = useState<{ lng: number; lat: number } | null>(null);
   const [webglError, setWebglError] = useState(false);
@@ -566,10 +568,53 @@ export default function App() {
         </button>
       )}
 
+      {downloadStatus.phase !== "idle" && (
+        <div className="download-banner">
+          {downloadStatus.phase === "downloading" && (
+            <>
+              <div className="download-banner-row">
+                <span className="download-banner-label">Скачивание зоны</span>
+                <span className="download-banner-count">
+                  {downloadStatus.done} / {downloadStatus.total}
+                </span>
+                <button className="download-banner-cancel" onClick={cancelAreaDownload}>
+                  Стоп
+                </button>
+              </div>
+              <div className="download-progress-track">
+                <div
+                  className="download-progress-fill"
+                  style={{ width: `${downloadStatus.total > 0 ? Math.round((downloadStatus.done / downloadStatus.total) * 100) : 0}%` }}
+                />
+              </div>
+            </>
+          )}
+          {downloadStatus.phase === "done" && (
+            <div className="download-banner-done">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <polyline points="20 6 9 17 4 12" />
+              </svg>
+              Готово — {downloadStatus.total} тайлов в кеше
+            </div>
+          )}
+          {downloadStatus.phase === "cancelled" && (
+            <div className="download-banner-cancelled">Скачивание отменено</div>
+          )}
+        </div>
+      )}
+
       <MapControls
         addMode={addMode} setAddMode={setAddMode}
         setMeMode={setMeMode} setSetMeMode={setSetMeMode}
         tracking={tracking}
+        downloadPhase={downloadStatus.phase}
+        onDownload={() => {
+          if (downloadStatus.phase === "downloading") {
+            cancelAreaDownload();
+          } else {
+            startAreaDownload();
+          }
+        }}
         onGeolocate={async () => {
           if (tracking) { stopTracking(); return; }
           try {

@@ -1,22 +1,29 @@
+import type { DownloadPhase } from "../hooks/useAreaDownload";
+
 interface Props {
   addMode: boolean;
   setAddMode: (v: boolean) => void;
   setMeMode: boolean;
   setSetMeMode: (v: boolean) => void;
   tracking: boolean;
+  downloadPhase: DownloadPhase;
   onGeolocate: () => void;
   onResetView: () => void;
   onZoomIn: () => void;
   onZoomOut: () => void;
   onOpenDrawer: () => void;
+  onDownload: () => void;
 }
 
 export function MapControls({
   addMode, setAddMode,
   setMeMode, setSetMeMode,
   tracking,
-  onGeolocate, onResetView, onZoomIn, onZoomOut, onOpenDrawer,
+  downloadPhase,
+  onGeolocate, onResetView, onZoomIn, onZoomOut, onOpenDrawer, onDownload,
 }: Props) {
+  const isDownloading = downloadPhase === "downloading";
+
   return (
     <div className="map-controls">
       <button className="map-btn" title="Меню" onClick={onOpenDrawer}>
@@ -59,6 +66,26 @@ export function MapControls({
           <polygon points="12 2 15 8 12 6 9 8 12 2" /><polygon points="12 22 15 16 12 18 9 16 12 22" />
           <line x1="12" y1="6" x2="12" y2="18" />
         </svg>
+      </button>
+      {/* Скачать зону для офлайн-работы */}
+      <button
+        className={`map-btn${isDownloading ? " active" : ""}`}
+        title={isDownloading ? "Остановить скачивание" : "Скачать зону для работы офлайн"}
+        onClick={onDownload}
+      >
+        {isDownloading ? (
+          // Иконка остановки (квадрат)
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <rect x="6" y="6" width="12" height="12" rx="1" />
+          </svg>
+        ) : (
+          // Иконка скачивания (облако со стрелкой вниз)
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <polyline points="8 17 12 21 16 17" />
+            <line x1="12" y1="12" x2="12" y2="21" />
+            <path d="M20.88 18.09A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.29" />
+          </svg>
+        )}
       </button>
       <div className="map-btn-divider" />
       <button className="map-btn" title="Приблизить" onClick={onZoomIn}>
