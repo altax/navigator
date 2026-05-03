@@ -14,6 +14,7 @@ import { useTracking } from "./hooks/useTracking";
 import { useRoute } from "./hooks/useRoute";
 import { useDraft } from "./hooks/useDraft";
 import { useAreaDownload } from "./hooks/useAreaDownload";
+import { useDownloadedZones } from "./hooks/useDownloadedZones";
 import { SearchBar } from "./components/SearchBar";
 import { RoutePanel } from "./components/RoutePanel";
 import { DraftPanel } from "./components/DraftPanel";
@@ -33,12 +34,13 @@ export default function App() {
   const { myLocation, setMyLocation, tracking, startTracking, stopTracking, getMyPosition } = useTracking();
   const { route, routing, routeError, setRouteError, stepsOpen, setStepsOpen, routeFromMe, clearRoute } = useRoute(mapRef, myLocation, getMyPosition);
   const { draftPoint, setDraftPoint, draftType, setDraftType, draftTitle, setDraftTitle, draftDesc, setDraftDesc, draftAddr, setDraftAddr, saving, saveError, saveDraft, cancelDraft, addMode, setAddMode } = useDraft(reloadPois);
-  const { download: startAreaDownload, cancel: cancelAreaDownload, status: downloadStatus } = useAreaDownload(mapRef);
+  const { zones, addZone, removeZone, clearAll: clearZones } = useDownloadedZones();
+  const { download: startAreaDownload, cancel: cancelAreaDownload, status: downloadStatus } = useAreaDownload(mapRef, addZone);
 
   const [coord, setCoord] = useState<{ lng: number; lat: number } | null>(null);
   const [webglError, setWebglError] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
-  const [drawerTab, setDrawerTab] = useState<"points" | "filter" | "stack">("points");
+  const [drawerTab, setDrawerTab] = useState<"points" | "filter" | "zones" | "stack">("points");
   const [selectedBuildingInfo, setSelectedBuildingInfo] = useState<{ label: string } | null>(null);
   const [setMeMode, setSetMeMode] = useState(false);
 
@@ -672,6 +674,7 @@ export default function App() {
         drawerTab={drawerTab} setDrawerTab={setDrawerTab}
         sortedPois={sortedPois} filterTypes={filterTypes} setFilterTypes={setFilterTypes}
         stack={stack}
+        zones={zones} onRemoveZone={removeZone} onClearZones={clearZones}
         onSelectPoi={(lng, lat) => flyTo(lng, lat, 17)}
       />
     </div>

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import type { Poi, PoiType, StackStatus } from "../types";
 import { POI_TYPE_META } from "../types";
+import type { DownloadedZone } from "../hooks/useDownloadedZones";
 
 const POI_TYPES = Object.keys(POI_TYPE_META) as PoiType[];
 
@@ -46,19 +47,40 @@ function ServiceRow({ label, up, detail, restartService }: {
   );
 }
 
+function formatDate(ts: number): string {
+  const d = new Date(ts);
+  const dd  = String(d.getDate()).padStart(2, "0");
+  const mm  = String(d.getMonth() + 1).padStart(2, "0");
+  const hh  = String(d.getHours()).padStart(2, "0");
+  const min = String(d.getMinutes()).padStart(2, "0");
+  return `${dd}.${mm}.${d.getFullYear()} ${hh}:${min}`;
+}
+
+type Tab = "points" | "filter" | "zones" | "stack";
+
 interface Props {
   open: boolean;
   onClose: () => void;
-  drawerTab: "points" | "filter" | "stack";
-  setDrawerTab: (tab: "points" | "filter" | "stack") => void;
+  drawerTab: Tab;
+  setDrawerTab: (tab: Tab) => void;
   sortedPois: Poi[];
   filterTypes: Set<PoiType>;
   setFilterTypes: (v: Set<PoiType>) => void;
   stack: StackStatus | null;
+  zones: DownloadedZone[];
+  onRemoveZone: (id: string) => void;
+  onClearZones: () => void;
   onSelectPoi: (lng: number, lat: number) => void;
 }
 
-export function DrawerPanel({ open, onClose, drawerTab, setDrawerTab, sortedPois, filterTypes, setFilterTypes, stack, onSelectPoi }: Props) {
+export function DrawerPanel({
+  open, onClose,
+  drawerTab, setDrawerTab,
+  sortedPois, filterTypes, setFilterTypes,
+  stack,
+  zones, onRemoveZone, onClearZones,
+  onSelectPoi,
+}: Props) {
   if (!open) return null;
   return (
     <>
@@ -74,6 +96,9 @@ export function DrawerPanel({ open, onClose, drawerTab, setDrawerTab, sortedPois
           </button>
           <button className={drawerTab === "filter" ? "active" : ""} onClick={() => setDrawerTab("filter")}>
             Фильтр
+          </button>
+          <button className={drawerTab === "zones" ? "active" : ""} onClick={() => setDrawerTab("zones")}>
+            Зоны {zones.length > 0 && <span className="zones-badge">{zones.length}</span>}
           </button>
           <button className={drawerTab === "stack" ? "active" : ""} onClick={() => setDrawerTab("stack")}>
             Сервисы
@@ -117,6 +142,56 @@ export function DrawerPanel({ open, onClose, drawerTab, setDrawerTab, sortedPois
                   );
                 })}
               </div>
+            </div>
+          )}
+          {drawerTab === "zones" && (
+            <div className="drawer-section">
+              <p className="drawer-hint">
+                Зоны, скачанные для работы офлайн. Тайлы хранятся в кеше браузера.
+              </p>
+              {zones.length === 0 && (
+                <div className="empty-state">
+                  Нет скачанных зон.<br />
+                  Нажмите кнопку облака на карте, чтобы скачать видимую область.
+                </div>
+              )}
+              {zones.map((z) => (
+                <div key={z.id} className="zone-card">
+                  <div className="zone-card-header">
+                    <span className="zone-card-date">{formatDate(z.downloadedAt)}</span>
+                    <button
+                      className="zone-delete-btn"
+                      title="Удалить зону из кеша"
+                      onClick={() => onRemoveZone(z.id)}
+                    >
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                        <polyline points="3 6 5 6 21 6" />
+                        <path d="M19 6l-1 14H6L5 6" />
+                        <path d="M10 11v6M14 11v6" />
+                        <path d="M9 6V4h6v2" />
+                      </svg>
+                    </button>
+                  </div>
+                  <div className="zone-card-info">
+                    <span className="zone-info-item">
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <polyline points="8 17 12 21 16 17" />
+                        <line x1="12" y1="12" x2="12" y2="21" />
+                        <path d="M20.88 18.09A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.29" />
+                      </svg>
+                      {z.tileCount} тайлов
+                    </span>
+                    <span className="zone-info-item">
+                      z{z.zMin}–{z.zMax}
+                    </span>
+                  </div>
+                </div>
+              ))}
+              {zones.length > 0 && (
+                <button className="zone-clear-btn" onClick={onClearZones}>
+                  Очистить весь тайловый кеш
+                </button>
+              )}
             </div>
           )}
           {drawerTab === "stack" && (
