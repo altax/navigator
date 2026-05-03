@@ -1820,14 +1820,6 @@ html, body {
     border-left: 1px solid #0f1e30;
     box-shadow: -6px 0 36px rgba(0, 0, 0, 0.7);
     padding: 0 20px 20px;
-    /* Плавное исчезание при наведении на чип */
-    transition: opacity 0.20s ease, transform 0.20s ease;
-  }
-  /* Навели на чип — панель уходит, карта открывается */
-  .ob-overlay.ob-overlay--choose.ob-hovering .ob-wrap {
-    opacity: 0.06;
-    transform: translateX(20px);
-    pointer-events: none;
   }
 }
 

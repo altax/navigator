@@ -39,7 +39,6 @@ export function OnboardingScreen({
   const [geocodeError,    setGeocodeError]   = useState<string | null>(null);
   const [warehouseCoords, setWarehouseCoords] = useState<[number, number] | null>(null);
   const [inRadiusIds,     setInRadiusIds]    = useState<string[]>([]);
-  const [hovering,        setHovering]       = useState(false);
 
   const downloadStartedRef = useRef(false);
   const prevPhaseRef       = useRef(downloadStatus.phase);
@@ -71,7 +70,6 @@ export function OnboardingScreen({
   };
 
   const handleChipHover = (id: string | null) => {
-    setHovering(id !== null);
     onDistrictHover(id);
     if (id) {
       const d = districtById(id);
@@ -118,12 +116,7 @@ export function OnboardingScreen({
     : DISTRICT_GROUPS;
 
   // На шаге choose карта видна (сайдбар), на остальных — глухая подложка.
-  // ob-hovering: при наведении на чип — панель уходит, карта открывается полностью.
-  const overlayClass = [
-    "ob-overlay",
-    step === "choose" ? "ob-overlay--choose" : "",
-    step === "choose" && hovering ? "ob-hovering" : "",
-  ].filter(Boolean).join(" ");
+  const overlayClass = `ob-overlay${step === "choose" ? " ob-overlay--choose" : ""}`;
 
   return (
     <div className={overlayClass}>
