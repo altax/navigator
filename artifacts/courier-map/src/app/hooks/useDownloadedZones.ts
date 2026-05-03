@@ -4,6 +4,8 @@ import type { TileBounds } from "../utils/tileUtils";
 
 export interface DownloadedZone {
   id: string;
+  name?: string;          // название района (если скачивался по району)
+  districtId?: string;    // id района из districts.ts
   downloadedAt: number;
   tileCount: number;
   bounds: TileBounds;
@@ -32,7 +34,11 @@ export function useDownloadedZones() {
 
   const addZone = useCallback((zone: DownloadedZone) => {
     setZones((prev) => {
-      const next = [zone, ...prev].slice(0, MAX_ZONES);
+      // Если этот район уже есть — заменяем (обновляем дату)
+      const withoutDupe = zone.districtId
+        ? prev.filter((z) => z.districtId !== zone.districtId)
+        : prev;
+      const next = [zone, ...withoutDupe].slice(0, MAX_ZONES);
       save(next);
       return next;
     });
@@ -46,15 +52,12 @@ export function useDownloadedZones() {
       save(next);
       return next;
     });
-    // Вычищаем тайлы этой зоны из кеша SW (best-effort)
     if (removed && "caches" in window) {
       try {
         const cache = await caches.open(TILE_CACHE);
         const urls = tileUrls(removed.bounds, removed.zMin, removed.zMax);
         await Promise.allSettled(urls.map((u) => cache.delete(u)));
-      } catch {
-        // Игнорируем, если кеш недоступен
-      }
+      } catch { /* ignore */ }
     }
   }, []);
 
@@ -62,11 +65,7 @@ export function useDownloadedZones() {
     setZones([]);
     localStorage.removeItem(STORAGE_KEY);
     if ("caches" in window) {
-      try {
-        await caches.delete(TILE_CACHE);
-      } catch {
-        // Игнорируем
-      }
+      try { await caches.delete(TILE_CACHE); } catch { /* ignore */ }
     }
   }, []);
 

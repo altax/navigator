@@ -2,31 +2,27 @@ import { useState } from "react";
 import type { Poi, PoiType, StackStatus } from "../types";
 import { POI_TYPE_META } from "../types";
 import type { DownloadedZone } from "../hooks/useDownloadedZones";
+import type { DownloadPhase } from "../hooks/useAreaDownload";
+import { DISTRICT_GROUPS, DISTRICTS } from "../data/districts";
+import type { District } from "../data/districts";
 
 const POI_TYPES = Object.keys(POI_TYPE_META) as PoiType[];
 
 function ServiceRow({ label, up, detail, restartService }: {
-  label: string;
-  up?: boolean;
-  detail?: string | null;
-  restartService?: string;
+  label: string; up?: boolean; detail?: string | null; restartService?: string;
 }) {
   const [restarting, setRestarting] = useState(false);
   const [msg, setMsg] = useState<string | null>(null);
 
   async function handleRestart() {
     if (restarting) return;
-    setRestarting(true);
-    setMsg(null);
+    setRestarting(true); setMsg(null);
     try {
       const r = await fetch(`/api/admin/restart/${restartService}`, { method: "POST" });
       const json = await r.json();
       setMsg(r.ok ? "Перезапускается…" : (json.error ?? "Ошибка"));
-    } catch {
-      setMsg("Нет связи с API");
-    } finally {
-      setTimeout(() => { setRestarting(false); setMsg(null); }, 12_000);
-    }
+    } catch { setMsg("Нет связи с API"); }
+    finally { setTimeout(() => { setRestarting(false); setMsg(null); }, 12_000); }
   }
 
   return (
@@ -37,8 +33,7 @@ function ServiceRow({ label, up, detail, restartService }: {
       {restartService && (
         <button
           className={`svc-restart-btn${restarting ? " spinning" : ""}${!up ? " warn" : ""}`}
-          onClick={handleRestart}
-          disabled={restarting}
+          onClick={handleRestart} disabled={restarting}
           title={restarting ? "Перезапускается…" : "Перезапустить сервис"}
         >↺</button>
       )}
@@ -68,8 +63,10 @@ interface Props {
   setFilterTypes: (v: Set<PoiType>) => void;
   stack: StackStatus | null;
   zones: DownloadedZone[];
+  downloadPhase: DownloadPhase;
   onRemoveZone: (id: string) => void;
   onClearZones: () => void;
+  onDownloadDistrict: (d: District) => void;
   onSelectPoi: (lng: number, lat: number) => void;
 }
 
@@ -78,10 +75,15 @@ export function DrawerPanel({
   drawerTab, setDrawerTab,
   sortedPois, filterTypes, setFilterTypes,
   stack,
-  zones, onRemoveZone, onClearZones,
+  zones, downloadPhase,
+  onRemoveZone, onClearZones, onDownloadDistrict,
   onSelectPoi,
 }: Props) {
   if (!open) return null;
+
+  const downloadedDistrictIds = new Set(zones.map((z) => z.districtId).filter(Boolean));
+  const isDownloading = downloadPhase === "downloading";
+
   return (
     <>
       <div className="drawer-backdrop" onClick={onClose} />
@@ -98,13 +100,14 @@ export function DrawerPanel({
             Фильтр
           </button>
           <button className={drawerTab === "zones" ? "active" : ""} onClick={() => setDrawerTab("zones")}>
-            Зоны {zones.length > 0 && <span className="zones-badge">{zones.length}</span>}
+            Офлайн {zones.length > 0 && <span className="zones-badge">{zones.length}</span>}
           </button>
           <button className={drawerTab === "stack" ? "active" : ""} onClick={() => setDrawerTab("stack")}>
             Сервисы
           </button>
         </div>
         <div className="drawer-body">
+
           {drawerTab === "points" && (
             <div className="poi-list">
               {sortedPois.length === 0 && <div className="empty-state">Пока нет точек</div>}
@@ -125,6 +128,7 @@ export function DrawerPanel({
               })}
             </div>
           )}
+
           {drawerTab === "filter" && (
             <div className="drawer-section">
               <p className="drawer-hint">Скрыть/показать точки определённого типа на карте.</p>
@@ -144,69 +148,109 @@ export function DrawerPanel({
               </div>
             </div>
           )}
+
           {drawerTab === "zones" && (
             <div className="drawer-section">
-              <p className="drawer-hint">
-                Зоны, скачанные для работы офлайн. Тайлы хранятся в кеше браузера.
-              </p>
-              {zones.length === 0 && (
-                <div className="empty-state">
-                  Нет скачанных зон.<br />
-                  Нажмите кнопку облака на карте, чтобы скачать видимую область.
+
+              {/* ── Выбор района для скачивания ── */}
+              <div className="district-picker">
+                <div className="district-picker-title">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <polyline points="8 17 12 21 16 17" />
+                    <line x1="12" y1="12" x2="12" y2="21" />
+                    <path d="M20.88 18.09A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.29" />
+                  </svg>
+                  Скачать район
                 </div>
-              )}
-              {zones.map((z) => (
-                <div key={z.id} className="zone-card">
-                  <div className="zone-card-header">
-                    <span className="zone-card-date">{formatDate(z.downloadedAt)}</span>
-                    <button
-                      className="zone-delete-btn"
-                      title="Удалить зону из кеша"
-                      onClick={() => onRemoveZone(z.id)}
-                    >
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                        <polyline points="3 6 5 6 21 6" />
-                        <path d="M19 6l-1 14H6L5 6" />
-                        <path d="M10 11v6M14 11v6" />
-                        <path d="M9 6V4h6v2" />
-                      </svg>
-                    </button>
+                {DISTRICT_GROUPS.map((group) => (
+                  <div key={group.label} className="district-group">
+                    <div className="district-group-label">{group.label}</div>
+                    <div className="district-grid">
+                      {group.ids.map((id) => {
+                        const d = DISTRICTS.find((x) => x.id === id);
+                        if (!d) return null;
+                        const done = downloadedDistrictIds.has(id);
+                        return (
+                          <button
+                            key={id}
+                            className={`district-btn${done ? " done" : ""}`}
+                            disabled={isDownloading}
+                            title={done ? `${d.name} — уже в кеше` : `Скачать ${d.name}`}
+                            onClick={() => { onDownloadDistrict(d); onClose(); }}
+                          >
+                            {done && (
+                              <svg className="district-check" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                                <polyline points="20 6 9 17 4 12" />
+                              </svg>
+                            )}
+                            {d.name}
+                          </button>
+                        );
+                      })}
+                    </div>
                   </div>
-                  <div className="zone-card-info">
-                    <span className="zone-info-item">
-                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <polyline points="8 17 12 21 16 17" />
-                        <line x1="12" y1="12" x2="12" y2="21" />
-                        <path d="M20.88 18.09A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.29" />
-                      </svg>
-                      {z.tileCount} тайлов
-                    </span>
-                    <span className="zone-info-item">
-                      z{z.zMin}–{z.zMax}
-                    </span>
-                  </div>
-                </div>
-              ))}
+                ))}
+              </div>
+
+              {/* ── Уже скачанные зоны ── */}
               {zones.length > 0 && (
-                <button className="zone-clear-btn" onClick={onClearZones}>
-                  Очистить весь тайловый кеш
-                </button>
+                <>
+                  <div className="zones-saved-title">Скачанные зоны</div>
+                  {zones.map((z) => (
+                    <div key={z.id} className="zone-card">
+                      <div className="zone-card-header">
+                        <div className="zone-card-name">
+                          {z.name ?? "Зона"}
+                          <span className="zone-card-date">{formatDate(z.downloadedAt)}</span>
+                        </div>
+                        <button className="zone-delete-btn" title="Удалить из кеша" onClick={() => onRemoveZone(z.id)}>
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                            <polyline points="3 6 5 6 21 6" />
+                            <path d="M19 6l-1 14H6L5 6" />
+                            <path d="M10 11v6M14 11v6M9 6V4h6v2" />
+                          </svg>
+                        </button>
+                      </div>
+                      <div className="zone-card-info">
+                        <span className="zone-info-item">
+                          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <polyline points="8 17 12 21 16 17" /><line x1="12" y1="12" x2="12" y2="21" />
+                            <path d="M20.88 18.09A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.29" />
+                          </svg>
+                          {z.tileCount} тайлов
+                        </span>
+                        <span className="zone-info-item">z{z.zMin}–{z.zMax}</span>
+                      </div>
+                    </div>
+                  ))}
+                  <button className="zone-clear-btn" onClick={onClearZones}>
+                    Очистить весь тайловый кеш
+                  </button>
+                </>
+              )}
+
+              {zones.length === 0 && (
+                <p className="drawer-hint" style={{ marginTop: 4 }}>
+                  Нажмите кнопку района выше, чтобы скачать карту для офлайн-работы.
+                </p>
               )}
             </div>
           )}
+
           {drawerTab === "stack" && (
             <div className="drawer-section">
               <p className="drawer-hint">Состояние гео-сервисов проекта.</p>
-              <ServiceRow label="PostGIS + h3" up={stack?.postgis.up} detail={stack?.postgis.detail} />
-              <ServiceRow label="Martin (PMTiles)" up={stack?.martin.up} detail={stack?.martin.detail} restartService="martin" />
-              <ServiceRow label="GraphHopper" up={stack?.graphhopper.up} detail={stack?.graphhopper.detail} restartService="graphhopper" />
-              <ServiceRow label="Pelias" up={stack?.pelias.up} detail={stack?.pelias.detail} />
+              <ServiceRow label="PostGIS + h3"     up={stack?.postgis.up}     detail={stack?.postgis.detail} />
+              <ServiceRow label="Martin (PMTiles)"  up={stack?.martin.up}     detail={stack?.martin.detail}     restartService="martin" />
+              <ServiceRow label="GraphHopper"       up={stack?.graphhopper.up} detail={stack?.graphhopper.detail} restartService="graphhopper" />
+              <ServiceRow label="Pelias"            up={stack?.pelias.up}     detail={stack?.pelias.detail} />
               <div className="basemap-source">
                 Базовая карта:{" "}
                 {stack?.basemap.source === "pmtiles_martin" ? "PMTiles (Martin)" : "OSM raster (fallback)"}
               </div>
             </div>
           )}
+
         </div>
       </aside>
     </>

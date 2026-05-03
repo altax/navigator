@@ -575,7 +575,9 @@ export default function App() {
           {downloadStatus.phase === "downloading" && (
             <>
               <div className="download-banner-row">
-                <span className="download-banner-label">Скачивание зоны</span>
+                <span className="download-banner-label">
+                  {downloadStatus.name ?? "Скачивание зоны"}
+                </span>
                 <span className="download-banner-count">
                   {downloadStatus.done} / {downloadStatus.total}
                 </span>
@@ -596,7 +598,7 @@ export default function App() {
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                 <polyline points="20 6 9 17 4 12" />
               </svg>
-              Готово — {downloadStatus.total} тайлов в кеше
+              {downloadStatus.name ? `${downloadStatus.name} скачан` : "Готово"} — {downloadStatus.total} тайлов
             </div>
           )}
           {downloadStatus.phase === "cancelled" && (
@@ -674,7 +676,9 @@ export default function App() {
         drawerTab={drawerTab} setDrawerTab={setDrawerTab}
         sortedPois={sortedPois} filterTypes={filterTypes} setFilterTypes={setFilterTypes}
         stack={stack}
-        zones={zones} onRemoveZone={removeZone} onClearZones={clearZones}
+        zones={zones} downloadPhase={downloadStatus.phase}
+        onRemoveZone={removeZone} onClearZones={clearZones}
+        onDownloadDistrict={(d) => startAreaDownload({ bounds: d.bounds, zMin: d.zMin, zMax: d.zMax, name: d.name, districtId: d.id })}
         onSelectPoi={(lng, lat) => flyTo(lng, lat, 17)}
       />
     </div>
