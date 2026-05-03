@@ -23,8 +23,37 @@ import { DrawerPanel } from "./components/DrawerPanel";
 
 const POI_TYPES = Object.keys(POI_TYPE_META) as PoiType[];
 
+// ── GPU-tier detection ─────────────────────────────────────────────────────
+// Создаём временный 1×1 WebGL-контекст, читаем строку рендерера, сразу
+// освобождаем контекст чтобы не конкурировать с MapLibre.
+type GpuTier = "low" | "mid" | "high";
+function detectGpuTier(): GpuTier {
+  try {
+    const c = document.createElement("canvas");
+    c.width = 1; c.height = 1;
+    const gl = (c.getContext("webgl") ?? c.getContext("experimental-webgl")) as WebGLRenderingContext | null;
+    if (!gl) return "low";
+    const ext = gl.getExtension("WEBGL_debug_renderer_info");
+    const renderer: string = ext ? (gl.getParameter(ext.UNMASKED_RENDERER_WEBGL) as string) ?? "" : "";
+    // Освобождаем контекст сразу — не тратим GPU-память
+    gl.getExtension("WEBGL_lose_context")?.loseContext();
+    if (/swiftshader|llvmpipe|softpipe|software/i.test(renderer)) return "low";
+    // Intel HD 3xx/4xx/5xx — Apollo Lake, Bay Trail, Broadwell ULP (очень слабые)
+    if (/HD\s+Graphics\s+[345]\d{2}/i.test(renderer)) return "low";
+    // Intel HD/UHD 6xx и новее (Kaby Lake+) — умеренно слабые
+    if (/intel.*(HD|UHD)\s+Graphics/i.test(renderer)) return "mid";
+    // Intel Iris / Xe — нормальные интегрированные
+    if (/intel.*(iris|xe)/i.test(renderer)) return "mid";
+    // Любой другой Intel — считаем средним
+    if (/intel/i.test(renderer)) return "mid";
+    // Дискретная GPU
+    return "high";
+  } catch { return "mid"; }
+}
+
 export default function App() {
   const mapRef = useRef<MlMap | null>(null);
+  const defaultPitchRef = useRef(35);
   const containerRef = useRef<HTMLDivElement | null>(null);
   const animFrameRef = useRef<number | null>(null);
 
@@ -56,22 +85,25 @@ export default function App() {
     // до рендера React — здесь повторять не нужно.
     let map: MlMap;
     try {
-      // Определяем «слабое» железо: ≤ 2 ядра или ≤ 2 ГБ RAM.
-      // На таких устройствах снижаем нагрузку на GPU и CPU.
+      // Определяем производительность GPU по строке WebGL-рендерера.
+      // Только CPU-ядра недостаточно: N3450 имеет 4 ядра но GPU-уровень планшета.
+      const gpuTier   = detectGpuTier();
       const weakDevice =
+        gpuTier === "low" ||
         (navigator.hardwareConcurrency ?? 4) <= 2 ||
         ((navigator as { deviceMemory?: number }).deviceMemory ?? 4) <= 2;
+      const defaultPitch = weakDevice ? 0 : 35;
+      defaultPitchRef.current = defaultPitch;
 
       map = new maplibregl.Map({
         container: containerRef.current,
         style: buildStyle(stack),
         center: SPB_CENTER,
         zoom: 14,
-        // На слабом GPU (Intel HD 500 и аналогичных) 3D-перспектива — основная
-        // причина медленного первого рендера. Стартуем плоско, курьер может
-        // наклонить карту жестом в любой момент.
-        pitch: weakDevice ? 0 : 35,
-        maxPitch: 65,
+        pitch: defaultPitch,
+        // Слабый GPU: ограничиваем максимальный наклон — меньше тайлов в поле
+        // зрения, меньше нагрузки на fill-extrusion рендеринг.
+        maxPitch: gpuTier === "low" ? 30 : 65,
         bearing: 0,
         maxBounds: [27.0, 58.0, 34.0, 61.8],
         attributionControl: { compact: true },
@@ -89,6 +121,20 @@ export default function App() {
         // пикселях браузера, без апскейлинга. На сильном — до 2× для чёткости.
         pixelRatio: weakDevice ? 1 : Math.min(window.devicePixelRatio || 1, 2),
       });
+
+      // Слабый GPU: скрываем fill-extrusion зданий после загрузки стиля.
+      // 3D-экструзия — самая тяжёлая операция для Intel HD 4xx/5xx.
+      // Плоские footprint'ы зданий (слой "buildings") остаются видимыми.
+      if (gpuTier === "low") {
+        const hideBuildingsExtrusion = () => {
+          if (map.getLayer("buildings-3d"))
+            map.setLayoutProperty("buildings-3d", "visibility", "none");
+          if (map.getLayer("selected-building-3d"))
+            map.setLayoutProperty("selected-building-3d", "visibility", "none");
+        };
+        if (map.isStyleLoaded()) hideBuildingsExtrusion();
+        else map.once("style.load", hideBuildingsExtrusion);
+      }
     } catch (e) {
       console.error("MapLibre init failed:", e);
       setWebglError(true);
@@ -410,7 +456,7 @@ export default function App() {
     if (highlightBuilding) highlightBuildingAt(lng, lat);
   };
 
-  const resetView = () => mapRef.current?.easeTo({ pitch: 35, bearing: 0, duration: 600 });
+  const resetView = () => mapRef.current?.easeTo({ pitch: defaultPitchRef.current, bearing: 0, duration: 600 });
 
   // ── Click handlers ─────────────────────────────────────────────────────────
   useEffect(() => {
