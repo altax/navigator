@@ -1715,9 +1715,14 @@ html, body {
   line-height: 1.5;
 }
 
+/* Обёртка для автодополнения (position: relative нужен для дропдауна) */
+.ob-addr-autocomplete { position: relative; }
+
 .ob-addr-field {
   display: flex;
-  gap: 8px;
+  align-items: center;
+  gap: 0;
+  position: relative;
 }
 
 .ob-addr-input {
@@ -1726,44 +1731,74 @@ html, body {
   background: #0a1628;
   border: 1.5px solid #172234;
   border-radius: 8px;
-  padding: 0 12px;
+  padding: 0 40px 0 12px; /* правый отступ под спиннер */
   font-size: 14px;
   color: #e2e8f0;
   outline: none;
+  width: 100%;
   transition: border-color 0.14s;
 }
 .ob-addr-input:focus        { border-color: #3b82f6; }
 .ob-addr-input::placeholder { color: #253d58; }
 .ob-addr-input:disabled     { opacity: 0.5; }
 
-.ob-addr-btn {
-  height: 44px;
-  padding: 0 18px;
-  background: #1d4ed8;
-  color: #fff;
-  border: none;
-  border-radius: 8px;
-  font-size: 13px;
-  font-weight: 600;
-  cursor: pointer;
-  white-space: nowrap;
-  transition: background 0.14s;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 72px;
-}
-.ob-addr-btn:hover:not(:disabled) { background: #1e40af; }
-.ob-addr-btn:disabled              { opacity: 0.4; cursor: not-allowed; }
-
-.ob-addr-spin {
+/* Спиннер внутри поля справа */
+.ob-addr-spin--inline {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
   display: inline-block;
-  width: 16px;
-  height: 16px;
-  border: 2px solid rgba(255,255,255,0.3);
-  border-top-color: #fff;
+  width: 15px;
+  height: 15px;
+  border: 2px solid #172234;
+  border-top-color: #3b82f6;
   border-radius: 50%;
   animation: ob-spin 0.7s linear infinite;
+  pointer-events: none;
+}
+
+/* Дропдаун с подсказками */
+.ob-suggestions {
+  position: absolute;
+  top: calc(100% + 2px);
+  left: 0;
+  right: 0;
+  background: #0d1f35;
+  border: 1px solid #172234;
+  border-radius: 8px;
+  z-index: 100;
+  max-height: 220px;
+  overflow-y: auto;
+  list-style: none;
+  margin: 0;
+  padding: 4px 0;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+}
+.ob-suggestions::-webkit-scrollbar { width: 4px; }
+.ob-suggestions::-webkit-scrollbar-thumb { background: #172234; border-radius: 4px; }
+
+.ob-suggestion {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 9px 12px;
+  cursor: pointer;
+  border-bottom: 1px solid #0f1e30;
+  transition: background 0.1s;
+}
+.ob-suggestion:last-child { border-bottom: none; }
+.ob-suggestion:hover      { background: #122030; }
+
+.ob-sug-icon {
+  flex-shrink: 0;
+  margin-top: 2px;
+  color: #2563eb;
+}
+.ob-sug-text {
+  font-size: 12px;
+  color: #94a3b8;
+  line-height: 1.4;
 }
 
 .ob-addr-error {

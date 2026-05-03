@@ -4,6 +4,7 @@ import { DISTRICTS } from "../data/districts";
 import { circleRing, RADIUS_KM } from "./useWarehouseRadius";
 import type { TileBounds } from "../utils/tileUtils";
 
+// CCW bbox ring (outer) — matches GeoJSON right-hand rule for polygons
 function bboxRing(b: TileBounds): [number, number][] {
   return [
     [b.west, b.south], [b.east, b.south],
@@ -11,8 +12,16 @@ function bboxRing(b: TileBounds): [number, number][] {
     [b.west, b.south],
   ];
 }
+// CW bbox ring (for hole in fog polygon)
+function bboxHole(b: TileBounds): [number, number][] {
+  return [
+    [b.west, b.south], [b.west, b.north],
+    [b.east, b.north], [b.east, b.south],
+    [b.west, b.south],
+  ];
+}
 
-// Внешнее кольцо "мира" — CCW (right-hand rule для outer polygon)
+// Мировое кольцо CCW — внешняя граница "тумана"
 const WORLD_RING: [number, number][] = [
   [-180, -90], [-180, 90], [180, 90], [180, -90], [-180, -90],
 ];
@@ -28,7 +37,7 @@ function districtFeatures(hoveredId: string | null, inRadiusIds: string[]) {
   }));
 }
 
-const OB_LAYERS  = ["ob-fog-fill", "ob-all-dist-fill", "ob-all-dist-line", "ob-circle-fill", "ob-circle-border", "ob-warehouse-halo", "ob-warehouse-dot"];
+const OB_LAYERS  = ["ob-fog-fill", "ob-all-dist-line", "ob-circle-border", "ob-warehouse-halo", "ob-warehouse-dot"];
 const OB_SOURCES = ["ob-fog", "ob-all-districts", "ob-circle", "ob-warehouse"];
 
 export function useOnboardingOverlay(
@@ -57,21 +66,21 @@ export function useOnboardingOverlay(
 
     const install = () => {
       cleanup();
-      if (!warehouseCoords) return;
+      // Слои ставим только когда адрес введён и есть районы в зоне
+      if (!warehouseCoords || inRadiusRef.current.length === 0) return;
 
-      const ring     = circleRing(warehouseCoords, RADIUS_KM);
-      // Дырка в тумане: обратный порядок кольца (CW для inner ring в GeoJSON)
-      const holeRing = [...ring].reverse() as [number, number][];
+      const ring          = circleRing(warehouseCoords, RADIUS_KM);
+      const inRadiusDists = DISTRICTS.filter(d => inRadiusRef.current.includes(d.id));
 
-      // Туман: весь мир минус круг 6 км
+      // ── Туман: весь мир с "дырками" по bbox выбранных районов ──
+      // Внутри bbox-дырок видна живая карта (улицы/дома района).
+      // Снаружи — тёмный туман.
+      const holes = inRadiusDists.map(d => bboxHole(d.bounds));
       map.addSource("ob-fog", {
         type: "geojson",
         data: {
           type: "Feature", properties: {},
-          geometry: {
-            type: "Polygon",
-            coordinates: [WORLD_RING, holeRing],
-          },
+          geometry: { type: "Polygon", coordinates: [WORLD_RING, ...holes] },
         },
       });
 
@@ -97,37 +106,31 @@ export function useOnboardingOverlay(
         },
       });
 
-      // Туман затемняет всё снаружи
+      // Туман — всё снаружи выбранных районов тёмное
       map.addLayer({
         id: "ob-fog-fill", type: "fill", source: "ob-fog",
-        paint: { "fill-color": "#000b18", "fill-opacity": 0.75 },
+        paint: { "fill-color": "#000b18", "fill-opacity": 0.88 },
       });
 
-      // Районы внутри зоны: слабый цвет + при наведении — яркий
-      map.addLayer({
-        id: "ob-all-dist-fill", type: "fill", source: "ob-all-districts",
-        paint: {
-          "fill-color": ["case", ["==", ["get", "hovered"], true], "#3b82f6", "#1e3a5f"],
-          "fill-opacity": ["case", ["==", ["get", "hovered"], true], 0.30, 0.08],
-        },
-      });
+      // Границы районов — яркий контур на bbox, подсветка при наведении
       map.addLayer({
         id: "ob-all-dist-line", type: "line", source: "ob-all-districts",
         paint: {
-          "line-color": ["case", ["==", ["get", "hovered"], true], "#60a5fa", "#2563eb"],
-          "line-width":  ["case", ["==", ["get", "hovered"], true], 2.5, 1.5],
-          "line-opacity": ["case", ["==", ["get", "hovered"], true], 1.0, 0.6],
+          "line-color":   ["case", ["==", ["get", "hovered"], true], "#60a5fa", "#2563eb"],
+          "line-width":   ["case", ["==", ["get", "hovered"], true], 3, 1.5],
+          "line-opacity": ["case", ["==", ["get", "hovered"], true], 1.0, 0.65],
         },
       });
 
-      // Пунктирная граница круга 6 км
-      map.addLayer({
-        id: "ob-circle-fill", type: "fill", source: "ob-circle",
-        paint: { "fill-color": "#3b82f6", "fill-opacity": 0.04 },
-      });
+      // Пунктирный круг 6 км — ориентир зоны
       map.addLayer({
         id: "ob-circle-border", type: "line", source: "ob-circle",
-        paint: { "line-color": "#3b82f6", "line-width": 2, "line-dasharray": [4, 3], "line-opacity": 0.85 },
+        paint: {
+          "line-color": "#3b82f6",
+          "line-width": 1.5,
+          "line-dasharray": [5, 4],
+          "line-opacity": 0.55,
+        },
       });
 
       // Маркер цеха
@@ -156,7 +159,7 @@ export function useOnboardingOverlay(
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [coordsKey, inRadiusKey]);
 
-  // ── Обновляем hover-подсветку без переустановки слоёв ─────────────────────
+  // ── Обновляем hover без переустановки слоёв ───────────────────────────────
   useEffect(() => {
     const map = mapRef.current;
     if (!map) return;

@@ -5,6 +5,8 @@ import type { MapMode } from "../hooks/useMapSetup";
 import { DISTRICTS, DISTRICT_GROUPS, districtById } from "../data/districts";
 import { geocodeAddress, districtIdsInRadius, circleTileBounds, RADIUS_KM } from "../hooks/useWarehouseRadius";
 
+// ── Типы ──────────────────────────────────────────────────────────────────────
+
 interface Props {
   downloadStatus:    DownloadStatus;
   pendingQueue:      DownloadRequest[];
@@ -18,7 +20,23 @@ interface Props {
 
 type Step = "address" | "choose" | "downloading" | "done";
 
-function plural(n: number) { return n === 1 ? "район" : n <= 4 ? "района" : "районов"; }
+interface Suggestion {
+  place_id: number;
+  display_name: string;
+  lat: string;
+  lon: string;
+}
+
+// ── Helpers ───────────────────────────────────────────────────────────────────
+
+function plural(n: number) {
+  return n === 1 ? "район" : n <= 4 ? "района" : "районов";
+}
+
+/** Короткое имя из Nominatim display_name: первые 2 части через запятую */
+function shortName(displayName: string): string {
+  return displayName.split(",").slice(0, 2).map(s => s.trim()).join(", ");
+}
 
 const CheckIcon = () => (
   <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor"
@@ -26,6 +44,8 @@ const CheckIcon = () => (
     <polyline points="20 6 9 17 4 12"/>
   </svg>
 );
+
+// ── Компонент ─────────────────────────────────────────────────────────────────
 
 export function OnboardingScreen({
   downloadStatus, pendingQueue, onEnqueue, onCancelAll, onComplete,
@@ -35,6 +55,9 @@ export function OnboardingScreen({
   const [mode,            setMode]           = useState<MapMode>("districts");
   const [pickedIds,       setPickedIds]      = useState<string[]>([]);
   const [addressInput,    setAddressInput]   = useState("");
+  const [suggestions,     setSuggestions]    = useState<Suggestion[]>([]);
+  const [sugOpen,         setSugOpen]        = useState(false);
+  const [searching,       setSearching]      = useState(false);
   const [geocoding,       setGeocoding]      = useState(false);
   const [geocodeError,    setGeocodeError]   = useState<string | null>(null);
   const [warehouseCoords, setWarehouseCoords] = useState<[number, number] | null>(null);
@@ -42,6 +65,19 @@ export function OnboardingScreen({
 
   const downloadStartedRef = useRef(false);
   const prevPhaseRef       = useRef(downloadStatus.phase);
+  const searchTimerRef     = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const wrapRef            = useRef<HTMLDivElement>(null);
+
+  // Закрыть дропдаун при клике снаружи
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (wrapRef.current && !wrapRef.current.contains(e.target as Node)) {
+        setSugOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, []);
 
   useEffect(() => {
     const prev = prevPhaseRef.current;
@@ -51,18 +87,63 @@ export function OnboardingScreen({
     else if (prev !== "idle" && downloadStatus.phase === "idle") { setStep("done"); }
   }, [downloadStatus.phase, step]);
 
-  const handleGeocode = async () => {
-    if (!addressInput.trim()) return;
-    setGeocoding(true);
+  // ── Применить выбранные координаты (из поиска или Enter) ──────────────────
+  const applyCoords = (coords: [number, number], label: string) => {
+    const inRadius = districtIdsInRadius(DISTRICTS, coords, RADIUS_KM);
+    setWarehouseCoords(coords);
+    setInRadiusIds(inRadius);
+    setPickedIds(inRadius.slice(0, 4));
+    setAddressInput(label);
     setGeocodeError(null);
+    onWarehouseChange(coords, inRadius);
+    mapRef.current?.flyTo({ center: coords, zoom: 11, duration: 900 });
+  };
+
+  // ── Живой поиск при вводе (debounce 400 мс) ───────────────────────────────
+  const handleAddressInput = (value: string) => {
+    setAddressInput(value);
+    setGeocodeError(null);
+    // Сбрасываем выбранный адрес если пользователь редактирует
+    if (warehouseCoords) {
+      setWarehouseCoords(null);
+      setInRadiusIds([]);
+      setPickedIds([]);
+      onWarehouseChange(null, []);
+    }
+    if (searchTimerRef.current) clearTimeout(searchTimerRef.current);
+    if (value.trim().length < 3) { setSuggestions([]); setSugOpen(false); return; }
+
+    searchTimerRef.current = setTimeout(async () => {
+      setSearching(true);
+      try {
+        const q = /санкт|питер|спб/i.test(value) ? value : `${value}, Санкт-Петербург`;
+        const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(q)}&format=json&limit=6&countrycodes=ru&accept-language=ru`;
+        const resp = await fetch(url, { headers: { "User-Agent": "courier-map/1.0" } });
+        const data = await resp.json() as Suggestion[];
+        setSuggestions(data);
+        setSugOpen(data.length > 0);
+      } catch { /* без интернета — тихо */ }
+      setSearching(false);
+    }, 400);
+  };
+
+  // ── Клик по подсказке ────────────────────────────────────────────────────
+  const handleSuggestionSelect = (s: Suggestion) => {
+    const coords: [number, number] = [parseFloat(s.lon), parseFloat(s.lat)];
+    applyCoords(coords, shortName(s.display_name));
+    setSuggestions([]);
+    setSugOpen(false);
+  };
+
+  // ── Поиск через Enter / кнопку (fallback) ────────────────────────────────
+  const handleGeocode = async () => {
+    if (!addressInput.trim() || warehouseCoords) return;
+    if (searchTimerRef.current) clearTimeout(searchTimerRef.current);
+    setSugOpen(false);
+    setGeocoding(true);
     try {
-      const coords   = await geocodeAddress(addressInput);
-      const inRadius = districtIdsInRadius(DISTRICTS, coords, RADIUS_KM);
-      setWarehouseCoords(coords);
-      setInRadiusIds(inRadius);
-      setPickedIds(inRadius.slice(0, 4));
-      onWarehouseChange(coords, inRadius);
-      mapRef.current?.flyTo({ center: coords, zoom: 11, duration: 1000 });
+      const coords = await geocodeAddress(addressInput);
+      applyCoords(coords, addressInput);
     } catch (e) {
       setGeocodeError((e as Error).message);
     }
@@ -84,8 +165,7 @@ export function OnboardingScreen({
 
   const toggle = (id: string) =>
     setPickedIds(prev =>
-      prev.includes(id) ? prev.filter(x => x !== id)
-        : prev.length >= 4 ? prev : [...prev, id],
+      prev.includes(id) ? prev.filter(x => x !== id) : prev.length >= 4 ? prev : [...prev, id],
     );
 
   const handleStart = () => {
@@ -107,15 +187,14 @@ export function OnboardingScreen({
   };
 
   const visibleQueue = pendingQueue.filter(r => r.districtId !== "__city_base__");
-  const pct    = downloadStatus.total > 0 ? Math.round((downloadStatus.done / downloadStatus.total) * 100) : 0;
-  const isCity = downloadStatus.currentDistrictId === "__city_base__";
+  const pct      = downloadStatus.total > 0 ? Math.round((downloadStatus.done / downloadStatus.total) * 100) : 0;
+  const isCity   = downloadStatus.currentDistrictId === "__city_base__";
   const canStart = mode === "all" || (warehouseCoords ? inRadiusIds.length > 0 : pickedIds.length > 0);
 
   const shownGroups = inRadiusIds.length > 0
     ? DISTRICT_GROUPS.map(g => ({ ...g, ids: g.ids.filter(id => inRadiusIds.includes(id)) })).filter(g => g.ids.length > 0)
     : DISTRICT_GROUPS;
 
-  // На шаге choose карта видна (сайдбар), на остальных — глухая подложка.
   const overlayClass = `ob-overlay${step === "choose" ? " ob-overlay--choose" : ""}`;
 
   return (
@@ -137,7 +216,7 @@ export function OnboardingScreen({
           </div>
         </header>
 
-        {/* ── Шаг 0: адрес цеха — карта скрыта ── */}
+        {/* ── Шаг 0: адрес цеха ── */}
         {step === "address" && (
           <div className="ob-choose">
             <div className="ob-addr-card">
@@ -145,39 +224,63 @@ export function OnboardingScreen({
                 <div className="ob-addr-emoji">🏭</div>
                 <h2 className="ob-addr-title">Где ваш цех или даркстор?</h2>
                 <p className="ob-addr-desc">
-                  Укажем рабочую зону {RADIUS_KM} км и автоматически подберём нужные районы — скачаете только их.
+                  Укажем рабочую зону {RADIUS_KM} км — карта покажет только нужные районы.
                 </p>
               </div>
-              <div className="ob-addr-field">
-                <input
-                  className="ob-addr-input"
-                  type="text"
-                  placeholder="ул. Дибуновская, 50"
-                  value={addressInput}
-                  onChange={e => { setAddressInput(e.target.value); setGeocodeError(null); }}
-                  onKeyDown={e => e.key === "Enter" && !geocoding && handleGeocode()}
-                  disabled={geocoding}
-                  autoFocus
-                />
-                <button
-                  className="ob-addr-btn"
-                  onClick={handleGeocode}
-                  disabled={geocoding || !addressInput.trim()}
-                >
-                  {geocoding ? <span className="ob-addr-spin" /> : "Найти"}
-                </button>
+
+              {/* Поле с автодополнением */}
+              <div className="ob-addr-autocomplete" ref={wrapRef}>
+                <div className="ob-addr-field">
+                  <input
+                    className="ob-addr-input"
+                    type="text"
+                    placeholder="Начните вводить адрес…"
+                    value={addressInput}
+                    onChange={e => handleAddressInput(e.target.value)}
+                    onKeyDown={e => {
+                      if (e.key === "Enter") { setSugOpen(false); handleGeocode(); }
+                      if (e.key === "Escape") setSugOpen(false);
+                    }}
+                    onFocus={() => suggestions.length > 0 && setSugOpen(true)}
+                    autoFocus
+                    autoComplete="off"
+                  />
+                  {(searching || geocoding) && <span className="ob-addr-spin ob-addr-spin--inline" />}
+                </div>
+
+                {sugOpen && suggestions.length > 0 && (
+                  <ul className="ob-suggestions">
+                    {suggestions.map(s => (
+                      <li
+                        key={s.place_id}
+                        className="ob-suggestion"
+                        onMouseDown={() => handleSuggestionSelect(s)}
+                      >
+                        <svg className="ob-sug-icon" width="12" height="12" viewBox="0 0 24 24"
+                          fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                          <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+                          <circle cx="12" cy="10" r="3"/>
+                        </svg>
+                        <span className="ob-sug-text">{s.display_name}</span>
+                      </li>
+                    ))}
+                  </ul>
+                )}
               </div>
+
               {geocodeError && <div className="ob-addr-error">{geocodeError}</div>}
+
               {warehouseCoords && !geocodeError && (
                 <div className="ob-addr-result">
                   <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#4ade80"
                     strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                     <polyline points="20 6 9 17 4 12"/>
                   </svg>
-                  Зона {RADIUS_KM} км построена · {inRadiusIds.length} {plural(inRadiusIds.length)} в зоне
+                  {inRadiusIds.length} {plural(inRadiusIds.length)} в зоне {RADIUS_KM} км
                 </div>
               )}
             </div>
+
             <button
               className={`ob-cta${!warehouseCoords ? " dim" : ""}`}
               onClick={() => setStep("choose")}
@@ -191,7 +294,7 @@ export function OnboardingScreen({
           </div>
         )}
 
-        {/* ── Шаг 1: выбор районов — карта видна слева ── */}
+        {/* ── Шаг 1: выбор режима и районов ── */}
         {step === "choose" && (
           <div className="ob-choose">
             <div className="ob-tabs">
