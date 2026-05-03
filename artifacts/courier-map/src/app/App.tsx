@@ -32,6 +32,7 @@ export default function App() {
         pitch: weakDevice ? 0 : 35,
         maxPitch: 65,
         bearing: 0,
+        minZoom: 5,
         maxBounds: [27.0, 58.0, 34.0, 61.8],
         attributionControl: { compact: true },
         touchPitch: true,

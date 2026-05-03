@@ -31,9 +31,19 @@ export function buildStyle(stack: StackStatus | null): StyleSpecification {
           type: "geojson" as const,
           data: { type: "FeatureCollection", features: [] },
         },
+        "delivery-mask": {
+          type: "geojson" as const,
+          data: { type: "FeatureCollection", features: [] },
+        },
       },
       layers: [
         { id: "background", type: "background" as const, paint: { "background-color": "#0e1116" } },
+        {
+          id: "delivery-outside-mask",
+          type: "fill" as const,
+          source: "delivery-mask",
+          paint: { "fill-color": "#0e1116", "fill-opacity": 1 },
+        },
         {
           id: "landuse",
           type: "fill" as const,

@@ -109,7 +109,44 @@ function makeCircle(
   };
 }
 
+function makeInverseMask(
+  lng: number, lat: number, radiusKm: number,
+): GeoJSON.FeatureCollection {
+  const world: [number, number][] = [
+    [-180, -85.051129], [180, -85.051129],
+    [180, 85.051129], [-180, 85.051129], [-180, -85.051129],
+  ];
+  const N = 128;
+  const hole: [number, number][] = [];
+  for (let i = N; i >= 0; i--) {
+    const a = (i / N) * 2 * Math.PI;
+    const dLat = (radiusKm / 111) * Math.cos(a);
+    const dLng = (radiusKm / (111 * Math.cos((lat * Math.PI) / 180))) * Math.sin(a);
+    hole.push([lng + dLng, lat + dLat]);
+  }
+  return {
+    type: "FeatureCollection",
+    features: [
+      {
+        type: "Feature",
+        geometry: { type: "Polygon", coordinates: [world, hole] },
+        properties: {},
+      },
+    ],
+  };
+}
+
+function zoneBounds(
+  lng: number, lat: number, radiusKm: number, bufferFactor = 1.3,
+): [number, number, number, number] {
+  const r = radiusKm * bufferFactor;
+  const dLat = r / 111;
+  const dLng = r / (111 * Math.cos((lat * Math.PI) / 180));
+  return [lng - dLng, lat - dLat, lng + dLng, lat + dLat];
+}
+
 const EMPTY_FC: GeoJSON.FeatureCollection = { type: "FeatureCollection", features: [] };
+const FULL_BOUNDS: [number, number, number, number] = [27.0, 58.0, 34.0, 61.8];
 
 export function ZoneLoader({ mapRef }: Props) {
   const [open, setOpen] = useState(false);
@@ -131,6 +168,8 @@ export function ZoneLoader({ mapRef }: Props) {
       const map = mapRef.current;
       if (!map || !map.isStyleLoaded()) return;
       const geo = makeCircle(lng, lat, r);
+      const mask = makeInverseMask(lng, lat, r);
+
       if (!map.getSource("zone-circle")) {
         map.addSource("zone-circle", { type: "geojson", data: geo });
         map.addLayer(
@@ -159,14 +198,22 @@ export function ZoneLoader({ mapRef }: Props) {
       } else {
         (map.getSource("zone-circle") as maplibregl.GeoJSONSource).setData(geo);
       }
+
+      (map.getSource("delivery-mask") as maplibregl.GeoJSONSource | undefined)?.setData(mask);
+
+      map.setMaxBounds(zoneBounds(lng, lat, r));
     },
     [mapRef],
   );
 
   const clearCircle = useCallback(() => {
     const map = mapRef.current;
-    if (!map || !map.getSource("zone-circle")) return;
-    (map.getSource("zone-circle") as maplibregl.GeoJSONSource).setData(EMPTY_FC);
+    if (!map) return;
+    if (map.getSource("zone-circle")) {
+      (map.getSource("zone-circle") as maplibregl.GeoJSONSource).setData(EMPTY_FC);
+    }
+    (map.getSource("delivery-mask") as maplibregl.GeoJSONSource | undefined)?.setData(EMPTY_FC);
+    map.setMaxBounds(FULL_BOUNDS);
   }, [mapRef]);
 
   // ── Restore saved zone on mount ────────────────────────────────────────
