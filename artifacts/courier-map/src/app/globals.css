@@ -547,6 +547,184 @@ html, body {
   color: #3d5040;
 }
 
+/* ============= Стартовый экран приветствия ============= */
+.welcome-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(6, 9, 14, 0.88);
+  backdrop-filter: blur(14px);
+  animation: welcomeFadeIn 0.35s ease-out;
+}
+@keyframes welcomeFadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.welcome-card {
+  width: 100%;
+  max-width: 440px;
+  margin: 16px;
+  background: #0d1219;
+  border: 1px solid #1e2a3a;
+  border-radius: 20px;
+  box-shadow: 0 28px 80px rgba(0, 0, 0, 0.85);
+  overflow: visible;
+  animation: welcomeSlideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+@keyframes welcomeSlideUp {
+  from { opacity: 0; transform: translateY(28px) scale(0.96); }
+  to   { opacity: 1; transform: translateY(0)    scale(1); }
+}
+
+.welcome-header {
+  padding: 32px 28px 22px;
+  text-align: center;
+  border-bottom: 1px solid #141e2a;
+}
+.welcome-icon {
+  width: 58px;
+  height: 58px;
+  margin: 0 auto 18px;
+  background: rgba(59, 130, 246, 0.1);
+  border: 1px solid rgba(59, 130, 246, 0.22);
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #60a5fa;
+}
+.welcome-title {
+  font-size: 22px;
+  font-weight: 700;
+  color: #e8edf3;
+  margin: 0 0 8px;
+  letter-spacing: -0.01em;
+}
+.welcome-subtitle {
+  font-size: 13px;
+  color: #4a5a6e;
+  margin: 0;
+  line-height: 1.55;
+}
+
+.welcome-body {
+  padding: 22px 28px 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+.welcome-field {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+.welcome-label {
+  font-size: 10.5px;
+  font-weight: 600;
+  color: #3d5068;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+}
+.welcome-input-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: #101720;
+  border: 1px solid #1e2a3a;
+  border-radius: 10px;
+  padding: 0 12px;
+  transition: border-color 0.15s;
+}
+.welcome-input-row:focus-within { border-color: #3b82f6; }
+.welcome-input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  color: #e2e8ef;
+  font-size: 14px;
+  outline: none;
+  padding: 12px 0;
+  min-width: 0;
+}
+.welcome-input::placeholder { color: #273040; }
+
+.welcome-suggestions {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  background: #0b1018;
+  border: 1px solid #192030;
+  border-radius: 10px;
+  overflow: hidden;
+  max-height: 210px;
+  overflow-y: auto;
+}
+.welcome-suggestion {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 10px 14px;
+  font-size: 13px;
+  color: #b0bccf;
+  cursor: pointer;
+  border-bottom: 1px solid #101720;
+  transition: background 0.1s;
+  line-height: 1.4;
+}
+.welcome-suggestion:last-child { border-bottom: none; }
+.welcome-suggestion:hover { background: #121d2c; color: #93c5fd; }
+.welcome-suggestion-icon { margin-top: 2px; flex-shrink: 0; opacity: 0.4; }
+
+.welcome-radius-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.welcome-radius-val {
+  font-size: 16px;
+  font-weight: 700;
+  color: #60a5fa;
+}
+.welcome-slider {
+  width: 100%;
+  accent-color: #3b82f6;
+  cursor: pointer;
+}
+.welcome-slider-marks {
+  display: flex;
+  justify-content: space-between;
+  font-size: 10px;
+  color: #2a3748;
+  padding: 0 1px;
+}
+
+.welcome-footer {
+  padding: 16px 28px 28px;
+}
+.welcome-btn {
+  width: 100%;
+  padding: 13px 0;
+  border-radius: 10px;
+  border: none;
+  background: #2563eb;
+  color: #fff;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.15s, transform 0.1s, opacity 0.15s;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.welcome-btn:hover:not(:disabled) { background: #1d4ed8; }
+.welcome-btn:active:not(:disabled) { transform: scale(0.98); }
+.welcome-btn:disabled { background: #131e2e; color: #2a3748; cursor: not-allowed; }
+
 /* ============= WebGL ошибка ============= */
 .webgl-error {
   position: absolute;

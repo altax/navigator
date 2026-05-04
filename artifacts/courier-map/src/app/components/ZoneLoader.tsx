@@ -161,6 +161,10 @@ export function ZoneLoader({ mapRef, zoneFilterRef }: Props) {
   const [progress, setProgress] = useState<{ done: number; total: number } | null>(null);
   const [saved, setSaved] = useState<ZoneSaved | null>(null);
 
+  const [showWelcome, setShowWelcome] = useState(() => {
+    try { return !localStorage.getItem(LS_KEY); } catch { return true; }
+  });
+
   const abortRef = useRef<AbortController | null>(null);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -360,11 +364,109 @@ export function ZoneLoader({ mapRef, zoneFilterRef }: Props) {
     clearCircle();
   };
 
+  const handleWelcomeStart = useCallback(() => {
+    if (!selected) return;
+    const map = mapRef.current;
+    const doStart = () => {
+      paintCircle(selected.lng, selected.lat, radiusKm);
+      map!.flyTo({ center: [selected.lng, selected.lat], zoom: 13, duration: 1400, essential: true });
+      const state: ZoneSaved = { address: selected.label, lng: selected.lng, lat: selected.lat, radiusKm };
+      localStorage.setItem(LS_KEY, JSON.stringify(state));
+      setSaved(state);
+      setShowWelcome(false);
+    };
+    if (!map) { setShowWelcome(false); return; }
+    if (map.isStyleLoaded()) doStart();
+    else map.once("style.load", doStart);
+  }, [selected, radiusKm, mapRef, paintCircle]);
+
   const pct = progress ? Math.round((progress.done / progress.total) * 100) : 0;
   const maxZLabel = radiusKm <= 7 ? "z5–z14" : radiusKm <= 12 ? "z5–z13" : "z5–z12";
 
   return (
     <>
+      {showWelcome && (
+        <div className="welcome-overlay">
+          <div className="welcome-card">
+            <div className="welcome-header">
+              <div className="welcome-icon">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <circle cx="12" cy="12" r="9" />
+                  <circle cx="12" cy="12" r="3" />
+                  <line x1="12" y1="2" x2="12" y2="5" />
+                  <line x1="12" y1="19" x2="12" y2="22" />
+                  <line x1="2" y1="12" x2="5" y2="12" />
+                  <line x1="19" y1="12" x2="22" y2="12" />
+                </svg>
+              </div>
+              <h1 className="welcome-title">Курьерская Карта</h1>
+              <p className="welcome-subtitle">Укажите адрес даркстора и радиус&nbsp;доставки — карта отрисует только вашу зону</p>
+            </div>
+
+            <div className="welcome-body">
+              <div className="welcome-field">
+                <span className="welcome-label">Адрес даркстора</span>
+                <div className="welcome-input-row">
+                  <input
+                    className="welcome-input"
+                    value={address}
+                    onChange={(e) => handleAddressChange(e.target.value)}
+                    placeholder="Улица, дом…"
+                    autoComplete="off"
+                    spellCheck={false}
+                    autoFocus
+                  />
+                  {searching && <span className="zone-spinner" />}
+                  {!searching && address && (
+                    <button className="zone-input-clear" onClick={() => handleAddressChange("")}>×</button>
+                  )}
+                </div>
+                {suggestions.length > 0 && (
+                  <ul className="welcome-suggestions">
+                    {suggestions.map((s, i) => (
+                      <li key={i} className="welcome-suggestion" onClick={() => handleSelect(s)}>
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="welcome-suggestion-icon">
+                          <path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0 1 18 0z" />
+                          <circle cx="12" cy="10" r="3" />
+                        </svg>
+                        <span>{s.label.split(", ").slice(0, 3).join(", ")}</span>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+
+              <div className="welcome-field">
+                <div className="welcome-radius-row">
+                  <span className="welcome-label" style={{ margin: 0 }}>Радиус доставки</span>
+                  <span className="welcome-radius-val">{radiusKm} км</span>
+                </div>
+                <input
+                  type="range"
+                  className="welcome-slider"
+                  min={1} max={20} step={1}
+                  value={radiusKm}
+                  onChange={(e) => handleRadiusChange(Number(e.target.value))}
+                />
+                <div className="welcome-slider-marks">
+                  <span>1</span><span>5</span><span>10</span><span>15</span><span>20</span>
+                </div>
+              </div>
+            </div>
+
+            <div className="welcome-footer">
+              <button
+                className="welcome-btn"
+                disabled={!selected}
+                onClick={handleWelcomeStart}
+              >
+                {selected ? `Начать — ${selected.label.split(", ").slice(0, 2).join(", ")}` : "Выберите адрес"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       <button
         className={`zone-trigger${saved ? " zone-trigger--active" : ""}`}
         onClick={() => setOpen((v) => !v)}
