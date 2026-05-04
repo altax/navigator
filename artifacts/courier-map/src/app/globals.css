@@ -547,6 +547,48 @@ html, body {
   color: #3d5040;
 }
 
+/* ============= Кнопка-переключатель организаций ============= */
+.poi-toggle {
+  position: absolute;
+  top: 122px;
+  left: 14px;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 0 10px;
+  height: 44px;
+  border-radius: 12px;
+  border: 1px solid #2a323a;
+  background: rgba(17, 21, 26, 0.96);
+  color: #6c7a8a;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(6px);
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+  position: relative;
+}
+.poi-toggle:hover { background: #1a2128; color: #93c5fd; }
+.poi-toggle:active { transform: scale(0.95); }
+.poi-toggle--active {
+  border-color: #22c55e;
+  color: #86efac;
+}
+.poi-toggle--active:hover { color: #bbf7d0; }
+.poi-toggle-label { letter-spacing: 0.02em; }
+.poi-toggle-dot {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #22c55e;
+  box-shadow: 0 0 4px rgba(34, 197, 94, 0.7);
+}
+
 /* ============= Маркер даркстора ============= */
 .darkstore-marker {
   width: 40px;
