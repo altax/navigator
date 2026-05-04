@@ -568,7 +568,6 @@ html, body {
   box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
   backdrop-filter: blur(6px);
   transition: background 0.15s, color 0.15s, border-color 0.15s;
-  position: relative;
 }
 .poi-toggle:hover { background: #1a2128; color: #93c5fd; }
 .poi-toggle:active { transform: scale(0.95); }
@@ -577,7 +576,7 @@ html, body {
   color: #86efac;
 }
 .poi-toggle--active:hover { color: #bbf7d0; }
-.poi-toggle-label { letter-spacing: 0.02em; }
+.map-btn-label { letter-spacing: 0.02em; }
 .poi-toggle-dot {
   position: absolute;
   top: 8px;
@@ -587,6 +586,53 @@ html, body {
   border-radius: 50%;
   background: #22c55e;
   box-shadow: 0 0 4px rgba(34, 197, 94, 0.7);
+}
+
+/* ============= Кнопка POV ============= */
+.pov-btn {
+  position: absolute;
+  top: 176px;
+  left: 14px;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 0 10px;
+  height: 44px;
+  border-radius: 12px;
+  border: 1px solid #2a323a;
+  background: rgba(17, 21, 26, 0.96);
+  color: #6c7a8a;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(6px);
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+.pov-btn:hover { background: #1a2128; color: #93c5fd; }
+.pov-btn:active { transform: scale(0.95); }
+.pov-btn--active {
+  border-color: #f59e0b;
+  color: #fcd34d;
+  background: rgba(17, 21, 26, 0.98);
+}
+.pov-btn--active:hover { color: #fde68a; }
+.pov-btn-pulse {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #f59e0b;
+  box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.7);
+  animation: pov-pulse 1.4s ease-out infinite;
+}
+@keyframes pov-pulse {
+  0%   { box-shadow: 0 0 0 0   rgba(245, 158, 11, 0.7); }
+  70%  { box-shadow: 0 0 0 6px rgba(245, 158, 11, 0); }
+  100% { box-shadow: 0 0 0 0   rgba(245, 158, 11, 0); }
 }
 
 /* ============= Маркер даркстора ============= */

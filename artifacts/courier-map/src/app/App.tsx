@@ -32,11 +32,13 @@ export default function App() {
   const mapRef = useRef<MlMap | null>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
   const zoneFilterRef = useRef<ZoneFilter | null>(null);
+  const prevCameraRef = useRef<{ pitch: number; zoom: number; bearing: number } | null>(null);
 
   const [coord, setCoord] = useState<{ lng: number; lat: number } | null>(null);
   const [webglError, setWebglError] = useState(false);
   const [selectedBuildingInfo, setSelectedBuildingInfo] = useState<{ label: string } | null>(null);
   const [poisVisible, setPoisVisible] = useState(true);
+  const [povActive, setPovActive] = useState(false);
 
   // ── Map init ───────────────────────────────────────────────────────────────
   useEffect(() => {
@@ -306,14 +308,43 @@ export default function App() {
   useEffect(() => {
     const map = mapRef.current;
     if (!map) return;
+    const vis = poisVisible ? "visible" : "none";
     const apply = () => {
-      try {
-        map.setLayoutProperty("poi-labels", "visibility", poisVisible ? "visible" : "none");
-      } catch {}
+      try { map.setLayoutProperty("poi-labels", "visibility", vis); } catch {}
+      try { map.setLayoutProperty("poi-nodes", "visibility", vis); } catch {}
     };
     if (map.isStyleLoaded()) apply();
     else map.once("style.load", apply);
   }, [poisVisible]);
+
+  // ── POV (courier eye-level) toggle ────────────────────────────────────────
+  const togglePov = useCallback(() => {
+    const map = mapRef.current;
+    if (!map) return;
+    if (!povActive) {
+      prevCameraRef.current = {
+        pitch: map.getPitch(),
+        zoom: map.getZoom(),
+        bearing: map.getBearing(),
+      };
+      map.easeTo({
+        pitch: 85,
+        zoom: Math.max(map.getZoom(), 18),
+        bearing: map.getBearing(),
+        duration: 900,
+      });
+      setPovActive(true);
+    } else {
+      const prev = prevCameraRef.current;
+      map.easeTo({
+        pitch: prev?.pitch ?? 35,
+        zoom: prev?.zoom ?? 15,
+        bearing: prev?.bearing ?? 0,
+        duration: 900,
+      });
+      setPovActive(false);
+    }
+  }, [povActive]);
 
   // ── Render ─────────────────────────────────────────────────────────────────
   return (
@@ -336,14 +367,27 @@ export default function App() {
         onClick={() => setPoisVisible(v => !v)}
         title={poisVisible ? "Скрыть организации" : "Показать организации"}
       >
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           <rect x="2" y="7" width="20" height="14" rx="2"/>
           <path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/>
           <line x1="12" y1="12" x2="12" y2="16"/>
           <line x1="10" y1="14" x2="14" y2="14"/>
         </svg>
-        <span className="poi-toggle-label">Орг.</span>
+        <span className="map-btn-label">Орг.</span>
         {poisVisible && <span className="poi-toggle-dot" />}
+      </button>
+
+      <button
+        className={`pov-btn${povActive ? " pov-btn--active" : ""}`}
+        onClick={togglePov}
+        title={povActive ? "Выйти из режима курьера" : "Вид от первого лица (POV)"}
+      >
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7z"/>
+          <circle cx="12" cy="12" r="3"/>
+        </svg>
+        <span className="map-btn-label">POV</span>
+        {povActive && <span className="pov-btn-pulse" />}
       </button>
 
       {selectedBuildingInfo && (
