@@ -317,4 +317,33 @@ router.get("/geo/route", async (req, res) => {
   }
 });
 
+// ── Entrance nodes (подъезды) via Overpass ─────────────────────────────────
+router.get("/entrances", async (req, res) => {
+  const lat = Number(req.query.lat);
+  const lng = Number(req.query.lng);
+  const radius = Math.min(Number(req.query.radius ?? 70) || 70, 200);
+  if (!Number.isFinite(lat) || !Number.isFinite(lng)) {
+    res.status(400).json({ error: "lat/lng required" });
+    return;
+  }
+  const q = `[out:json][timeout:8];node["entrance"](around:${radius},${lat},${lng});out body;`;
+  try {
+    const r = await fetch(
+      `https://overpass-api.de/api/interpreter?data=${encodeURIComponent(q)}`,
+      { signal: AbortSignal.timeout(9000), headers: { "User-Agent": "courier-map-spb/0.1" } },
+    );
+    if (!r.ok) { res.status(502).json({ error: "overpass_error" }); return; }
+    const data = await r.json() as { elements: Array<{ id: number; lat: number; lon: number; tags?: Record<string,string> }> };
+    res.json((data.elements ?? []).map((el) => ({
+      id: el.id,
+      lat: el.lat,
+      lng: el.lon,
+      entrance: el.tags?.entrance ?? "yes",
+      ref: el.tags?.ref ?? null,
+    })));
+  } catch {
+    res.status(504).json({ error: "overpass_timeout" });
+  }
+});
+
 export default router;

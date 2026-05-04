@@ -33,6 +33,7 @@ export default function App() {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const zoneFilterRef = useRef<ZoneFilter | null>(null);
   const prevCameraRef = useRef<{ pitch: number; zoom: number; bearing: number } | null>(null);
+  const entranceMarkersRef = useRef<maplibregl.Marker[]>([]);
 
   const [coord, setCoord] = useState<{ lng: number; lat: number } | null>(null);
   const [webglError, setWebglError] = useState(false);
@@ -55,7 +56,7 @@ export default function App() {
         center: SPB_CENTER,
         zoom: 14,
         pitch: weakDevice ? 0 : 35,
-        maxPitch: 70,
+        maxPitch: 85,
         bearing: 0,
         minZoom: 5,
         maxZoom: 21,
@@ -199,9 +200,15 @@ export default function App() {
   }, []);
 
   // ── Selected-building helper ───────────────────────────────────────────────
+  const clearEntranceMarkers = useCallback(() => {
+    entranceMarkersRef.current.forEach((m) => m.remove());
+    entranceMarkersRef.current = [];
+  }, []);
+
   const setSelectedBuilding = useCallback((feature: GeoJSON.Feature | null, label: string | null) => {
     const src = mapRef.current?.getSource("selected-building") as maplibregl.GeoJSONSource | undefined;
     if (!src) return;
+    clearEntranceMarkers();
     if (feature) {
       src.setData({ type: "FeatureCollection", features: [feature] });
       setSelectedBuildingInfo({ label: label || "Здание" });
@@ -209,7 +216,7 @@ export default function App() {
       src.setData({ type: "FeatureCollection", features: [] });
       setSelectedBuildingInfo(null);
     }
-  }, []);
+  }, [clearEntranceMarkers]);
 
   const buildBuildingLabel = useCallback((props: Record<string, string | number | undefined>): string => {
     const housenumber = props["addr:housenumber"];
@@ -288,6 +295,29 @@ export default function App() {
         .setLngLat(e.lngLat)
         .setHTML(html)
         .addTo(map);
+
+      // Fetch building entrances (подъезды) from Overpass API via proxy
+      clearEntranceMarkers();
+      fetch(`/api/entrances?lat=${e.lngLat.lat.toFixed(6)}&lng=${e.lngLat.lng.toFixed(6)}&radius=70`)
+        .then((r) => r.ok ? r.json() : Promise.reject())
+        .then((entrances: Array<{ id: number; lat: number; lng: number; entrance: string; ref: string | null }>) => {
+          if (!Array.isArray(entrances) || entrances.length === 0) return;
+          const map = mapRef.current;
+          if (!map) return;
+          entrances.forEach((en) => {
+            const isMain = en.entrance === "main";
+            const isStaircase = en.entrance === "staircase";
+            const label = isMain ? "вход" : isStaircase ? `п.${en.ref ?? "?"}` : (en.ref ?? "вх");
+            const el = document.createElement("div");
+            el.className = `entrance-marker${isMain ? " entrance-marker--main" : ""}`;
+            el.textContent = label;
+            const marker = new maplibregl.Marker({ element: el, anchor: "bottom" })
+              .setLngLat([en.lng, en.lat])
+              .addTo(map);
+            entranceMarkersRef.current.push(marker);
+          });
+        })
+        .catch(() => {});
     };
 
     const onEnter = () => { map.getCanvas().style.cursor = "pointer"; };
@@ -326,8 +356,8 @@ export default function App() {
         zoom: map.getZoom(),
         bearing: map.getBearing(),
       };
-      // True eye level: zoom 20 ≈ 1–3 m above ground, pitch 83° — almost horizontal
-      map.easeTo({ pitch: 83, zoom: 20, bearing: map.getBearing(), duration: 1000 });
+      // True road level: zoom 20, pitch 85° (MapLibre max) — nearly horizontal, eye of courier
+      map.easeTo({ pitch: 85, zoom: 20, bearing: map.getBearing(), duration: 1000 });
       // In POV: housenumbers only for the very closest buildings (minzoom stays 16,
       // but at zoom 20 the frustum is so narrow you naturally see only nearby ones)
       try { map.setLayoutProperty("housenumbers", "text-allow-overlap", false); } catch {}
