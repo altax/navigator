@@ -39,12 +39,6 @@ export function buildStyle(stack: StackStatus | null): StyleSpecification {
       layers: [
         { id: "background", type: "background" as const, paint: { "background-color": "#0e1116" } },
         {
-          id: "delivery-outside-mask",
-          type: "fill" as const,
-          source: "delivery-mask",
-          paint: { "fill-color": "#0e1116", "fill-opacity": 1 },
-        },
-        {
           id: "landuse",
           type: "fill" as const,
           source: "basemap",
@@ -437,6 +431,12 @@ export function buildStyle(stack: StackStatus | null): StyleSpecification {
             "text-halo-blur": 0.4,
             "text-opacity": ["interpolate", ["linear"], ["zoom"], 15, 0.8, 16, 1],
           },
+        },
+        {
+          id: "delivery-outside-mask",
+          type: "fill" as const,
+          source: "delivery-mask",
+          paint: { "fill-color": "#0e1116", "fill-opacity": 1 },
         },
         {
           id: "selected-building-3d",

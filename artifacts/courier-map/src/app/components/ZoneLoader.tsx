@@ -179,7 +179,7 @@ export function ZoneLoader({ mapRef }: Props) {
             source: "zone-circle",
             paint: { "fill-color": "#3b82f6", "fill-opacity": 0.09 },
           },
-          "footways",
+          "selected-building-3d",
         );
         map.addLayer(
           {
@@ -193,7 +193,7 @@ export function ZoneLoader({ mapRef }: Props) {
               "line-dasharray": [5, 3],
             },
           },
-          "footways",
+          "selected-building-3d",
         );
       } else {
         (map.getSource("zone-circle") as maplibregl.GeoJSONSource).setData(geo);
