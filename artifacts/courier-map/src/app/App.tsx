@@ -7,9 +7,31 @@ import { drawMetroIcon, drawMetroEntranceIcon, drawZebraIcon } from "./mapIcons"
 import { SearchBar } from "./components/SearchBar";
 import { ZoneLoader } from "./components/ZoneLoader";
 
+export interface ZoneFilter {
+  lng: number;
+  lat: number;
+  radiusKm: number;
+}
+
+function tileDistKm(z: number, tx: number, ty: number, zLng: number, zLat: number): number {
+  const n = 1 << z;
+  const lng = ((tx + 0.5) / n) * 360 - 180;
+  const lat = (Math.atan(Math.sinh(Math.PI * (1 - (2 * (ty + 0.5)) / n))) * 180) / Math.PI;
+  const R = 6371;
+  const dLat = (lat - zLat) * (Math.PI / 180);
+  const dLng = (lng - zLng) * (Math.PI / 180);
+  const a =
+    Math.sin(dLat / 2) ** 2 +
+    Math.cos(zLat * (Math.PI / 180)) * Math.cos(lat * (Math.PI / 180)) * Math.sin(dLng / 2) ** 2;
+  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+}
+
+const EMPTY_TILE = "data:application/octet-stream;base64,";
+
 export default function App() {
   const mapRef = useRef<MlMap | null>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
+  const zoneFilterRef = useRef<ZoneFilter | null>(null);
 
   const [coord, setCoord] = useState<{ lng: number; lat: number } | null>(null);
   const [webglError, setWebglError] = useState(false);
@@ -44,6 +66,22 @@ export default function App() {
         refreshExpiredTiles: false,
         localIdeographFontFamily: "",
         pixelRatio: weakDevice ? 1 : Math.min(window.devicePixelRatio || 1, 2),
+        transformRequest: (url, resourceType) => {
+          if (resourceType === "Tile" && url.includes("/api/tiles/spb-lo/")) {
+            const zone = zoneFilterRef.current;
+            if (zone) {
+              const m = url.match(/\/(\d+)\/(\d+)\/(\d+)(?:\?|$)/);
+              if (m) {
+                const z = parseInt(m[1]), tx = parseInt(m[2]), ty = parseInt(m[3]);
+                const dist = tileDistKm(z, tx, ty, zone.lng, zone.lat);
+                if (dist > zone.radiusKm * 1.3) {
+                  return { url: EMPTY_TILE };
+                }
+              }
+            }
+          }
+          return { url };
+        },
       });
     } catch (e) {
       console.error("MapLibre init failed:", e);
@@ -274,7 +312,7 @@ export default function App() {
       )}
 
       <SearchBar onSelect={flyToAndHighlight} />
-      <ZoneLoader mapRef={mapRef} />
+      <ZoneLoader mapRef={mapRef} zoneFilterRef={zoneFilterRef} />
 
       {selectedBuildingInfo && (
         <button className="selection-pill" onClick={() => setSelectedBuilding(null, null)} title="Снять выделение здания">

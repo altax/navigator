@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import maplibregl, { type Map as MlMap } from "maplibre-gl";
+import type { ZoneFilter } from "../App";
 
 interface ZoneSaved {
   address: string;
@@ -16,6 +17,7 @@ interface GeoResult {
 
 interface Props {
   mapRef: React.RefObject<MlMap | null>;
+  zoneFilterRef: React.RefObject<ZoneFilter | null>;
 }
 
 const LS_KEY = "zone-loader-v1";
@@ -148,7 +150,7 @@ function zoneBounds(
 const EMPTY_FC: GeoJSON.FeatureCollection = { type: "FeatureCollection", features: [] };
 const FULL_BOUNDS: [number, number, number, number] = [27.0, 58.0, 34.0, 61.8];
 
-export function ZoneLoader({ mapRef }: Props) {
+export function ZoneLoader({ mapRef, zoneFilterRef }: Props) {
   const [open, setOpen] = useState(false);
   const [address, setAddress] = useState("");
   const [suggestions, setSuggestions] = useState<GeoResult[]>([]);
@@ -201,9 +203,14 @@ export function ZoneLoader({ mapRef }: Props) {
 
       (map.getSource("delivery-mask") as maplibregl.GeoJSONSource | undefined)?.setData(mask);
 
+      // Update tile filter — only tiles within radius will be fetched from now on
+      (zoneFilterRef as React.MutableRefObject<{ lng: number; lat: number; radiusKm: number } | null>).current = { lng, lat, radiusKm: r };
+      // Flush tile cache so already-cached out-of-zone tiles are evicted
+      (map.getSource("basemap") as maplibregl.VectorTileSource & { reload?: () => void })?.reload?.();
+
       map.setMaxBounds(zoneBounds(lng, lat, r));
     },
-    [mapRef],
+    [mapRef, zoneFilterRef],
   );
 
   const clearCircle = useCallback(() => {
@@ -213,8 +220,11 @@ export function ZoneLoader({ mapRef }: Props) {
       (map.getSource("zone-circle") as maplibregl.GeoJSONSource).setData(EMPTY_FC);
     }
     (map.getSource("delivery-mask") as maplibregl.GeoJSONSource | undefined)?.setData(EMPTY_FC);
+    // Remove tile filter — full map loads again
+    (zoneFilterRef as React.MutableRefObject<{ lng: number; lat: number; radiusKm: number } | null>).current = null;
+    (map.getSource("basemap") as maplibregl.VectorTileSource & { reload?: () => void })?.reload?.();
     map.setMaxBounds(FULL_BOUNDS);
-  }, [mapRef]);
+  }, [mapRef, zoneFilterRef]);
 
   // ── Restore saved zone on mount ────────────────────────────────────────
   useEffect(() => {
