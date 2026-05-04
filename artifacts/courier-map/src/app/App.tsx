@@ -311,7 +311,6 @@ export default function App() {
     const vis = poisVisible ? "visible" : "none";
     const apply = () => {
       try { map.setLayoutProperty("poi-labels", "visibility", vis); } catch {}
-      try { map.setLayoutProperty("poi-nodes", "visibility", vis); } catch {}
     };
     if (map.isStyleLoaded()) apply();
     else map.once("style.load", apply);
@@ -327,12 +326,11 @@ export default function App() {
         zoom: map.getZoom(),
         bearing: map.getBearing(),
       };
-      map.easeTo({
-        pitch: 85,
-        zoom: Math.max(map.getZoom(), 18),
-        bearing: map.getBearing(),
-        duration: 900,
-      });
+      // True eye level: zoom 20 ≈ 1–3 m above ground, pitch 83° — almost horizontal
+      map.easeTo({ pitch: 83, zoom: 20, bearing: map.getBearing(), duration: 1000 });
+      // In POV: housenumbers only for the very closest buildings (minzoom stays 16,
+      // but at zoom 20 the frustum is so narrow you naturally see only nearby ones)
+      try { map.setLayoutProperty("housenumbers", "text-allow-overlap", false); } catch {}
       setPovActive(true);
     } else {
       const prev = prevCameraRef.current;
@@ -342,6 +340,10 @@ export default function App() {
         bearing: prev?.bearing ?? 0,
         duration: 900,
       });
+      try {
+        map.setLayoutProperty("housenumbers", "text-allow-overlap",
+          ["step", ["zoom"], false, 18, true]);
+      } catch {}
       setPovActive(false);
     }
   }, [povActive]);
