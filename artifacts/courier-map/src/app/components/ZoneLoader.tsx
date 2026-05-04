@@ -167,6 +167,7 @@ export function ZoneLoader({ mapRef, zoneFilterRef }: Props) {
 
   const abortRef = useRef<AbortController | null>(null);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const darkstoreMarkerRef = useRef<maplibregl.Marker | null>(null);
 
   // ── Paint / clear zone circle on the map ───────────────────────────────
   const paintCircle = useCallback(
@@ -213,8 +214,30 @@ export function ZoneLoader({ mapRef, zoneFilterRef }: Props) {
       (map.getSource("basemap") as maplibregl.VectorTileSource & { reload?: () => void })?.reload?.();
 
       map.setMaxBounds(zoneBounds(lng, lat, r));
+
+      // ── Darkstore marker ────────────────────────────────────────────────
+      if (darkstoreMarkerRef.current) {
+        darkstoreMarkerRef.current.setLngLat([lng, lat]);
+      } else {
+        const el = document.createElement("div");
+        el.className = "darkstore-marker";
+        el.innerHTML = `
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+            <polyline points="9 22 9 12 15 12 15 22"/>
+          </svg>
+          <span class="darkstore-label">Даркстор</span>
+        `;
+        el.addEventListener("click", (e) => {
+          e.stopPropagation();
+          mapRef.current?.flyTo({ center: [lng, lat], zoom: 17, duration: 900, essential: true });
+        });
+        darkstoreMarkerRef.current = new maplibregl.Marker({ element: el, anchor: "bottom" })
+          .setLngLat([lng, lat])
+          .addTo(map);
+      }
     },
-    [mapRef, zoneFilterRef],
+    [mapRef, zoneFilterRef, darkstoreMarkerRef],
   );
 
   const clearCircle = useCallback(() => {
@@ -228,7 +251,10 @@ export function ZoneLoader({ mapRef, zoneFilterRef }: Props) {
     (zoneFilterRef as React.MutableRefObject<{ lng: number; lat: number; radiusKm: number } | null>).current = null;
     (map.getSource("basemap") as maplibregl.VectorTileSource & { reload?: () => void })?.reload?.();
     map.setMaxBounds(FULL_BOUNDS);
-  }, [mapRef, zoneFilterRef]);
+    // Remove darkstore marker
+    darkstoreMarkerRef.current?.remove();
+    darkstoreMarkerRef.current = null;
+  }, [mapRef, zoneFilterRef, darkstoreMarkerRef]);
 
   // ── Restore saved zone on mount ────────────────────────────────────────
   useEffect(() => {
